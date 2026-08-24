@@ -145,7 +145,6 @@ MonitorComponent.propTypes = {
     componentRef: PropTypes.func.isRequired,
     draggable: PropTypes.bool.isRequired,
     id: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
     mode: PropTypes.oneOf(monitorModes),
     opcode: PropTypes.string.isRequired,
     onDragEnd: PropTypes.func.isRequired,

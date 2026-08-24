@@ -16,7 +16,7 @@
 .modal-content {
     margin: 100px auto;
     outline: none;
-    border: .25rem solid $ui-white-transparent;
+    border: none;
     padding: 0;
     border-radius: $space;
     user-select: none;
@@ -54,7 +54,7 @@
 }
 
 .button-row button {
-    border: 1px solid $looks-secondary;
+    border: none;
     border-radius: 0.25rem;
     padding: 0.5rem 2rem;
     background: $looks-secondary;

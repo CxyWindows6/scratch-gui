@@ -92,6 +92,7 @@ class LanguageMenu extends React.PureComponent {
                 >
                     {
                         Object.keys(locales)
+                            .filter(l => ['en', 'zh-cn', 'zh-tw'].includes(l))
                             .map(locale => (
                                 <MenuItem
                                     key={locale}

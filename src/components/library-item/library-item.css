@@ -15,9 +15,7 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: $text-primary;
     background: $ui-white;
-    border-width: 2px;
-    border-style: solid;
-    border-color: $ui-black-transparent;
+    border: none;
     border-radius: $space;
     text-align: center;
     cursor: pointer;
@@ -27,10 +25,7 @@
     align-self: stretch;
 }
 
-.library-item:hover {
-    border-width: 2px;
-    border-color: $looks-secondary;
-}
+
 
 .hidden {
     display: none;
@@ -41,9 +36,7 @@
     cursor: auto;
 }
 
-.disabled:hover {
-    border-color: $ui-black-transparent;
-}
+
 
 .library-item-image-container-wrapper {
     height: 100px;
@@ -68,7 +61,7 @@
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 0.5rem;
-    border: 0.25rem solid $ui-white;
+    border: 0.25rem solid transparent;
 }
 
 [dir="ltr"] .library-item-inset-image-container {

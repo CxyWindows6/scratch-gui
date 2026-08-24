@@ -15,12 +15,10 @@
 :global(.Popover-body) {
     color: $text-primary !important;
     background: $popover-background !important;
-    border: 1px solid $ui-black-transparent !important;
     box-shadow: 0px 0px 8px 1px $shadow !important;
 }
 :global(.Popover-tipShape) {
     fill: $popover-background !important;
-    stroke: $ui-black-transparent !important;
 }
 
 /* ScratchAdddons editor-dark-mode compatibility */
@@ -28,7 +26,7 @@
     --editorDarkMode-primary: $looks-secondary;
     --editorDarkMode-primary-transparent35: $looks-transparent;
     --editorDarkMode-primary-variant: $looks-secondary-dark;
-    --editorDarkMode-border: $ui-black-transparent;
+    --editorDarkMode-border: $ui-border;
     --editorDarkMode-accent: $ui-modal-background;
     --editorDarkMode-categoryMenu-text: $text-primary;
     --editorDarkMode-accent-text: $text-primary;

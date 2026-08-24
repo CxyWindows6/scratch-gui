@@ -1,21 +1,19 @@
 @import "../../css/units.css";
 @import "../../css/colors.css";
-@import "../../css/default-colors.css";
 
 .question-container {
     margin: $space;
-    border: 1px solid $ui-black-transparent-default;
     border-radius: $space;
     border-width: 2px;
     padding: 1rem;
-    background: white;
+    background: $ui-white;
 }
 
 .question-label {
     font-size: 0.75rem;
     font-weight: bold;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: $text-primary-default;
+    color: $text-primary;
     padding-bottom: $space;
 }
 
@@ -52,9 +50,8 @@
     font-weight: normal;
 
     /* override dark mode */
-    background-color: $input-background-default;
-    color: $text-primary-default;
-    border-color: $ui-black-transparent-default;
+    background-color: $input-background;
+    color: $text-primary;
 }
 
 [dir="ltr"] .question-input > input {

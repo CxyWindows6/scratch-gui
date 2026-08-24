@@ -57,6 +57,8 @@ const applyGuiColors = theme => {
         doc.style.setProperty(`--editorTheme3-${color}-field-background`, blockColors[color].quaternary);
     }
 
+    doc.setAttribute('data-gui', guiColors['color-scheme'] === 'dark' ? 'dark' : 'light');
+
     // Some browsers will color their interfaces to match theme-color, so if we make it the same color as our
     // menu bar, it'll look pretty cool.
     let metaThemeColor = document.head.querySelector('meta[name=theme-color]');

@@ -27,7 +27,6 @@
 .variable-name-text-input {
     margin-bottom: 1.5rem;
     width: 100%;
-    border: 1px solid $ui-black-transparent;
     border-radius: 5px;
     padding: 0 1rem;
     height: 3rem;
@@ -58,9 +57,9 @@
 .button-row button {
     padding: 0.75rem 1rem;
     border-radius: 0.25rem;
-    background: white;
-    color: black;
-    border: 1px solid $ui-black-transparent;
+    background: $ui-white;
+    border: 1px solid $ui-border;
+    color: $text-primary;
     font-weight: 600;
     font-size: 0.85rem;
 }
@@ -81,7 +80,6 @@
 
 .cloud-option {
     display:flex;
-    border-top: 1px dashed $ui-black-transparent;
     overflow: visible;
     padding: 1rem 0;
     text-align: center;

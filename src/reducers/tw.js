@@ -1,4 +1,5 @@
 const SET_FRAMERATE = 'tw/SET_FRAMERATE';
+const SET_OPSPERFRAME = 'tw/SET_OPSPERFRAME';
 const SET_INTERPOLATION = 'tw/SET_INTERPOLATION';
 const SET_COMPILER_OPTIONS = 'tw/SET_COMPILER_OPTIONS';
 const SET_RUNTIME_OPTIONS = 'tw/SET_RUNTIME_OPTIONS';
@@ -17,9 +18,11 @@ const SET_HAS_CLOUD_VARIABLES = 'tw/SET_HAS_CLOUD_VARIABLES';
 const SET_CLOUD_HOST = 'tw/SET_CLOUD_HOST';
 const SET_PLATFORM_MISMATCH_DETAILS = 'tw/SET_PLATFORM_MISMATCH_DETAILS';
 const SET_PROJECT_ERROR = 'tw/SET_PROJECT_ERROR';
+const SET_MENUBAR_ALIGNMENT = 'tw/SET_MENUBAR_ALIGNMENT';
 
 export const initialState = {
     framerate: 30,
+    opsPerFrame: 1,
     interpolation: false,
     cloud: true,
     username: '',
@@ -52,7 +55,16 @@ export const initialState = {
         platform: null,
         callback: null
     },
-    projectError: null
+    projectError: null,
+    menuBarAlignment: (() => {
+        try {
+            const stored = localStorage.getItem('tw:menuBarAlignment');
+            if (stored === 'center' || stored === 'right') return stored;
+        } catch (e) {
+            // ignore
+        }
+        return 'left';
+    })()
 };
 
 const reducer = function (state, action) {
@@ -61,6 +73,10 @@ const reducer = function (state, action) {
     case SET_FRAMERATE:
         return Object.assign({}, state, {
             framerate: action.framerate
+        });
+    case SET_OPSPERFRAME:
+        return Object.assign({}, state, {
+            opsPerFrame: action.opsPerFrame
         });
     case SET_INTERPOLATION:
         return Object.assign({}, state, {
@@ -140,6 +156,10 @@ const reducer = function (state, action) {
         return Object.assign({}, state, {
             projectError: action.projectError
         });
+    case SET_MENUBAR_ALIGNMENT:
+        return Object.assign({}, state, {
+            menuBarAlignment: action.alignment
+        });
     default:
         return state;
     }
@@ -149,6 +169,13 @@ const setFramerateState = function (framerate) {
     return {
         type: SET_FRAMERATE,
         framerate: framerate
+    };
+};
+
+const setOpsPerFrameState = function (opsPerFrame) {
+    return {
+        type: SET_OPSPERFRAME,
+        opsPerFrame: opsPerFrame
     };
 };
 
@@ -271,6 +298,13 @@ const setPlatformMismatchDetails = function (platform, callback) {
     };
 };
 
+const setMenuBarAlignment = function (alignment) {
+    return {
+        type: SET_MENUBAR_ALIGNMENT,
+        alignment: alignment
+    };
+};
+
 const setProjectError = function (projectError) {
     return {
         type: SET_PROJECT_ERROR,
@@ -282,6 +316,7 @@ export {
     reducer as default,
     initialState as twInitialState,
     setFramerateState,
+    setOpsPerFrameState,
     setInterpolationState,
     setCompilerOptionsState,
     setRuntimeOptionsState,
@@ -299,5 +334,6 @@ export {
     setHasCloudVariables,
     setCloudHost,
     setPlatformMismatchDetails,
-    setProjectError
+    setProjectError,
+    setMenuBarAlignment
 };

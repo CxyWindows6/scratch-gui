@@ -20,14 +20,12 @@
 
 .alert.warn {
     background: #FFF0DF;
-    border: 1px solid #FF8C1A;
-    box-shadow: 0px 0px 0px 2px rgba(255, 140, 26, 0.25);
+    border: none;
 }
 
 .alert.success {
     background: $extensions-light;
-    border: 1px solid $extensions-tertiary;
-    box-shadow: 0px 0px 0px 2px $extensions-light;
+    border: none;
 }
 
 .alert-spinner {

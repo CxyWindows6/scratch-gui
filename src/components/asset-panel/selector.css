@@ -79,6 +79,6 @@ $fade-out-distance: 100px;
 
 
 .list-item.placeholder {
-    background: white;
+    background: $ui-white;
     filter: opacity(15%) brightness(0%);
 }

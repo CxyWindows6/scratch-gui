@@ -70,7 +70,6 @@ a:active, a:focus {
 .button {
     color: inherit;
     background: $ui-secondary;
-    border: 1px solid $ui-black-transparent;
     padding: 8px 12px;
     border-radius: 4px;
     outline: none;
@@ -92,7 +91,6 @@ a:active, a:focus {
 .search-container {
     display: flex;
     background-color: $ui-secondary;
-    border: 1px solid $ui-black-transparent;
     border-radius: 4px;
 }
 .search-container:focus-within {
@@ -130,7 +128,6 @@ a:active, a:focus {
 
 .feedback-button-outer {
     background: $ui-secondary;
-    border: 1px solid $ui-black-transparent;
     color: inherit !important; /* override <a> colors */
     height: 36px;
     box-sizing: border-box;
@@ -178,7 +175,6 @@ a:active, a:focus {
 .addon-group-name::after {
     margin-left: 16px;
     content: '';
-    border-top: 1px solid $ui-black-transparent;
     width: 100px;
     flex: 1;
 }
@@ -202,7 +198,6 @@ a:active, a:focus {
 
 .addon {
     box-shadow: 0 2px 5px $shadow;
-    border: 1px solid $ui-black-transparent;
     border-radius: 5px;
     margin: 10px 0 10px 0;
     font-size: 14px;
@@ -282,7 +277,6 @@ a:active, a:focus {
     background: #333;
     width: 40px;
     height: 22px;
-    border: 1px solid $ui-black-transparent;
     border-radius: 12px;
     position: relative;
     cursor: pointer;
@@ -422,7 +416,6 @@ a:active, a:focus {
 }
 .setting input {
     background: $input-background;
-    border: 1px solid $ui-black-transparent;
     padding: 8px 12px;
     border-radius: 4px;
     transition: 0.25s ease;
@@ -484,7 +477,6 @@ a:active, a:focus {
     background: transparent;
     border: none;
     background: $ui-secondary;
-    border: 1px solid $ui-black-transparent;
     border-right-width: 0;
     transition: 0.25s ease;
     transition-property: color, background, border;

@@ -11,6 +11,7 @@
 .body-wrapper {
     flex-grow: 1;
     background-color: $ui-primary;
+    background-image: var(--noise-texture);
 }
 
 .body-wrapper * {
@@ -60,7 +61,6 @@
     height: $stage-menu-height;
     width: 250px; /* Match width of the toolbox */
     display: flex;
-    align-items: flex-end;
     flex-shrink: 0;
 
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -69,24 +69,23 @@
 
     /* Overrides for react-tabs styling */
     margin: 0 !important;
-    border-bottom: 0 !important;
+    border-bottom: none;
 
     color: $text-primary;
 }
 
 .tab {
     flex-grow: 1;
-    height: 80%;
     margin-bottom: 0;
 
-    border-radius: 1rem 1rem 0 0;
-    border: 1px solid $ui-black-transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
 
-    padding: 0.125rem 1.25rem 0;
+    padding: 0 1.25rem;
     font-size: 0.75rem;
 
-    background-color: $ui-tertiary;
-    color: $text-primary-transparent;
+    background-color: transparent;
+    color: $text-primary;
 
     display: flex;
     justify-content: center;
@@ -94,44 +93,17 @@
 
     user-select: none;
     white-space: nowrap;
-}
 
-[dir="ltr"] .tab {
-    margin-left: -0.5rem;
-}
-
-[dir="rtl"] .tab {
-    margin-right: -0.5rem;
-}
-
-[dir="ltr"] .tab:nth-of-type(1) {
-    margin-left: 0;
-}
-
-[dir="rtl"] .tab:nth-of-type(1) {
-    margin-right: 0;
-}
-
-/* Use z-indices to force left-on-top for tabs */
-.tab:nth-of-type(1) {
-    z-index: 3;
-}
-.tab:nth-of-type(2) {
-    z-index: 2;
-}
-.tab:nth-of-type(3) {
-    z-index: 1;
+    cursor: pointer;
 }
 
 .tab:hover {
-  background-color: $ui-primary;
+    background-color: $ui-hover;
 }
 
 .tab.is-selected {
-    height: 90%;
     color: $looks-secondary;
-    background-color: $ui-white;
-    z-index: 4; /* Make sure selected is always above */
+    border-bottom-color: $looks-secondary;
 }
 
 .tab img {
@@ -160,19 +132,10 @@
     filter: none;
 }
 
-/* Tab style overrides from react-tabs */
-.tab.is-selected:after {
-    display: none;
-}
-
 .tab.is-selected:focus {
     outline: none;
     box-shadow: none;
-    border-color: $ui-black-transparent;
-}
-
-.tab.is-selected:focus:after {
-    display: none;
+    border-bottom-color: $looks-secondary;
 }
 
 /* Body of the tabs */
@@ -243,7 +206,7 @@
     z-index: $z-index-extension-button;
     background: $looks-secondary;
 
-    border: 1px solid $looks-secondary;
+    border: none;
     box-sizing: content-box; /* To match scratch-block vertical toolbox borders */
 }
 
@@ -303,6 +266,15 @@ $fade-out-distance: 15px;
 .menu-bar-position {
     position: relative;
     z-index: $z-index-menu-bar;
+    background-color: $menu-bar-background;
+}
+
+.menu-bar-position.fullscreenMenuBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: $fullscreen-accent;
 }
 /* Alerts */
 
@@ -324,6 +296,20 @@ $fade-out-distance: 15px;
     overflow: hidden;
 }
 
+/* Ubuntu-style scrollbar */
+:global(body) ::-webkit-scrollbar {
+    width: 10px;
+}
+:global(body) ::-webkit-scrollbar-track {
+    background: transparent;
+}
+:global(body) ::-webkit-scrollbar-thumb {
+    background-color: #555555;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
 /* when in the browser's fullscreen mode, we need to put our own background to avoid just having black */
 .fullscreen-background {
     position: absolute;
@@ -332,5 +318,5 @@ $fade-out-distance: 15px;
     width: 100%;
     height: 100%;
     /* overridden by JS; this will be used if the browser can't understand that color */
-    background-color: white;
+    background-color: $fullscreen-background;
 }

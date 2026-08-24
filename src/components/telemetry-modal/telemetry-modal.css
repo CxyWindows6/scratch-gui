@@ -22,7 +22,7 @@ $ui-gray: hsla(0, 0%, 95%, 1);
 .modal-content {
     margin: 100px auto;
     outline: none;
-    border: .25rem solid $ui-white-transparent;
+    border: none;
     padding: 0;
     border-radius: $space;
     user-select: none;
@@ -74,7 +74,7 @@ $ui-gray: hsla(0, 0%, 95%, 1);
 
 .radio-buttons input[type="radio"] {
     margin: -1px 0.75rem 1px;
-    border: 1px solid $active-gray;
+    border: none;
     border-radius: 50%;
     width: 1rem;
     height: 1rem;
@@ -92,7 +92,7 @@ $ui-gray: hsla(0, 0%, 95%, 1);
 .radio-buttons input[type="radio"]:checked {
     transition: all .25s ease;
     background-color: $ui-white;
-    border: 1px solid $looks-secondary;
+    border: none;
 }
 
 .radio-buttons input[type="radio"]:checked::after {

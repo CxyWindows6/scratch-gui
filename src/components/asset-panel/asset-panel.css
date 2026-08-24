@@ -4,7 +4,6 @@
 .wrapper {
     display: flex;
     flex-grow: 1;
-    border: 1px solid $ui-black-transparent;
     background: $assets-background;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.85rem;
@@ -27,10 +26,3 @@
     overflow: visible;
 }
 
-[dir="ltr"] .detail-area {
-    border-left: 1px solid $ui-black-transparent;
-}
-
-[dir="rtl"] .detail-area {
-    border-right: 1px solid $ui-black-transparent;
-}

@@ -16,7 +16,7 @@
 .modal-content {
     margin: 100px auto;
     outline: none;
-    border: .25rem solid $ui-white-transparent;
+    border: none;
     padding: 0;
     border-radius: $space;
     user-select: none;
@@ -66,7 +66,6 @@
     font-weight: bold;
     padding: 0.75rem 1rem;
     border-radius: 0.25rem;
-    border: 1px solid $ui-black-transparent;
     background-color: $looks-secondary;
     color: white;
 }

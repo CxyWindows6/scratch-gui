@@ -8,7 +8,6 @@
 
 .backpack-header {
     margin-top: 0.5rem;
-    border: 1px solid $ui-black-transparent;
     background: $ui-white;
     padding: 0.25rem;
     text-align: center;
@@ -32,7 +31,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-right: 1px solid $ui-black-transparent;
     min-height: 5.5rem;
 }
 

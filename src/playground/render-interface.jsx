@@ -32,7 +32,6 @@ import '../lib/tw-fix-history-api';
 import GUI from './render-gui.jsx';
 import MenuBar from '../components/menu-bar/menu-bar.jsx';
 import ProjectInput from '../components/tw-project-input/project-input.jsx';
-import FeaturedProjects from '../components/tw-featured-projects/featured-projects.jsx';
 import Description from '../components/tw-description/description.jsx';
 import BrowserModal from '../components/browser-modal/browser-modal.jsx';
 import CloudVariableBadge from '../containers/tw-cloud-variable-badge.jsx';
@@ -340,9 +339,9 @@ class Interface extends React.Component {
                                     />
                                 </p>
                             </div>
-                            <div className={styles.section}>
+                            {/* <div className={styles.section}>
                                 <FeaturedProjects studio="27205657" />
-                            </div>
+                            </div> */}
                         </React.Fragment>
                     ) : null}
                 </div>

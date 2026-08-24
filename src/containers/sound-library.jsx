@@ -69,6 +69,7 @@ class SoundLibrary extends React.PureComponent {
             data: null
         };
     }
+    /* eslint-disable react/no-did-mount-set-state */
     componentDidMount () {
         const soundLibrary = getSoundLibrary();
         if (soundLibrary.then) {
@@ -80,6 +81,7 @@ class SoundLibrary extends React.PureComponent {
                 data: getSoundLibraryThumbnailData(soundLibrary, this.props.isRtl)
             });
         }
+        /* eslint-enable react/no-did-mount-set-state */
 
         this.audioEngine = new AudioEngine(new SharedAudioContext());
         this.playingSoundPromise = null;

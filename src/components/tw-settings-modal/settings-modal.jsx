@@ -6,16 +6,16 @@ import bindAll from 'lodash.bindall';
 import Box from '../box/box.jsx';
 import Modal from '../../containers/modal.jsx';
 import FancyCheckbox from '../tw-fancy-checkbox/checkbox.jsx';
-import Input from '../forms/input.jsx';
-import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
 import DocumentationLink from '../tw-documentation-link/documentation-link.jsx';
 import styles from './settings-modal.css';
 import helpIcon from './help-icon.svg';
 import {APP_NAME} from '../../lib/brand.js';
-
-/* eslint-disable react/no-multi-comp */
+import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
+import Input from '../forms/input.jsx';
 
 const BufferedInput = BufferedInputHOC(Input);
+
+/* eslint-disable react/no-multi-comp */
 
 const messages = defineMessages({
     title: {
@@ -190,6 +190,48 @@ CustomFPS.propTypes = {
     framerate: PropTypes.number,
     onChange: PropTypes.func,
     onCustomizeFramerate: PropTypes.func
+};
+
+const CustomOPF = props => (
+    <BooleanSetting
+        value={props.opsPerFrame !== 1}
+        onChange={props.onChange}
+        label={
+            <FormattedMessage
+                defaultMessage="2 OpsPerFrame (Custom OpsPerFrame)"
+                description="OPF setting"
+                id="tw.settingsModal.opf"
+            />
+        }
+        help={
+            <FormattedMessage
+                // eslint-disable-next-line max-len
+                defaultMessage="Run the code multiple times within a frame. Open TurboMode will be better. {customOpsPerFrame}."
+                description="OPF setting help"
+                id="tw.settingsModal.opfHelp"
+                values={{
+                    customOpsPerFrame: (
+                        <a
+                            onClick={props.onCustomizeOpsPerFrame}
+                            tabIndex="0"
+                        >
+                            <FormattedMessage
+                                defaultMessage="Click to use a OpsPerFrame other than 1 or 2"
+                                description="OPF settings help"
+                                id="tw.settingsModal.opfHelp.customOpsPerFrame"
+                            />
+                        </a>
+                    )
+                }}
+            />
+        }
+        slug="opf"
+    />
+);
+CustomOPF.propTypes = {
+    opsPerFrame: PropTypes.number,
+    onChange: PropTypes.func,
+    onCustomizeOpsPerFrame: PropTypes.func
 };
 
 const Interpolation = props => (
@@ -452,6 +494,11 @@ const SettingsModalComponent = props => (
                 onChange={props.onFramerateChange}
                 onCustomizeFramerate={props.onCustomizeFramerate}
             />
+            <CustomOPF
+                opsPerFrame={props.opsPerFrame}
+                onChange={props.onOpsPerFrameChange}
+                onCustomizeOpsPerFrame={props.onCustomizeOpsPerFrame}
+            />
             <Interpolation
                 value={props.interpolation}
                 onChange={props.onInterpolationChange}
@@ -515,6 +562,9 @@ SettingsModalComponent.propTypes = {
     framerate: PropTypes.number,
     onFramerateChange: PropTypes.func,
     onCustomizeFramerate: PropTypes.func,
+    opsPerFrame: PropTypes.number,
+    onOpsPerFrameChange: PropTypes.func,
+    onCustomizeOpsPerFrame: PropTypes.func,
     highQualityPen: PropTypes.bool,
     onHighQualityPenChange: PropTypes.func,
     interpolation: PropTypes.bool,

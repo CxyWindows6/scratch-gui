@@ -10,8 +10,8 @@
 .button {
     margin: 0;
     padding: 0.25rem;
-    border: 1px solid $ui-black-transparent;
     background: none;
+    border: none;
     outline: none;
     cursor: pointer;
     user-select: none;
@@ -35,7 +35,6 @@
 
 [dir="rtl"] .button:not(:last-child) {
     border-left: none;
-    border-right: 1px solid $ui-black-transparent;
 }
 
 .button:focus::before {
@@ -45,7 +44,7 @@
     right: -1px;
     bottom: -1px;
     left: -1px;
-    border: 1px solid $looks-secondary;
+    border: none;
 }
 
 /* round corners for first and last buttons */

@@ -5,32 +5,33 @@
 .menu-bar {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     flex-wrap: nowrap;
     gap: 0.5rem;
 
-    /*
-        For most things, we shouldn't explicitly set height, and let the
-        content push the element to whatever fits. Using a fixed height
-        instead, will help us subtract the value we assign from the body,
-        adding up to a perfect 100%. This means we don't need to set
-        overflow: hidden, which makes it hard to debug. border-box
-        simplifies by all of this by removing padding from the equation.
-    */
     box-sizing: border-box;
     height: $menu-bar-height;
 
-    /*
-        @todo: This adds ~20px in Chrome, when scrolling to the right,
-        but fixes [FFx + Safari] [resize window down + scroll to the right] bug.
-        width: 100%;
-    */
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: $menu-bar-standard-font-size;
-    font-weight: bold;
+    font-weight: 500;
     background-color: $menu-bar-background;
     background-image: $menu-bar-background-image;
     color: $menu-bar-foreground;
+
+    position: relative;
+}
+
+
+
+.menu-bar-inner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .main-menu {
@@ -40,11 +41,13 @@
     flex-wrap: nowrap;
     align-items: center;
     flex-grow: 1;
-    gap: 0.5rem;
+    gap: 0.25rem;
 }
+
 .inactive {
     opacity: 0;
 }
+
 .scratch-logo {
     height:  1.6rem;
     vertical-align: middle;
@@ -71,7 +74,7 @@
 
 .menu-bar-item.active,
 .menu-bar-item.hoverable:hover {
-    background-color: $ui-black-transparent;
+    background-color: rgba(255, 255, 255, 0.06);
 }
 
 .menu-bar-item.growable {
@@ -88,7 +91,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
 }
 
 .file-group .menu-bar-item {
@@ -100,20 +103,29 @@
     z-index: $z-index-menu-bar;
 }
 
-.feedback-link {
-    color: $menu-bar-background;
-    text-decoration: none;
-}
-
 .feedback-button {
-    background-color: white;
-    color: inherit;
-    height: 34px;
+    background-color: $ui-white;
+    color: $looks-secondary;
+    height: 28px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.6875rem;
 }
 
-.divider {
-    height: 34px;
+.feedback-button:hover {
+    color: $looks-secondary-dark;
 }
+
+[data-gui="dark"] .feedback-button {
+    color: #ffffff;
+}
+
+[data-gui="dark"] .feedback-button:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
 
 .author-info {
     margin-left: .25rem;
@@ -140,11 +152,12 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    gap: 0.25rem;
 }
 
 .account-info-group .menu-bar-item {
     margin: 0 .25rem;
-    padding: 0 0.75rem;
+    padding: 0 0.5rem;
 }
 
 .mystuff-icon {
@@ -201,12 +214,9 @@
   text-indent: 50px;
   white-space: nowrap;
 }
+
 .mystuff > a:hover {
   background-size: 50%;
-}
-
-.mystuff > a {
-  /* background-image: url("/images/mystuff.png"); */
 }
 
 .about-icon {

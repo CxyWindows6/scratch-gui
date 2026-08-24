@@ -7,8 +7,8 @@
     align-items: center;
     flex-grow: 1;
 
-    background: $ui-white;
-    border-radius: 10rem;
+    background: $input-background;
+    border-radius: 4px;
     user-select: none;
     height: $library-filter-bar-height;
 
@@ -34,9 +34,7 @@
     transform: scaleX(-1);
 }
 
-.filter:focus-within {
-    box-shadow: 0 0 0 .25rem $looks-transparent;
-}
+
 
 /*
     Hidden state

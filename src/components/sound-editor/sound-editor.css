@@ -37,19 +37,16 @@
 
 [dir="ltr"] .input-group {
     padding-right: calc(2 * $space);
-    border-right: 1px dashed $ui-black-transparent;
 }
 
 [dir="rtl"] .input-group {
     padding-left: calc(2 * $space);
-    border-left: 1px dashed $ui-black-transparent;
 }
 
 [dir="rtl"] .row-reverse > .input-group {
     padding-left: 0;
     padding-right: calc(2 * $space);
     border-left: none;
-    border-right: 1px dashed $ui-black-transparent;
 }
 
 .name-input {
@@ -65,7 +62,6 @@
     position: relative;
 
     background: hsla(300, 53%, 60%, 0.15);
-    border: 1px solid $ui-black-transparent;
     border-radius: 5px;
 
     margin-top: 20px;
@@ -80,7 +76,6 @@ $border-radius: 0.25rem;
     outline: none;
     background: $ui-white;
     border-radius: $border-radius;
-    border: 1px solid $ui-black-transparent;
     cursor: pointer;
     font-size: 0.85rem;
     user-select: none;
@@ -99,7 +94,7 @@ $border-radius: 0.25rem;
     right: -1px;
     bottom: -1px;
     left: -1px;
-    border: 1px solid $looks-secondary;
+    border: none;
     z-index: 1;
 }
 
@@ -228,7 +223,6 @@ $border-radius: 0.25rem;
 
 [dir="rtl"] .button:not(:last-child) {
     border-left: none;
-    border-right: 1px solid $ui-black-transparent;
 }
 
 .button-group .button:first-child,

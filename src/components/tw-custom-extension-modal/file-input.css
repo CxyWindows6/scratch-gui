@@ -6,7 +6,7 @@
     padding: 1rem;
     margin: 1rem 0;
     text-align: center;
-    border: 4px dashed $ui-tertiary;
+    border: none;
     border-radius: 5px;
     cursor: pointer;
     background: none;

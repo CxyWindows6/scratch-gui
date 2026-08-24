@@ -11,7 +11,9 @@ const MENU_MODE = 'modeMenu';
 const MENU_SETTINGS = 'settingsMenu';
 const MENU_ACCENT = 'accentMenu';
 const MENU_BLOCKS_THEME = 'blocksThemeMenu';
+const MENU_GUI_THEME = 'guiThemeMenu';
 const MENU_ERRORS = 'errorsMenu';
+const MENU_ALIGNMENT = 'alignmentMenu';
 
 class Menu {
     constructor (id) {
@@ -54,8 +56,10 @@ const rootMenu = new Menu('root')
     .addChild(
         new Menu(MENU_SETTINGS)
             .addChild(new Menu(MENU_LANGUAGE))
+            .addChild(new Menu(MENU_GUI_THEME))
             .addChild(new Menu(MENU_ACCENT))
             .addChild(new Menu(MENU_BLOCKS_THEME))
+            .addChild(new Menu(MENU_ALIGNMENT))
     )
     .addChild(new Menu(MENU_FILE))
     .addChild(new Menu(MENU_EDIT))
@@ -76,6 +80,8 @@ const initialState = {
     [MENU_SETTINGS]: false,
     [MENU_ACCENT]: false,
     [MENU_BLOCKS_THEME]: false,
+    [MENU_GUI_THEME]: false,
+    [MENU_ALIGNMENT]: false,
     [MENU_ERRORS]: false
 };
 
@@ -156,6 +162,14 @@ const openBlocksThemeMenu = () => openMenu(MENU_BLOCKS_THEME);
 const closeBlocksThemeMenu = () => closeMenu(MENU_BLOCKS_THEME);
 const blocksThemeMenuOpen = state => state.scratchGui.menus[MENU_BLOCKS_THEME];
 
+const openAlignmentMenu = () => openMenu(MENU_ALIGNMENT);
+const closeAlignmentMenu = () => closeMenu(MENU_ALIGNMENT);
+const alignmentMenuOpen = state => state.scratchGui.menus[MENU_ALIGNMENT];
+
+const openGuiThemeMenu = () => openMenu(MENU_GUI_THEME);
+const closeGuiThemeMenu = () => closeMenu(MENU_GUI_THEME);
+const guiThemeMenuOpen = state => state.scratchGui.menus[MENU_GUI_THEME];
+
 const openErrorsMenu = () => openMenu(MENU_ERRORS);
 const closeErrorsMenu = () => closeMenu(MENU_ERRORS);
 const errorsMenuOpen = state => state.scratchGui.menus[MENU_ERRORS];
@@ -195,5 +209,11 @@ export {
     blocksThemeMenuOpen,
     openErrorsMenu,
     closeErrorsMenu,
-    errorsMenuOpen
+    errorsMenuOpen,
+    openGuiThemeMenu,
+    closeGuiThemeMenu,
+    guiThemeMenuOpen,
+    openAlignmentMenu,
+    closeAlignmentMenu,
+    alignmentMenuOpen
 };

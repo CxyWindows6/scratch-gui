@@ -4,7 +4,7 @@
 .badge {
     padding: 0.5rem;
     margin: 5px 0 8px 0;
-    border: 1px solid $badge-border;
+    border: none;
     background-color: $badge-background;
     display: flex;
     flex-direction: column;
@@ -29,7 +29,6 @@
     align-items: center;
 }
 .server {
-    border: 1px solid $ui-black-transparent;
     padding: 0.25rem 0.5rem;
     margin: 0;
     background: none;

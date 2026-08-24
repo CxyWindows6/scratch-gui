@@ -1,6 +1,8 @@
 const guiColors = {
     'color-scheme': 'dark',
 
+    'ui-border': '#3a322a',
+
     'ui-primary': '#111111',
     'ui-secondary': '#1e1e1e',
     'ui-tertiary': '#2e2e2e',
@@ -18,6 +20,7 @@ const guiColors = {
     'text-primary': '#eeeeee',
 
     'menu-bar-background': '#333333',
+    'menu-bar-foreground': '#ffffff',
 
     'assets-background': '#111111',
 

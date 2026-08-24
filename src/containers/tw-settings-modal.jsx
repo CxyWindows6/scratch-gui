@@ -6,12 +6,18 @@ import {connect} from 'react-redux';
 import {closeSettingsModal} from '../reducers/modals';
 import SettingsModalComponent from '../components/tw-settings-modal/settings-modal.jsx';
 import {defaultStageSize} from '../reducers/custom-stage-size';
+import {setOpsPerFrameState} from '../reducers/tw';
 
 const messages = defineMessages({
     newFramerate: {
         defaultMessage: 'New framerate:',
         description: 'Prompt shown to choose a new framerate',
         id: 'tw.menuBar.newFramerate'
+    },
+    newOpsPerFrame: {
+        defaultMessage: 'New OpsPerFrame:',
+        description: 'Prompt shown to choose a new OpsPerFrame',
+        id: 'tw.menuBar.newOpsPerFrame'
     }
 });
 
@@ -21,6 +27,8 @@ class UsernameModal extends React.Component {
         bindAll(this, [
             'handleFramerateChange',
             'handleCustomizeFramerate',
+            'handleOpsPerFrameChange',
+            'handleCustomizeOpsPerFrame',
             'handleHighQualityPenChange',
             'handleInterpolationChange',
             'handleInfiniteClonesChange',
@@ -37,12 +45,25 @@ class UsernameModal extends React.Component {
         this.props.vm.setFramerate(e.target.checked ? 60 : 30);
     }
     async handleCustomizeFramerate () {
-        // prompt() returns Promise in desktop app
         // eslint-disable-next-line no-alert
         const newFramerate = await prompt(this.props.intl.formatMessage(messages.newFramerate), this.props.framerate);
         const parsed = parseFloat(newFramerate);
         if (isFinite(parsed)) {
             this.props.vm.setFramerate(parsed);
+        }
+    }
+    handleOpsPerFrameChange (e) {
+        this.props.vm.setOpsPerFrame(e.target.checked ? 2 : 1);
+        this.props.setOpsPerFrame(e.target.checked ? 2 : 1);
+    }
+    async handleCustomizeOpsPerFrame () {
+        const msg = this.props.intl.formatMessage(messages.newOpsPerFrame);
+        // eslint-disable-next-line no-alert
+        const newOpsPerFrame = await prompt(msg, this.props.opsPerFrame);
+        const parsed = parseFloat(newOpsPerFrame);
+        if (isFinite(parsed)) {
+            this.props.vm.setOpsPerFrame(parsed);
+            this.props.setOpsPerFrame(parsed);
         }
     }
     handleHighQualityPenChange (e) {
@@ -98,6 +119,8 @@ class UsernameModal extends React.Component {
                 onClose={this.props.onClose}
                 onFramerateChange={this.handleFramerateChange}
                 onCustomizeFramerate={this.handleCustomizeFramerate}
+                onOpsPerFrameChange={this.handleOpsPerFrameChange}
+                onCustomizeOpsPerFrame={this.handleCustomizeOpsPerFrame}
                 onHighQualityPenChange={this.handleHighQualityPenChange}
                 onInterpolationChange={this.handleInterpolationChange}
                 onInfiniteClonesChange={this.handleInfiniteClonesChange}
@@ -128,6 +151,7 @@ UsernameModal.propTypes = {
             setUseHighQualityRender: PropTypes.func
         }),
         setFramerate: PropTypes.func,
+        setOpsPerFrame: PropTypes.func,
         setCompilerOptions: PropTypes.func,
         setInterpolation: PropTypes.func,
         setRuntimeOptions: PropTypes.func,
@@ -136,6 +160,8 @@ UsernameModal.propTypes = {
     }),
     isEmbedded: PropTypes.bool,
     framerate: PropTypes.number,
+    opsPerFrame: PropTypes.number,
+    setOpsPerFrame: PropTypes.func,
     highQualityPen: PropTypes.bool,
     interpolation: PropTypes.bool,
     infiniteClones: PropTypes.bool,
@@ -153,6 +179,7 @@ const mapStateToProps = state => ({
     vm: state.scratchGui.vm,
     isEmbedded: state.scratchGui.mode.isEmbedded,
     framerate: state.scratchGui.tw.framerate,
+    opsPerFrame: state.scratchGui.tw.opsPerFrame,
     highQualityPen: state.scratchGui.tw.highQualityPen,
     interpolation: state.scratchGui.tw.interpolation,
     infiniteClones: state.scratchGui.tw.runtimeOptions.maxClones === Infinity,
@@ -164,7 +191,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    onClose: () => dispatch(closeSettingsModal())
+    onClose: () => dispatch(closeSettingsModal()),
+    setOpsPerFrame: value => dispatch(setOpsPerFrameState(value))
 });
 
 export default injectIntl(connect(

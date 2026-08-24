@@ -11,7 +11,7 @@
     display: block;
 
     border-radius: $space;
-    border: $stage-standard-border-width solid $ui-black-transparent;
+    border: none;
     overflow: hidden;
 
     /* @todo: This is for overriding the value being set somewhere. Where is it being set? */
@@ -32,7 +32,7 @@
 }
 
 .stage.full-screen {
-    border: $stage-full-screen-border-width solid $ui-black-transparent;
+    border: none;
 }
 
 .with-color-picker {
@@ -137,7 +137,7 @@ stage doesn't "spill" out from under its rounded corners. instead, shift these o
     padding: 1rem;
     border-radius: 100%;
     background: rgba(255,255,255,0.75);
-    border: 3px solid $ui-white-default;
+    border: none;
     display: flex;
     justify-content: center;
     align-items: center;

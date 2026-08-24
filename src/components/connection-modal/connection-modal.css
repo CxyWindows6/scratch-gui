@@ -177,7 +177,7 @@
     border-radius: 100%;
     box-shadow: 0px 0px 0px 4px $looks-transparent;
     /* animation: pulse-blue-ring 1s infinite ease-in-out alternate; */
-    animation: wiggle 0.5s infinite ease-in-out alternate;
+    animation: wiggle 0.5s infinite var(--ease-counter) alternate;
 
 }
 

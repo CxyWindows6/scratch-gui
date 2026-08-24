@@ -8,11 +8,9 @@ import {defaultProjectId} from '../../reducers/project-state';
 import styles from './project-input.css';
 import {setProjectId} from '../../lib/tw-navigation-utils';
 
-const PROJECT_BASE = 'https://scratch.mit.edu/projects/';
-
 const messages = defineMessages({
     tooltip: {
-        defaultMessage: 'Copy and paste a Scratch project link here!',
+        defaultMessage: 'Paste any project ID here',
         description: 'Project ID input tooltip',
         id: 'tw.input.tooltip'
     }
@@ -98,7 +96,8 @@ class ProjectInput extends React.Component {
                     ref={this.inputRef}
                     spellCheck="false"
                     type="text"
-                    value={`${PROJECT_BASE}${projectId}`}
+                    placeholder={this.props.intl.formatMessage(messages.tooltip)}
+                    value={projectId}
                     className={styles.input}
                     onKeyDown={this.handleKeyDown}
                     onChange={this.handleChange}

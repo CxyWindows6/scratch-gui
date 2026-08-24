@@ -1,11 +1,14 @@
 const SET_FULL_SCREEN = 'scratch-gui/mode/SET_FULL_SCREEN';
 const SET_PLAYER = 'scratch-gui/mode/SET_PLAYER';
+const SET_FULLSCREEN_RETURN_MODE = 'scratch-gui/mode/SET_FULLSCREEN_RETURN_MODE';
+const SET_PLAYER_FROM_RETURN_MODE = 'scratch-gui/mode/SET_PLAYER_FROM_RETURN_MODE';
 
 const initialState = {
     isEmbedded: false,
     isFullScreen: false,
     isPlayerOnly: false,
-    hasEverEnteredEditor: true
+    hasEverEnteredEditor: true,
+    fullscreenReturnMode: false
 };
 
 const reducer = function (state, action) {
@@ -19,6 +22,15 @@ const reducer = function (state, action) {
         return Object.assign({}, state, {
             isPlayerOnly: action.isPlayerOnly,
             hasEverEnteredEditor: state.hasEverEnteredEditor || !action.isPlayerOnly
+        });
+    case SET_FULLSCREEN_RETURN_MODE:
+        return Object.assign({}, state, {
+            fullscreenReturnMode: action.mode
+        });
+    case SET_PLAYER_FROM_RETURN_MODE:
+        return Object.assign({}, state, {
+            isPlayerOnly: state.fullscreenReturnMode,
+            hasEverEnteredEditor: state.hasEverEnteredEditor || !state.fullscreenReturnMode
         });
     default:
         return state;
@@ -37,10 +49,23 @@ const setPlayer = function (isPlayerOnly) {
         isPlayerOnly: isPlayerOnly
     };
 };
+const setFullscreenReturnMode = function (mode) {
+    return {
+        type: SET_FULLSCREEN_RETURN_MODE,
+        mode: mode
+    };
+};
+const setPlayerFromReturnMode = function () {
+    return {
+        type: SET_PLAYER_FROM_RETURN_MODE
+    };
+};
 
 export {
     reducer as default,
     initialState as modeInitialState,
     setFullScreen,
-    setPlayer
+    setPlayer,
+    setFullscreenReturnMode,
+    setPlayerFromReturnMode
 };

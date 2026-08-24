@@ -25,7 +25,6 @@
 .opener-content {
     background-color: $ui-modal-background;
     padding: 4px;
-    border: 1px solid $ui-black-transparent;
     box-shadow: 0 0 8px 0 $shadow;
 }
 

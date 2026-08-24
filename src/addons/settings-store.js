@@ -116,6 +116,7 @@ class SettingsStore extends EventTargetShim {
 
     /**
      * @private
+     * @returns {object} empty store
      */
     createEmptyStore () {
         const result = {};
@@ -174,6 +175,8 @@ class SettingsStore extends EventTargetShim {
 
     /**
      * @private
+     * @param {string} addonId - addon identifier
+     * @returns {object} addon storage
      */
     getAddonStorage (addonId) {
         if (this.store[addonId]) {
@@ -184,6 +187,8 @@ class SettingsStore extends EventTargetShim {
 
     /**
      * @private
+     * @param {string} addonId - addon identifier
+     * @returns {object} addon manifest
      */
     getAddonManifest (addonId) {
         if (addons[addonId]) {
@@ -194,6 +199,9 @@ class SettingsStore extends EventTargetShim {
 
     /**
      * @private
+     * @param {object} manifest - addon manifest
+     * @param {string} settingId - setting identifier
+     * @returns {object|null} setting object or null
      */
     getAddonSettingObject (manifest, settingId) {
         if (!manifest.settings) {
@@ -234,6 +242,8 @@ class SettingsStore extends EventTargetShim {
 
     /**
      * @private
+     * @param {string} addonId - addon identifier
+     * @returns {object} default settings
      */
     getDefaultSettings (addonId) {
         const manifest = this.getAddonManifest(addonId);

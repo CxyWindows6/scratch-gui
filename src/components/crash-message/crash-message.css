@@ -22,10 +22,10 @@
 }
 
 .reloadButton {
-    border: 1px solid $motion-primary;
+    border: none;
     border-radius: 0.25rem;
     padding: 0.5rem 2rem;
-    background: white;
+    background: $ui-white;
     color: $motion-primary;
     font-weight: bold;
     font-size: 0.875rem;

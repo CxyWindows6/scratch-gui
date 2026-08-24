@@ -9,7 +9,7 @@ import Box from '../box/box.jsx';
 import Button from '../button/button.jsx';
 import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
 import Controls from '../../containers/controls.jsx';
-import {getStageDimensions, getMinWidth} from '../../lib/screen-utils';
+import {getStageDimensions} from '../../lib/screen-utils';
 import {STAGE_DISPLAY_SIZES, STAGE_SIZE_MODES} from '../../lib/layout-constants';
 
 import fullScreenIcon from './icon--fullscreen.svg';
@@ -63,175 +63,184 @@ const messages = defineMessages({
 
 const enableSettingsButton = new URLSearchParams(location.search).has('settings-button');
 
-const StageHeaderComponent = function (props) {
-    const {
-        customStageSize,
-        showFixedLargeSize,
-        isFullScreen,
-        isPlayerOnly,
-        onKeyPress,
-        onSetStageFullScreen,
-        onSetStageUnFullScreen,
-        onSetStageLarge,
-        onSetStageSmall,
-        onSetStageFull,
-        onOpenSettings,
-        isEmbedded,
-        stageSize,
-        stageSizeMode,
-        vm
-    } = props;
-
-    let header = null;
-
-    const stageDimensions = getStageDimensions(stageSize, customStageSize, isFullScreen || isEmbedded);
-
-    if (isFullScreen || isEmbedded) {
-        const settingsButton = isEmbedded && enableSettingsButton ? (
-            <div className={classNames(styles.settingsButton, styles.unselectWrapper)}>
-                <Button
-                    className={styles.stageButton}
-                    onClick={onOpenSettings}
-                >
-                    <img
-                        alt={props.intl.formatMessage(messages.openSettingsMessage)}
-                        className={styles.stageButtonIcon}
-                        draggable={false}
-                        src={settingsIcon}
-                        title={props.intl.formatMessage(messages.openSettingsMessage)}
-                    />
-                </Button>
-            </div>
-        ) : null;
-        const fullscreenButton = isFullScreen ? (
-            <div className={styles.unselectWrapper}>
-                <Button
-                    className={styles.stageButton}
-                    onClick={onSetStageUnFullScreen}
-                    onKeyPress={onKeyPress}
-                >
-                    <img
-                        alt={props.intl.formatMessage(messages.unFullScreenMessage)}
-                        className={styles.stageButtonIcon}
-                        draggable={false}
-                        src={unFullScreenIcon}
-                        title={props.intl.formatMessage(messages.fullscreenControl)}
-                    />
-                </Button>
-            </div>
-        ) : FullscreenAPI.available() ? (
-            <div className={styles.unselectWrapper}>
-                <Button
-                    className={styles.stageButton}
-                    onClick={onSetStageFullScreen}
-                >
-                    <img
-                        alt={props.intl.formatMessage(messages.fullScreenMessage)}
-                        className={styles.stageButtonIcon}
-                        draggable={false}
-                        src={fullScreenIcon}
-                        title={props.intl.formatMessage(messages.fullscreenControl)}
-                    />
-                </Button>
-            </div>
-        ) : null;
-        header = (
-            <Box
-                className={classNames(styles.stageHeaderWrapperOverlay, {
-                    [styles.embedded]: isEmbedded
-                })}
-            >
-                <Box
-                    className={styles.stageMenuWrapper}
-                    style={{width: stageDimensions.width}}
-                >
-                    <Controls vm={vm} />
-                    <div
-                        className={styles.fullscreenButtonsRow}
-                        key="fullscreen" // addons require the HTML element to be not be re-used by in-editor buttons
-                    >
-                        {settingsButton}
-                        {fullscreenButton}
-                    </div>
-                </Box>
-            </Box>
-        );
-    } else {
-        const stageControls =
-            isPlayerOnly ? (
-                []
-            ) : (
-                <div className={styles.stageSizeToggleGroup}>
-                    <ToggleButtons
-                        buttons={[
-                            {
-                                handleClick: onSetStageSmall,
-                                icon: smallStageIcon,
-                                iconClassName: styles.stageButtonIcon,
-                                isSelected: stageSizeMode === STAGE_SIZE_MODES.small,
-                                title: props.intl.formatMessage(messages.smallStageSizeMessage)
-                            },
-                            ...(showFixedLargeSize ? [
-                                {
-                                    handleClick: onSetStageLarge,
-                                    icon: largeStageIcon,
-                                    iconClassName: styles.stageButtonIcon,
-                                    isSelected: stageSizeMode === STAGE_SIZE_MODES.large,
-                                    title: props.intl.formatMessage(messages.largeStageSizeMessage)
-                                }
-                            ] : []),
-                            {
-                                handleClick: onSetStageFull,
-                                icon: showFixedLargeSize ? fullStageIcon : largeStageIcon,
-                                iconClassName: styles.stageButtonIcon,
-                                isSelected: stageSizeMode === STAGE_SIZE_MODES.full,
-                                title: props.intl.formatMessage(messages.fullStageSizeMessage)
-                            }
-                        ]}
-                    />
-                </div>
-            );
-        header = (
-            <Box
-                className={styles.stageHeaderWrapper}
-                // + 2 px because the stage will have 2 pixels of border around it
-                style={{minWidth: `${Math.max(stageDimensions.width, getMinWidth(stageSize)) + 2}px`}}
-            >
-                <Box className={styles.stageMenuWrapper}>
-                    <Controls
-                        vm={vm}
-                        isSmall={stageSizeMode === STAGE_SIZE_MODES.small}
-                    />
-                    <div
-                        className={styles.stageSizeRow}
-                        key="editor" // addons require the HTML element to be not be re-used by in-editor buttons
-                    >
-                        {stageControls}
-                        <div>
-                            <Button
-                                className={styles.stageButton}
-                                onClick={onSetStageFullScreen}
-                            >
-                                <img
-                                    alt={props.intl.formatMessage(messages.fullStageSizeMessage)}
-                                    className={styles.stageButtonIcon}
-                                    draggable={false}
-                                    src={fullScreenIcon}
-                                    title={props.intl.formatMessage(messages.fullscreenControl)}
-                                />
-                            </Button>
-                        </div>
-                    </div>
-                </Box>
-            </Box>
-        );
+class StageHeaderComponent extends React.Component {
+    constructor (props) {
+        super(props);
+        this.handleSetStageFullScreen = this.handleSetStageFullScreen.bind(this);
     }
 
-    return header;
-};
+    handleSetStageFullScreen () {
+        const {onSetStageFullScreen, isPlayerOnly} = this.props;
+        onSetStageFullScreen(isPlayerOnly);
+    }
+
+    render () {
+        const {
+            customStageSize,
+            showFixedLargeSize,
+            isFullScreen,
+            isPlayerOnly,
+            onKeyPress,
+            onSetStageUnFullScreen,
+            onSetStageLarge,
+            onSetStageSmall,
+            onSetStageFull,
+            onOpenSettings,
+            isEmbedded,
+            stageSize,
+            stageSizeMode,
+            vm
+        } = this.props;
+
+        let header = null;
+
+        const stageDimensions = getStageDimensions(stageSize, customStageSize, isFullScreen || isEmbedded);
+
+        if (isFullScreen || isEmbedded) {
+            const settingsButton = isEmbedded && enableSettingsButton ? (
+                <div className={classNames(styles.settingsButton, styles.unselectWrapper)}>
+                    <Button
+                        className={styles.stageButton}
+                        onClick={onOpenSettings}
+                    >
+                        <img
+                            alt={this.props.intl.formatMessage(messages.openSettingsMessage)}
+                            className={styles.stageButtonIcon}
+                            draggable={false}
+                            src={settingsIcon}
+                            title={this.props.intl.formatMessage(messages.openSettingsMessage)}
+                        />
+                    </Button>
+                </div>
+            ) : null;
+            const fullscreenButton = isFullScreen ? (
+                <div className={styles.unselectWrapper}>
+                    <Button
+                        className={styles.stageButton}
+                        onClick={onSetStageUnFullScreen}
+                        onKeyPress={onKeyPress}
+                    >
+                        <img
+                            alt={this.props.intl.formatMessage(messages.unFullScreenMessage)}
+                            className={styles.stageButtonIcon}
+                            draggable={false}
+                            src={unFullScreenIcon}
+                            title={this.props.intl.formatMessage(messages.fullscreenControl)}
+                        />
+                    </Button>
+                </div>
+            ) : FullscreenAPI.available() ? (
+                <div className={styles.unselectWrapper}>
+                    <Button
+                        className={styles.stageButton}
+                        onClick={this.handleSetStageFullScreen}
+                    >
+                        <img
+                            alt={this.props.intl.formatMessage(messages.fullScreenMessage)}
+                            className={styles.stageButtonIcon}
+                            draggable={false}
+                            src={fullScreenIcon}
+                            title={this.props.intl.formatMessage(messages.fullscreenControl)}
+                        />
+                    </Button>
+                </div>
+            ) : null;
+            header = (
+                <Box
+                    className={classNames(styles.stageHeaderWrapperOverlay, {
+                        [styles.embedded]: isEmbedded
+                    })}
+                >
+                    <Box
+                        className={styles.stageMenuWrapper}
+                        style={{width: stageDimensions.width}}
+                    >
+                        <Controls vm={vm} />
+                        <div
+                            className={styles.fullscreenButtonsRow}
+                            key="fullscreen"
+                        >
+                            {settingsButton}
+                            {fullscreenButton}
+                        </div>
+                    </Box>
+                </Box>
+            );
+        } else {
+            const stageControls =
+                isPlayerOnly ? (
+                    []
+                ) : (
+                    <div className={styles.stageSizeToggleGroup}>
+                        <ToggleButtons
+                            buttons={[
+                                {
+                                    handleClick: onSetStageSmall,
+                                    icon: smallStageIcon,
+                                    iconClassName: styles.stageButtonIcon,
+                                    isSelected: stageSizeMode === STAGE_SIZE_MODES.small,
+                                    title: this.props.intl.formatMessage(messages.smallStageSizeMessage)
+                                },
+                                ...(showFixedLargeSize ? [
+                                    {
+                                        handleClick: onSetStageLarge,
+                                        icon: largeStageIcon,
+                                        iconClassName: styles.stageButtonIcon,
+                                        isSelected: stageSizeMode === STAGE_SIZE_MODES.large,
+                                        title: this.props.intl.formatMessage(messages.largeStageSizeMessage)
+                                    }
+                                ] : []),
+                                {
+                                    handleClick: onSetStageFull,
+                                    icon: showFixedLargeSize ? fullStageIcon : largeStageIcon,
+                                    iconClassName: styles.stageButtonIcon,
+                                    isSelected: stageSizeMode === STAGE_SIZE_MODES.full,
+                                    title: this.props.intl.formatMessage(messages.fullStageSizeMessage)
+                                }
+                            ]}
+                        />
+                    </div>
+                );
+            header = (
+                <Box
+                    className={styles.stageHeaderWrapper}
+                    style={{minWidth: `${stageDimensions.width + 2}px`}}
+                >
+                    <Box className={styles.stageMenuWrapper}>
+                        <Controls
+                            vm={vm}
+                            isSmall={stageSizeMode === STAGE_SIZE_MODES.small}
+                        />
+                        <div
+                            className={styles.stageSizeRow}
+                            key="editor"
+                        >
+                            {stageControls}
+                            <div>
+                                <Button
+                                    className={styles.stageButton}
+                                    onClick={this.handleSetStageFullScreen}
+                                >
+                                    <img
+                                        alt={this.props.intl.formatMessage(messages.fullStageSizeMessage)}
+                                        className={styles.stageButtonIcon}
+                                        draggable={false}
+                                        src={fullScreenIcon}
+                                        title={this.props.intl.formatMessage(messages.fullscreenControl)}
+                                    />
+                                </Button>
+                            </div>
+                        </div>
+                    </Box>
+                </Box>
+            );
+        }
+
+        return header;
+    }
+}
 
 const mapStateToProps = state => ({
-    // This is the button's mode, as opposed to the actual current state
     stageSizeMode: state.scratchGui.stageSize.stageSize
 });
 

@@ -9,7 +9,6 @@
     background-color: $ui-white;
     transition-property: background-color;
     background-size: 100%;
-    border: 1px solid $ui-black-transparent;
     outline: none;
 }
 .checkbox:hover, .checkbox:focus, .checkbox:active, .checkbox:checked {

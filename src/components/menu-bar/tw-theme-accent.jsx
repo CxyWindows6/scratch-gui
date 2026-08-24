@@ -7,7 +7,8 @@ import {connect} from 'react-redux';
 import check from './check.svg';
 import dropdownCaret from './dropdown-caret.svg';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
-import {ACCENT_BLUE, ACCENT_MAP, ACCENT_PURPLE, ACCENT_RED, ACCENT_RAINBOW, Theme} from '../../lib/themes/index.js';
+import {ACCENT_BLUE, ACCENT_MAP, ACCENT_ORANGE, ACCENT_PURPLE,
+    ACCENT_RED, ACCENT_RAINBOW, Theme} from '../../lib/themes/index.js';
 import {openAccentMenu, accentMenuOpen, closeSettingsMenu} from '../../reducers/menus.js';
 import {setTheme} from '../../reducers/theme.js';
 import {persistTheme} from '../../lib/themes/themePersistance.js';
@@ -19,6 +20,11 @@ const options = defineMessages({
         defaultMessage: 'Red',
         description: 'Name of the red color scheme, used by TurboWarp by default.',
         id: 'tw.accent.red'
+    },
+    [ACCENT_ORANGE]: {
+        defaultMessage: 'Orange',
+        description: 'Name of the orange color scheme.',
+        id: 'tw.accent.orange'
     },
     [ACCENT_PURPLE]: {
         defaultMessage: 'Purple',

@@ -4,9 +4,13 @@ import * as accentPurple from './accent/purple';
 import * as accentBlue from './accent/blue';
 import * as accentRed from './accent/red';
 import * as accentRainbow from './accent/rainbow';
+import * as accentGray from './accent/gray';
+import * as accentOrange from './accent/orange';
 
 import * as guiLight from './gui/light';
 import * as guiDark from './gui/dark';
+import * as guiMidnight from './gui/midnight';
+import * as guiEmber from './gui/ember';
 
 import * as blocksThree from './blocks/three';
 import * as blocksHighContrast from './blocks/high-contrast';
@@ -15,20 +19,28 @@ import * as blocksDark from './blocks/dark';
 const ACCENT_PURPLE = 'purple';
 const ACCENT_BLUE = 'blue';
 const ACCENT_RED = 'red';
+const ACCENT_GRAY = 'gray';
 const ACCENT_RAINBOW = 'rainbow';
+const ACCENT_ORANGE = 'orange';
 const ACCENT_MAP = {
     [ACCENT_PURPLE]: accentPurple,
     [ACCENT_BLUE]: accentBlue,
     [ACCENT_RED]: accentRed,
-    [ACCENT_RAINBOW]: accentRainbow
+    [ACCENT_GRAY]: accentGray,
+    [ACCENT_RAINBOW]: accentRainbow,
+    [ACCENT_ORANGE]: accentOrange
 };
 const ACCENT_DEFAULT = ACCENT_RED;
 
 const GUI_LIGHT = 'light';
 const GUI_DARK = 'dark';
+const GUI_MIDNIGHT = 'midnight';
+const GUI_EMBER = 'ember';
 const GUI_MAP = {
     [GUI_LIGHT]: guiLight,
-    [GUI_DARK]: guiDark
+    [GUI_DARK]: guiDark,
+    [GUI_MIDNIGHT]: guiMidnight,
+    [GUI_EMBER]: guiEmber
 };
 const GUI_DEFAULT = GUI_LIGHT;
 
@@ -87,6 +99,7 @@ class Theme {
 
     static light = new Theme(ACCENT_DEFAULT, GUI_LIGHT, BLOCKS_DEFAULT);
     static dark = new Theme(ACCENT_DEFAULT, GUI_DARK, BLOCKS_DEFAULT);
+    static midnight = new Theme(ACCENT_DEFAULT, GUI_MIDNIGHT, BLOCKS_DEFAULT);
     static highContrast = new Theme(ACCENT_DEFAULT, GUI_DEFAULT, BLOCKS_HIGH_CONTRAST);
 
     set (what, to) {
@@ -147,13 +160,17 @@ export {
     defaultBlockColors,
 
     ACCENT_RED,
+    ACCENT_GRAY,
     ACCENT_PURPLE,
     ACCENT_BLUE,
     ACCENT_RAINBOW,
+    ACCENT_ORANGE,
     ACCENT_MAP,
 
     GUI_LIGHT,
     GUI_DARK,
+    GUI_MIDNIGHT,
+    GUI_EMBER,
     GUI_MAP,
 
     BLOCKS_THREE,

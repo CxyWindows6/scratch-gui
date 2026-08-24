@@ -15,8 +15,10 @@ $ui-transparent-default: var(--ui-transparent-default);
 
 $ui-black-transparent-default: var(--ui-black-transparent-default);
 
+$ui-border-default: var(--ui-border-default);
+
 $text-primary-default: var(--text-primary-default);
-$text-primary-transparent-default: var(--ui-text-primary-transparent-default);
+$text-primary-transparent-default: var(--text-primary-transparent-default);
 
 $motion-primary-default: var(--motion-primary-default);
 $motion-tertiary-default: var(--motion-tertiary-default);

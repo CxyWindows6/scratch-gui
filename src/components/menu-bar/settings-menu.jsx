@@ -10,6 +10,7 @@ import TWAccentThemeMenu from './tw-theme-accent.jsx';
 import TWGuiThemeMenu from './tw-theme-gui.jsx';
 import TWBlocksThemeMenu from './tw-theme-blocks.jsx';
 import TWDesktopSettings from './tw-desktop-settings.jsx';
+import TWMenuBarAlignmentMenu from './tw-menu-bar-alignment.jsx';
 
 import menuBarStyles from './menu-bar.css';
 import styles from './settings-menu.css';
@@ -40,7 +41,7 @@ const SettingsMenu = ({
         />
         <span className={styles.dropdownLabel}>
             <FormattedMessage
-                defaultMessage="Settings"
+                defaultMessage="设置"
                 description="Settings menu"
                 id="gui.menuBar.settings"
             />
@@ -65,6 +66,7 @@ const SettingsMenu = ({
                             onOpenCustomSettings={onOpenCustomSettings}
                         />
                         <TWAccentThemeMenu />
+                        <TWMenuBarAlignmentMenu />
                     </React.Fragment>
                 )}
                 {onClickDesktopSettings && <TWDesktopSettings onClick={onClickDesktopSettings} />}

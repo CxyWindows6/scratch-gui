@@ -10,10 +10,7 @@
     background-color: $ui-secondary;
     border-top-right-radius: $space;
     border-top-left-radius: $space;
-    border-color: $ui-black-transparent;
-    border-width: 1px;
-    border-style: solid;
-    border-bottom: 0;
+    border: none;
 }
 
 .sprite-wrapper {
@@ -99,7 +96,7 @@
     animation-name: wiggle;
     animation-duration: 500ms;
     animation-iteration-count: 1;
-    animation-timing-function: ease-in-out;
+    animation-timing-function: var(--ease-counter);
     background-color: $drop-highlight;
 }
 

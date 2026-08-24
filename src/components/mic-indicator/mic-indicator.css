@@ -6,5 +6,5 @@
 .mic-img {
     margin: 10px;
     transform-origin: center;
-    animation: popIn 0.1s ease-in-out;
+    animation: popIn 0.1s var(--ease-counter);
 }

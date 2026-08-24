@@ -113,6 +113,7 @@ class FileHashRouter extends HashRouter {
             this.onSetIsPlayerOnly(false);
             this.onSetIsFullScreen(false);
         } else if (pathName === this.fullscreenPath) {
+            this.onSetIsPlayerOnly(true);
             this.onSetIsFullScreen(true);
         }
     }
@@ -192,8 +193,9 @@ class WildcardRouter extends Router {
                 return;
             }
             if (type === 'fullscreen') {
+                this.onSetIsPlayerOnly(true);
                 this.onSetIsFullScreen(true);
-            } else if (type === 'editor') {
+            } else if (type === 'editor' || type === 'editor.html') {
                 this.onSetIsPlayerOnly(false);
                 this.onSetIsFullScreen(false);
             } else {

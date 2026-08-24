@@ -28,7 +28,7 @@ export default defineMessages({
     },
     loadFromComputerTitle: {
         id: 'gui.sharedMessages.loadFromComputerTitle',
-        defaultMessage: 'Load from your computer',
+        defaultMessage: '从电脑打开',
         description: 'Title for uploading a project from your computer'
     }
 });
