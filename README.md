@@ -1,4 +1,4 @@
-scratch-gui modified for use in [TurboWarp](https://turbowarp.org/)
+scratch-gui modified for use in Surge Editor
 
 This fork's UI has been restyled with [MDUI](https://www.mdui.org/) (Material Design 3 Web Components):
 - All UI chrome (menu bar, dialogs, prompts, buttons, inputs, dropdowns, panels, backpack, libraries, record modal, font manager) uses MD3 design tokens via `src/lib/mdui/` (React wrappers) and `src/lib/mdui-theme/` (theme bootstrap).
@@ -10,6 +10,7 @@ This fork's UI has been restyled with [MDUI](https://www.mdui.org/) (Material De
 See https://docs.turbowarp.org/development/getting-started to setup the complete TurboWarp environment.
 
 If you just want to play with the GUI then it's the same process as upstream scratch-gui.
+
 
 ## License
 
