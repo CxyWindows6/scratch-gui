@@ -121,13 +121,14 @@ class FontName extends React.Component {
         const filteredOptions = this.getFilteredOptions();
         return (
             <div className={styles.fontInputOuter}>
-                <input
+                <mdui-text-field
                     {...props}
                     type="text"
+                    variant="outlined"
                     className={styles.fontInput}
                     value={this.props.name}
                     ref={this.setInputRef}
-                    onChange={this.handleChange}
+                    onInput={this.handleChange}
                     onFocus={this.handleFocus}
                     onBlur={this.handleBlur}
                     onKeyDown={this.handleKeyDown}

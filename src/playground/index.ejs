@@ -100,25 +100,33 @@
         var theme = '';
         var accent = '#ff4c4c';
 
+        // Surge Editor (mdui): the splash theme follows the mdui theme mode,
+        // which itself defaults to the system preference.
         try {
-          var themeSetting = localStorage.getItem('tw:theme');
+          var mduiTheme = localStorage.getItem('surge:mdui-theme');
+          if (mduiTheme === 'light' || mduiTheme === 'dark') {
+            theme = mduiTheme;
+          }
         } catch (e) {
           // ignore
         }
-        if (themeSetting === 'light') {
-          theme = 'light';
-        } else if (themeSetting === 'dark') {
-          theme = 'dark';
-        } else if (themeSetting) {
+
+        if (!theme) {
           try {
-            var parsed = JSON.parse(themeSetting);
-            if (parsed.accent === 'purple') {
-              accent = '#855cd6';
-            } else if (parsed.accent === 'blue') {
-              accent = '#4c97ff';
-            }
-            if (parsed.gui === 'dark' || parsed.gui === 'light') {
-              theme = parsed.gui;
+            var themeSetting = localStorage.getItem('tw:theme');
+            if (themeSetting === 'light') {
+              theme = 'light';
+            } else if (themeSetting === 'dark') {
+              theme = 'dark';
+            } else if (themeSetting) {
+              var parsed = JSON.parse(themeSetting);
+              if (parsed.accent === 'purple') {
+                accent = '#855cd6';
+              } else if (parsed.accent === 'blue') {
+                accent = '#4c97ff';
+              }
+              // Surge Editor (mdui): the GUI theme layer was retired, so the
+              // splash theme follows the system preference below.
             }
           } catch (e) {
             // ignore

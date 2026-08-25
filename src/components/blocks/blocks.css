@@ -37,11 +37,14 @@
 
 .blocks :global(.blocklyMainBackground) {
     stroke: none;
+    fill: rgb(var(--mdui-color-surface, 254, 247, 255));
 }
 
 .blocks :global(.blocklyToolboxDiv) {
     box-sizing: content-box;
     height: calc(100% - 3.25rem) !important;
+    background-color: rgb(var(--mdui-color-surface-container, 247, 242, 250)) !important;
+    color: rgb(var(--mdui-color-on-surface, 29, 27, 32));
 
     /*
         For now, the layout cannot support scrollbars in the category menu.
@@ -62,6 +65,37 @@
 
 .blocks :global(.blocklyFlyout) {
     box-sizing: content-box;
+}
+
+.blocks :global(.blocklyFlyoutBackground) {
+    fill: rgb(var(--mdui-color-surface-container-low, 247, 242, 250)) !important;
+    fill-opacity: 1;
+}
+
+.blocks :global(.blocklyFlyoutLabelText) {
+    fill: rgb(var(--mdui-color-on-surface, 29, 27, 32)) !important;
+    font-family: Roboto, system-ui, "Noto Sans", sans-serif;
+}
+
+/* Material Design 3 Scrollbar Styling */
+.blocks :global(.blocklyScrollbarHandle) {
+    fill: rgba(var(--mdui-color-outline, 121, 116, 126), 0.35) !important;
+    rx: 4;
+    ry: 4;
+    transition: fill 0.2s ease, opacity 0.2s ease;
+}
+
+.blocks :global(.blocklyFlyout .blocklyScrollbarHandle),
+.blocks :global(.blocklyFlyoutScrollbar .blocklyScrollbarHandle) {
+    fill: rgba(var(--mdui-color-outline, 121, 116, 126), 0.25) !important;
+    opacity: 0.8;
+}
+
+.blocks :global(.blocklyScrollbarBackground:hover + .blocklyScrollbarHandle),
+.blocks :global(.blocklyScrollbarHandle:hover),
+.blocks :global(.blocklyFlyout .blocklyScrollbarHandle:hover) {
+    fill: rgba(var(--mdui-color-outline, 121, 116, 126), 0.6) !important;
+    opacity: 1;
 }
 
 [dir="rtl"] .blocks :global(.blocklyFlyout) {

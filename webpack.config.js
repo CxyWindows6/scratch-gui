@@ -60,6 +60,9 @@ const base = {
     },
     resolve: {
         symlinks: false,
+        // Resolve extensionless imports (e.g. './make-component' -> .jsx)
+        // used by src/lib/mdui wrappers.
+        extensions: ['.js', '.jsx', '.json'],
         alias: {
             'text-encoding$': path.resolve(__dirname, 'src/lib/tw-text-encoder'),
             'scratch-render-fonts$': path.resolve(__dirname, 'src/lib/tw-scratch-render-fonts')
@@ -73,7 +76,22 @@ const base = {
                 path.resolve(__dirname, 'src'),
                 /node_modules[\\/]scratch-[^\\/]+[\\/]src/,
                 /node_modules[\\/]pify/,
-                /node_modules[\\/]@vernier[\\/]godirect/
+                /node_modules[\\/]@vernier[\\/]godirect/,
+                // mdui + its dependency tree must be transpiled: webpack 4's
+                // acorn 6.4 cannot parse ES2021 logical assignment (??=) used
+                // by @lit/reactive-element.
+                /node_modules[\\/]mdui[\\/]/,
+                /node_modules[\\/]@mdui[\\/]/,
+                /node_modules[\\/]lit[\\/]/,
+                /node_modules[\\/]lit-html[\\/]/,
+                /node_modules[\\/]lit-element[\\/]/,
+                /node_modules[\\/]@lit[\\/]/,
+                /node_modules[\\/]@floating-ui[\\/]/,
+                /node_modules[\\/]@material[\\/]/,
+                /node_modules[\\/]classcat[\\/]/,
+                /node_modules[\\/]ssr-window[\\/]/,
+                /node_modules[\\/]is-promise[\\/]/,
+                /node_modules[\\/]tslib[\\/]/
             ],
             options: {
                 // Explicitly disable babelrc so we don't catch various config
@@ -87,7 +105,35 @@ const base = {
             }
         },
         {
+            // mdui / Material Symbols CSS must NOT be processed as CSS Modules.
+            // webpack 4 applies the first matching rule, so this must stay
+            // before the general CSS Modules rule below.
             test: /\.css$/,
+            include: [
+                path.resolve(__dirname, 'node_modules/mdui'),
+                path.resolve(__dirname, 'node_modules/@material-symbols'),
+                path.resolve(__dirname, 'src/lib/mdui-theme')
+            ],
+            use: [{
+                loader: 'style-loader'
+            }, {
+                loader: 'css-loader',
+                options: {
+                    modules: false
+                }
+            }]
+        },
+        {
+            test: /\.css$/,
+            // Exclude mdui / Material Symbols / mdui-theme CSS (handled by the
+            // dedicated rule above; webpack 4 applies every matching rule, so
+            // without this exclude the two rules would stack their loader
+            // chains and break css-loader).
+            exclude: [
+                path.resolve(__dirname, 'node_modules/mdui'),
+                path.resolve(__dirname, 'node_modules/@material-symbols'),
+                path.resolve(__dirname, 'src/lib/mdui-theme')
+            ],
             use: [{
                 loader: 'style-loader'
             }, {

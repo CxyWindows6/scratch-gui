@@ -8,11 +8,12 @@
     justify-content: flex-start;
     position: relative;
 
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.8rem;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
     border: none;
-    border-radius: $space;
+    border-radius: 1rem;
 
     text-align: center;
     cursor: pointer;
@@ -21,12 +22,14 @@
 }
 
 .sprite-selector-item.is-selected {
-    box-shadow: 0px 0px 0px 4px $looks-transparent;
+    box-shadow: 0px 0px 0px 4px rgba(var(--mdui-color-primary, 103, 80, 164), 0.2);
     background: $ui-white;
+    background: rgb(var(--mdui-color-surface-container-high, 240, 234, 244));
 }
 
 .sprite-selector-item:hover {
     background: $ui-white;
+    background: rgb(var(--mdui-color-surface-container-high, 240, 234, 244));
 }
 
 .sprite-selector-item:hover .sprite-image, .is-selected .sprite-image {
@@ -64,6 +67,7 @@
 
     font-size: 0.625rem;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
     user-select: none;
 }
 
@@ -85,7 +89,9 @@
 
 .is-selected .sprite-info {
     background: $looks-secondary;
+    background: rgb(var(--mdui-color-primary-container, 222, 216, 255));
     color: #ffffff;
+    color: rgb(var(--mdui-color-on-primary-container, 30, 25, 67));
 }
 
 .delete-button {

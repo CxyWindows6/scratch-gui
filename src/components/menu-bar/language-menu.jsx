@@ -1,78 +1,84 @@
 import classNames from 'classnames';
-import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
+import bindAll from 'lodash.bindall';
 import locales from '@turbowarp/scratch-l10n';
 
-import check from './check.svg';
-import {MenuItem, Submenu} from '../menu/menu.jsx';
-import languageIcon from '../language-selector/language-icon.svg';
-import {languageMenuOpen, openLanguageMenu} from '../../reducers/menus.js';
+import {openLanguageMenu, closeLanguageMenu, languageMenuOpen} from '../../reducers/menus.js';
 import {selectLocale} from '../../reducers/locales.js';
 
 import styles from './settings-menu.css';
 
-import dropdownCaret from './dropdown-caret.svg';
-
-class LanguageMenu extends React.PureComponent {
+class LanguageMenu extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'setRef',
-            'handleMouseOver'
+            'handleChangeLanguage',
+            'handleToggleSubmenu',
+            'handleSubmenuOpened',
+            'handleSubmenuClosed'
         ]);
+        this.itemRef = React.createRef();
     }
-
+    componentDidMount () {
+        this.bindSubmenuEvents();
+    }
     componentDidUpdate (prevProps) {
-        // If the submenu has been toggled open, try scrolling the selected option into view.
-        if (!prevProps.menuOpen && this.props.menuOpen && this.selectedRef) {
-            this.scrollSelectedIntoView();
+        if (this.itemRef.current && prevProps.menuOpen !== this.props.menuOpen) {
+            this.itemRef.current.submenuOpen = this.props.menuOpen;
+        }
+        this.bindSubmenuEvents();
+    }
+    componentWillUnmount () {
+        this.unbindSubmenuEvents();
+    }
+    bindSubmenuEvents () {
+        const element = this.itemRef.current;
+        if (element && !element.dataset.mduiSubmenuBound) {
+            element.dataset.mduiSubmenuBound = 'true';
+            element.addEventListener('submenu-opened', this.handleSubmenuOpened);
+            element.addEventListener('submenu-closed', this.handleSubmenuClosed);
         }
     }
-
-    setRef (component) {
-        this.selectedRef = component;
-    }
-
-    handleMouseOver () {
-        // If we are using hover rather than clicks for submenus, scroll the selected option into view
-        if (!this.props.menuOpen && this.selectedRef) {
-            this.scrollSelectedIntoView();
+    unbindSubmenuEvents () {
+        const element = this.itemRef.current;
+        if (element && element.dataset.mduiSubmenuBound) {
+            delete element.dataset.mduiSubmenuBound;
+            element.removeEventListener('submenu-opened', this.handleSubmenuOpened);
+            element.removeEventListener('submenu-closed', this.handleSubmenuClosed);
         }
     }
-
-    scrollSelectedIntoView () {
-        // the native scrollIntoView() scrolls the entire page when used outside the editor,
-        // so we do this manually instead.
-        // selectedRef is the checkmark <img>, its parent is a <div> from <MenuItem>, then a <div> from <SubMenu>
-
-        const menuItem = this.selectedRef.parentNode;
-        const scrollContainer = menuItem.parentNode;
-
-        const itemHeight = menuItem.offsetHeight;
-        const selectedItemPosition = menuItem.offsetTop;
-        const visibleHeight = scrollContainer.offsetHeight;
-
-        scrollContainer.scrollTop = selectedItemPosition - (visibleHeight / 2) + (itemHeight / 2);
+    handleChangeLanguage (locale) {
+        this.props.onChangeLanguage(locale);
+        this.props.onRequestCloseSettings();
     }
-
+    // mdui only toggles a submenu when the click target is the menu-item host
+    // itself; clicks on the option content land on inner elements, so toggle
+    // the submenu state manually (mdui still emits submenu-opened/closed).
+    handleToggleSubmenu () {
+        const element = this.itemRef.current;
+        if (element) element.submenuOpen = !element.submenuOpen;
+    }
+    handleSubmenuOpened () {
+        if (!this.props.menuOpen) this.props.onRequestOpen();
+    }
+    handleSubmenuClosed () {
+        if (this.props.menuOpen) this.props.onRequestClose();
+    }
     render () {
+        const {
+            currentLocale
+        } = this.props;
         return (
-            <MenuItem
-                expanded={this.props.menuOpen}
-            >
+            <mdui-menu-item ref={this.itemRef}>
                 <div
                     className={styles.option}
-                    onClick={this.props.onRequestOpen}
-                    onMouseOver={this.handleMouseOver}
+                    slot="custom"
+                    onClick={this.handleToggleSubmenu}
                 >
-                    <img
-                        className={styles.icon}
-                        src={languageIcon}
-                        draggable={false}
-                    />
+                    <mdui-icon name="language" />
                     <span className={styles.submenuLabel}>
                         <FormattedMessage
                             defaultMessage="Language"
@@ -80,57 +86,53 @@ class LanguageMenu extends React.PureComponent {
                             id="gui.menuBar.language"
                         />
                     </span>
-                    <img
-                        className={styles.expandCaret}
-                        src={dropdownCaret}
-                        draggable={false}
-                    />
+                    <span className={styles.expandCaret}>
+                        <mdui-icon name="chevron_right" />
+                    </span>
                 </div>
-                <Submenu
-                    className={styles.languageSubmenu}
-                    place={this.props.isRtl ? 'left' : 'right'}
-                >
+                <mdui-menu slot="submenu">
                     {
                         Object.keys(locales)
                             .filter(l => ['en', 'zh-cn', 'zh-tw'].includes(l))
                             .map(locale => (
-                                <MenuItem
+                                <mdui-menu-item
                                     key={locale}
+                                    value={locale}
                                     className={styles.languageMenuItem}
+                                    selected={currentLocale === locale}
                                     // eslint-disable-next-line react/jsx-no-bind
-                                    onClick={() => this.props.onChangeLanguage(locale)}
+                                    onClick={() => this.handleChangeLanguage(locale)}
                                 >
-                                    <img
-                                        className={classNames(styles.check, {
-                                            [styles.selected]: this.props.currentLocale === locale
-                                        })}
-                                        src={check}
-                                        draggable={false}
-                                        {...(this.props.currentLocale === locale && {ref: this.setRef})}
-                                    />
-                                    {locales[locale].name}
-                                </MenuItem>
+                                    <div className={styles.option}>
+                                        <span
+                                            className={classNames(styles.check, {
+                                                [styles.selected]: currentLocale === locale
+                                            })}
+                                        >
+                                            <mdui-icon name="check" />
+                                        </span>
+                                        {locales[locale].name}
+                                    </div>
+                                </mdui-menu-item>
                             ))
                     }
-                </Submenu>
-            </MenuItem>
+                </mdui-menu>
+            </mdui-menu-item>
         );
     }
 }
 
 LanguageMenu.propTypes = {
     currentLocale: PropTypes.string,
-    isRtl: PropTypes.bool,
-    label: PropTypes.string,
     menuOpen: PropTypes.bool,
     onChangeLanguage: PropTypes.func,
+    onRequestClose: PropTypes.func,
     onRequestCloseSettings: PropTypes.func,
     onRequestOpen: PropTypes.func
 };
 
 const mapStateToProps = state => ({
     currentLocale: state.locales.locale,
-    isRtl: state.locales.isRtl,
     menuOpen: languageMenuOpen(state),
     messagesByLocale: state.locales.messagesByLocale
 });
@@ -140,7 +142,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         dispatch(selectLocale(locale));
         ownProps.onRequestCloseSettings();
     },
-    onRequestOpen: () => dispatch(openLanguageMenu())
+    onRequestOpen: () => dispatch(openLanguageMenu()),
+    onRequestClose: () => dispatch(closeLanguageMenu())
 });
 
 export default connect(

@@ -19,12 +19,14 @@
 }
 
 .alert.warn {
-    background: #FFF0DF;
+    /* MD3 error container (falls back to the old light orange) */
+    background: rgb(var(--mdui-color-error-container, 255, 240, 223));
     border: none;
 }
 
 .alert.success {
-    background: $extensions-light;
+    /* MD3 secondary container (falls back to the old light green) */
+    background: rgb(var(--mdui-color-secondary-container, 216, 244, 228));
     border: none;
 }
 
@@ -44,7 +46,7 @@
 }
 
 .alert-message {
-    color: #555;
+    color: rgb(var(--mdui-color-on-surface-variant, 85, 85, 85));
     font-weight: bold;
     font-size: .8125rem;
     line-height: .875rem;
@@ -70,21 +72,7 @@
 }
 
 .alert-connection-button {
-    min-height: 2rem;
-    width: 6.5rem;
-    padding: 0.55rem 0.9rem;
-    border-radius: 0.35rem;
-    background: #FF8C1A;
-    color: white;
-    font-weight: 700;
-    font-size: 0.77rem;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     align-self: stretch;
-    outline-style:none;
 }
 
 [dir="ltr"] .alert-connection-button {

@@ -8,10 +8,10 @@ import Modal from '../../containers/modal.jsx';
 import FancyCheckbox from '../tw-fancy-checkbox/checkbox.jsx';
 import DocumentationLink from '../tw-documentation-link/documentation-link.jsx';
 import styles from './settings-modal.css';
-import helpIcon from './help-icon.svg';
 import {APP_NAME} from '../../lib/brand.js';
 import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
 import Input from '../forms/input.jsx';
+import {MduiButton, MduiIconButton} from '../../lib/mdui';
 
 const BufferedInput = BufferedInputHOC(Input);
 
@@ -74,16 +74,12 @@ class UnwrappedSetting extends React.Component {
             >
                 <div className={styles.label}>
                     {this.props.primary}
-                    <button
+                    <MduiIconButton
+                        icon="help"
                         className={styles.helpIcon}
                         onClick={this.handleClickHelp}
                         title={this.props.intl.formatMessage(messages.help)}
-                    >
-                        <img
-                            src={helpIcon}
-                            draggable={false}
-                        />
-                    </button>
+                    />
                 </div>
                 {this.state.helpVisible && (
                     <div className={styles.detail}>
@@ -439,7 +435,8 @@ CustomStageSize.propTypes = {
 const StoreProjectOptions = ({onStoreProjectOptions}) => (
     <div className={styles.setting}>
         <div>
-            <button
+            <MduiButton
+                variant="tonal"
                 onClick={onStoreProjectOptions}
                 className={styles.button}
             >
@@ -448,7 +445,7 @@ const StoreProjectOptions = ({onStoreProjectOptions}) => (
                     description="Button in settings modal"
                     id="tw.settingsModal.storeProjectOptions"
                 />
-            </button>
+            </MduiButton>
             <p>
                 <FormattedMessage
                     // eslint-disable-next-line max-len

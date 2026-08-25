@@ -9,40 +9,40 @@ can set a width for example or what it should do in a flex box (eg. grow).
 */
 
 .title-field {
-    border-radius: $form-radius;
-    -webkit-border-radius: $form-radius;
-    -moz-border-radius: $form-radius;
-    background-color: $project-title-inactive;
-    background-clip: padding-box;
-    -webkit-background-clip: padding-box;
-    height: auto;
-    padding: .5rem;
+    border-radius: 0.5rem;
+    height: 2rem;
+    padding: 0;
+    margin: 0;
+    width: 100%;
 }
 
-.title-field {
-    color: $menu-bar-foreground;
-    font-weight: bold;
-    font-size: .8rem;
+.title-field::part(container) {
+    height: 2rem;
+    min-height: 2rem;
+    background-color: rgba(var(--mdui-color-on-surface, 29, 27, 32), 0.06);
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.title-field::placeholder {
-    color: $menu-bar-foreground;
-    opacity: 0.8;
+.title-field:hover::part(container) {
+    background-color: rgba(var(--mdui-color-on-surface, 29, 27, 32), 0.1);
+}
+
+.title-field:focus-within::part(container) {
+    background-color: rgb(var(--mdui-color-surface, 254, 247, 255));
+}
+
+.title-field::part(input) {
+    font-family: Roboto, system-ui, "Noto Sans", sans-serif;
+    font-weight: 500;
+    font-size: 0.8125rem;
+    color: rgb(var(--mdui-color-on-surface, 29, 27, 32));
+    padding: 0 0.625rem;
+    line-height: 2rem;
+}
+
+.title-field::part(input)::placeholder {
+    color: rgba(var(--mdui-color-on-surface, 29, 27, 32), 0.6);
     font-weight: normal;
-    font-size: .8rem;
-    font-style: italic;
-}
-
-.title-field:hover {
-    background-color: $project-title-hover;
-    border-color: $ui-border; /* dont use hover border from custom input */
-}
-
-.title-field:focus {
-    outline:none;
-    border: 1px solid $ui-transparent;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    background-color: $ui-white;
-    color: $text-primary;
+    font-style: normal;
 }

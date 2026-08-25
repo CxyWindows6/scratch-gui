@@ -5,11 +5,13 @@
 .sprite-selector {
     flex-grow: 1;
     position: relative;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
     margin-right: calc($space / 2);
     background-color: $ui-secondary;
-    border-top-right-radius: $space;
-    border-top-left-radius: $space;
+    /* MD3 surface container (overrides the fallback above when mdui is loaded) */
+    background-color: rgb(var(--mdui-color-surface-container, 243, 237, 247));
+    border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem;
     border: none;
 }
 

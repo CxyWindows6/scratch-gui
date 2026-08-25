@@ -21,10 +21,10 @@
     margin: 100px auto;
     outline: none;
     padding: 0;
-    border-radius: 4px;
+    border-radius: 0; /* mdui-dialog panel owns the MD3 shape */
     user-select: none;
 
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, system-ui, sans-serif;
     overflow: hidden;
 }
 
@@ -67,9 +67,11 @@ $sides: 20rem;
     box-sizing: border-box;
     width: 100%;
     background-color: $ui-modal-header-background;
+    background-color: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
     color: $ui-modal-header-foreground;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
 
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, system-ui, sans-serif;
     font-size: 1rem;
     font-weight: normal;
 }

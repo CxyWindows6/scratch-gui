@@ -1,17 +1,21 @@
 @import "../../css/colors.css";
 @import "../../css/units.css";
 
-/* Position the language select over the language icon, and make it transparent */
+/* Position the language select over the language icon, and make it transparent.
+   The mdui-select host stays invisible; clicking it still opens the mdui
+   dropdown menu, preserving the original icon-tap interaction. */
 .language-select {
     position: absolute;
     width: 100%;
     height: $menu-bar-height;
     opacity: 0;
     user-select: none;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: .875rem;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
     background: $ui-white;
+    background: rgb(var(--mdui-color-surface-container, 243, 237, 247));
 }
 
 [dir="ltr"] .language-select {
@@ -22,10 +26,8 @@
     left: 0;
 }
 
-.language-select option {
+/* The dropdown panel itself must stay fully visible when opened */
+.language-select .mdui-menu,
+.language-select mdui-menu {
     opacity: 1;
-}
-
-.language-select:focus {
-    border: 1px solid transparent;
 }

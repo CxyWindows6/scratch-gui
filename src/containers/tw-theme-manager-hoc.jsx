@@ -27,7 +27,12 @@ const TWThemeManagerHOC = function (WrappedComponent) {
         componentWillUnmount () {
             this.removeListeners();
         }
+        // Surge Editor (mdui): the GUI theme layer was retired — mdui follows
+        // the system preference on its own. Re-run applyGuiColors here so the
+        // legacy --ui-* variables track the mdui light/dark mode, and only
+        // update the scratch theme when the contrast preference changed.
         handleSystemThemeChange () {
+            applyGuiColors(this.props.reduxTheme);
             let newTheme = detectTheme();
             if (this.props.reduxTheme.blocks === BLOCKS_CUSTOM) {
                 newTheme = newTheme.set('blocks', BLOCKS_CUSTOM);

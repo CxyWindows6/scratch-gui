@@ -16,6 +16,7 @@ const TagButtonComponent = ({
     ...props
 }) => (
     <Button
+        variant="tonal"
         className={classNames(
             styles.tagButton,
             className, {

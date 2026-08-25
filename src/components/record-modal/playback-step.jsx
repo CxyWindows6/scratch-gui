@@ -6,6 +6,7 @@ import Meter from '../meter/meter.jsx';
 import AudioTrimmer from '../../containers/audio-trimmer.jsx';
 import TWRenderRecoloredImage from '../../lib/tw-recolor/render.jsx';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
+import {MduiButton} from '../../lib/mdui';
 
 import styles from './record-modal.css';
 import backIcon from '!../../lib/tw-recolor/build!./icon--back.svg';
@@ -68,7 +69,8 @@ const PlaybackStep = props => (
             </Box>
         </Box>
         <Box className={styles.mainButtonRow}>
-            <button
+            <MduiButton
+                variant="text"
                 className={styles.mainButton}
                 onClick={props.playing ? props.onStopPlaying : props.onPlay}
             >
@@ -84,10 +86,11 @@ const PlaybackStep = props => (
                         }
                     </span>
                 </div>
-            </button>
+            </MduiButton>
         </Box>
         <Box className={styles.buttonRow}>
-            <button
+            <MduiButton
+                variant="outlined"
                 className={styles.rerecordButton}
                 onClick={props.onBack}
             >
@@ -96,8 +99,9 @@ const PlaybackStep = props => (
                     src={backIcon}
                 />
                 {props.intl.formatMessage(messages.reRecordMsg)}
-            </button>
-            <button
+            </MduiButton>
+            <MduiButton
+                variant="filled"
                 className={styles.okButton}
                 disabled={props.encoding}
                 onClick={props.onSubmit}
@@ -106,7 +110,7 @@ const PlaybackStep = props => (
                     props.intl.formatMessage(messages.loadingMsg) :
                     props.intl.formatMessage(messages.saveMsg)
                 }
-            </button>
+            </MduiButton>
         </Box>
     </Box>
 );

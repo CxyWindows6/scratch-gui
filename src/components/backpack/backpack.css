@@ -9,21 +9,23 @@
 .backpack-header {
     margin-top: 0.5rem;
     background: $ui-white;
+    background: rgb(var(--mdui-color-surface-container-low, 255, 255, 255));
     padding: 0.25rem;
     text-align: center;
     font-size: 0.85rem;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
     transition: 0.2s;
     cursor: pointer;
     user-select: none;
 }
 
 [dir="ltr"] .backpack-header {
-    border-top-right-radius: $space;
+    border-top-right-radius: 1rem;
 }
 
 [dir="rtl"] .backpack-header {
-    border-top-left-radius: $space;
+    border-top-left-radius: 1rem;
 }
 
 .backpack-list {
@@ -64,6 +66,7 @@
     text-align: center;
     font-size: 0.85rem;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface-variant, 0, 0, 0));
 }
 
 .error-message {
@@ -87,7 +90,9 @@
 
 .more {
     background: $looks-secondary;
+    background: rgb(var(--mdui-color-secondary-container, 222, 216, 255));
     color: $ui-white;
+    color: rgb(var(--mdui-color-on-secondary-container, 30, 25, 67));
     border: none;
     outline: none;
     font-weight: bold;

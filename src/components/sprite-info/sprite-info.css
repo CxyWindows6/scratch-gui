@@ -4,11 +4,13 @@
 
 .sprite-info {
     padding: 0.75rem;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: $ui-white;
+    background-color: rgb(var(--mdui-color-surface-container, 255, 255, 255));
     color: $text-primary;
-    border-top-left-radius: $space;
-    border-top-right-radius: $space;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
 }
 
 
@@ -66,7 +68,7 @@
     border-color: $looks-secondary;
 }
 
-.larger-input input {
+.larger-input mdui-text-field {
     width: 4rem;
 }
 

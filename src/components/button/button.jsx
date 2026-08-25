@@ -1,9 +1,12 @@
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import styles from './button.css';
+import {MduiButton} from '../../lib/mdui';
 
+// Surge Editor: the project-wide button base is now an mdui (MD3) outlined
+// button. The public props contract is unchanged so all callers automatically
+// get the Material 3 look. `iconSrc` remains an SVG image (not an mdui icon
+// name), rendered before the children.
 const ButtonComponent = ({
     className,
     disabled,
@@ -15,14 +18,13 @@ const ButtonComponent = ({
     children,
     ...props
 }) => {
-
     if (disabled) {
         onClick = function () {};
     }
 
     const icon = iconSrc && (
         <img
-            className={classNames(iconClassName, styles.icon)}
+            className={iconClassName}
             draggable={false}
             src={iconSrc}
             height={iconHeight}
@@ -31,18 +33,16 @@ const ButtonComponent = ({
     );
 
     return (
-        <span
-            className={classNames(
-                styles.outlinedButton,
-                className
-            )}
-            role="button"
+        <MduiButton
+            variant="outlined"
+            className={className}
+            disabled={disabled}
             onClick={onClick}
             {...props}
         >
             {icon}
-            <div className={styles.content}>{children}</div>
-        </span>
+            {children}
+        </MduiButton>
     );
 };
 

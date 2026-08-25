@@ -11,12 +11,19 @@
     box-sizing: border-box;
     height: $menu-bar-height;
 
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: $menu-bar-standard-font-size;
     font-weight: 500;
-    background-color: $menu-bar-background;
-    background-image: $menu-bar-background-image;
+    /* MD3 (mdui) surface wins once the mdui theme is active; fall back to the
+       scratch-gui theme variables otherwise. The mdui design tokens are stored
+       as comma-separated RGB components, so they must be wrapped in rgb(). */
+    background-color: var(--menu-bar-background, #4c97ff);
+    background-color: rgb(var(--mdui-color-surface-container, 0, 0, 0));
+    background-image: none;
     color: $menu-bar-foreground;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
+    /* MD3 top app bar elevation 1 */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
 
     position: relative;
 }
@@ -74,7 +81,8 @@
 
 .menu-bar-item.active,
 .menu-bar-item.hoverable:hover {
-    background-color: rgba(255, 255, 255, 0.06);
+    /* MD3 hover: on-surface at ~8% over the surface container */
+    background-color: rgba(var(--mdui-color-on-surface, 255, 255, 255), 0.08);
 }
 
 .menu-bar-item.growable {
@@ -98,50 +106,58 @@
     padding: 0 0.5rem;
 }
 
-.menu-bar-menu {
-    margin-top: $menu-bar-height;
-    z-index: $z-index-menu-bar;
+/* mdui buttons inherit the MD3 on-surface color (overriding the default
+   primary tint keeps the top bar neutral); fall back to the old foreground. */
+/* mdui text buttons keep their MD3 primary accent; only the icon buttons
+   use the neutral on-surface-variant tone. */
+.menu-bar mdui-icon-button::part(button) {
+    color: $menu-bar-foreground;
+    color: rgb(var(--mdui-color-on-surface-variant, 0, 0, 0));
+}
+
+/* The settings trigger is an mdui text button whose icon defaults to the
+   primary accent; tone it down to the same neutral on-surface-variant as
+   the adjacent icon buttons (the label keeps the MD3 primary accent). */
+.menu-bar mdui-button[icon="settings"]::part(icon) {
+    color: $menu-bar-foreground;
+    color: rgb(var(--mdui-color-on-surface-variant, 0, 0, 0));
 }
 
 .feedback-button {
-    background-color: $ui-white;
-    color: $looks-secondary;
-    height: 28px;
+    height: 2.25rem;
+}
+
+.feedback-button::part(button) {
+    background-color: rgb(var(--mdui-color-primary, 103, 80, 164));
+    color: rgb(var(--mdui-color-on-primary, 255, 255, 255));
+    height: 2.25rem;
+    padding: 0 1rem;
     border: none;
-    border-radius: 4px;
-    font-size: 0.6875rem;
+    border-radius: 1.125rem;
+    font-size: 0.8125rem;
+    font-family: Roboto, system-ui, "Noto Sans", sans-serif;
+    font-weight: 500;
 }
 
-.feedback-button:hover {
-    color: $looks-secondary-dark;
-}
-
-[data-gui="dark"] .feedback-button {
-    color: #ffffff;
-}
-
-[data-gui="dark"] .feedback-button:hover {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-
-
-.author-info {
-    margin-left: .25rem;
-    margin-right: .6875rem;
+.feedback-button:hover::part(button) {
+    background-color: rgb(var(--mdui-color-primary, 103, 80, 164));
+    opacity: 0.92;
 }
 
 .menu-bar-button {
-    height: $menu-bar-button-size;
+    height: 2.25rem;
 }
 
-.remix-button {
-    background-color: $pen-primary
+.menu-bar-button::part(button) {
+    height: 2.25rem;
+    border-radius: 1.125rem;
+    font-size: 0.8125rem;
+    font-family: Roboto, system-ui, "Noto Sans", sans-serif;
+    padding: 0 0.875rem;
 }
 
-.remix-button-icon {
-    height: 1.25rem;
+.remix-button::part(button) {
+    background-color: $pen-primary;
 }
 
 .coming-soon >:not(.coming-soon-tooltip) {
@@ -187,8 +203,15 @@
 }
 
 .dropdown-caret-icon {
+    display: inline-flex;
     width: 0.5rem;
     height: 0.5rem;
+}
+
+/* Material Symbols font icon: size via font-size (the 24px default would
+   otherwise win over the 0.5rem width/height). */
+.dropdown-caret-icon mdui-icon {
+    font-size: 0.5rem;
 }
 
 [dir="ltr"] .dropdown-caret-icon {
@@ -219,12 +242,6 @@
   background-size: 50%;
 }
 
-.about-icon {
-    height: 1.25rem;
-    margin: 0.5rem;
-    vertical-align: middle;
-}
-
 .collapsible-label {
     margin: 0 .25rem;
 }
@@ -237,9 +254,4 @@
     .help-icon {
         margin-right: 0;
     }
-}
-
-.menu-item-link {
-    color: inherit;
-    text-decoration: none;
 }

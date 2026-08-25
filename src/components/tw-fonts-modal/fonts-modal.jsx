@@ -6,6 +6,7 @@ import Modal from '../../containers/modal.jsx';
 import ManageFont from './manage-font.jsx';
 import AddSystemFont from './add-system-font.jsx';
 import AddCustomFont, {FONT_FORMATS} from './add-custom-font.jsx';
+import {MduiButton} from '../../lib/mdui';
 import styles from './fonts-modal.css';
 
 const messages = defineMessages({
@@ -26,7 +27,8 @@ const FontModal = props => (
         <div className={styles.body}>
             {props.screen === '' ? (
                 <div className={styles.openButtons}>
-                    <button
+                    <MduiButton
+                        variant="tonal"
                         className={styles.openButton}
                         onClick={props.onOpenSystemFonts}
                     >
@@ -51,9 +53,10 @@ const FontModal = props => (
                                 />
                             </div>
                         </div>
-                    </button>
+                    </MduiButton>
 
-                    <button
+                    <MduiButton
+                        variant="tonal"
                         className={styles.openButton}
                         onClick={props.onOpenCustomFonts}
                     >
@@ -83,7 +86,7 @@ const FontModal = props => (
                                 />
                             </div>
                         </div>
-                    </button>
+                    </MduiButton>
                 </div>
             ) : props.screen === 'system' ? (
                 <AddSystemFont

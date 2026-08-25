@@ -13,7 +13,6 @@ import MenuBarMenu from './menu-bar-menu.jsx';
 import {MenuSection} from '../menu/menu.jsx';
 import MenuItemContainer from '../../containers/menu-item.jsx';
 import UserAvatar from './user-avatar.jsx';
-import dropdownCaret from './dropdown-caret.svg';
 
 import styles from './account-nav.css';
 
@@ -50,11 +49,9 @@ const AccountNavComponent = ({
                 {username}
             </span>
             <div className={styles.dropdownCaretPosition}>
-                <img
-                    className={styles.dropdownCaretIcon}
-                    src={dropdownCaret}
-                    draggable={false}
-                />
+                <span className={styles.dropdownCaretIcon}>
+                    <mdui-icon name="arrow_drop_down" />
+                </span>
             </div>
         </div>
         <MenuBarMenu

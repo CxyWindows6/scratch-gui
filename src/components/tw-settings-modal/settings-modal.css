@@ -29,14 +29,16 @@
     flex-direction: column;
     padding: 0.5rem 1rem;
     margin: 0.25rem 0;
-    border-radius: 4px;
+    border-radius: 12px;
 }
 .setting.active {
     background: $badge-background;
+    background: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
 }
 .setting:hover,
 .setting:focus-within {
     background: $badge-border;
+    background: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
 }
 
 .label {
@@ -103,23 +105,12 @@
     flex-grow: 1;
     margin-left: 1rem;
     border-top: 1px dashed $ui-tertiary;
+    border-top-color: rgb(var(--mdui-color-outline-variant, 196, 199, 197));
 }
 
+/* The Store button is an MduiButton (variant="tonal"); no extra styling needed. */
 .button {
-    font-family: inherit;
-    font-size: 14px;
-    background-color: $looks-secondary;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
     margin: 0;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: bold;
-}
-.button:active, .button:focus-within {
-    box-shadow: 0 0 0 3px $looks-transparent;
 }
 
 .warning {

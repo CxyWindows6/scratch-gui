@@ -1,27 +1,35 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactModal from 'react-modal';
 import {FormattedMessage} from 'react-intl';
 
 import Box from '../box/box.jsx';
-import Button from '../button/button.jsx';
-import CloseButton from '../close-button/close-button.jsx';
-
-import backIcon from '../../lib/assets/icon--back.svg';
-import helpIcon from '../../lib/assets/icon--help.svg';
+import {MduiDialog, MduiButton, MduiIconButton} from '../../lib/mdui';
 
 import styles from './modal.css';
 
 const ModalComponent = props => (
-    <ReactModal
-        isOpen
+    <MduiDialog
+        open
+        fullscreen={props.fullScreen}
+        headline={props.contentLabel}
+        closeOnEsc
+        closeOnOverlayClick
+        onClosed={props.onRequestClose}
         className={classNames(styles.modalContent, props.className, {
             [styles.fullScreen]: props.fullScreen
         })}
-        contentLabel={props.contentLabel}
-        overlayClassName={styles.modalOverlay}
-        onRequestClose={props.onRequestClose}
+        ref={instance => {
+            // Wrapper does not forward ref; access the underlying
+            // mdui-dialog element via its internal elementRef to set
+            // camelCase-to-kebab properties that the wrapper cannot set
+            // as attributes (closeOnEsc, closeOnOverlayClick).
+            if (instance && instance.elementRef && instance.elementRef.current) {
+                const el = instance.elementRef.current;
+                el.closeOnEsc = true;
+                el.closeOnOverlayClick = true;
+            }
+        }}
     >
         <Box
             dir={props.isRtl ? 'rtl' : 'ltr'}
@@ -36,9 +44,9 @@ const ModalComponent = props => (
                             styles.headerItemHelp
                         )}
                     >
-                        <Button
-                            className={styles.helpButton}
-                            iconSrc={helpIcon}
+                        <MduiButton
+                            variant="text"
+                            icon="help"
                             onClick={props.onHelp}
                         >
                             <FormattedMessage
@@ -46,24 +54,23 @@ const ModalComponent = props => (
                                 description="Help button in modal"
                                 id="gui.modal.help"
                             />
-                        </Button>
+                        </MduiButton>
                     </div>
                 ) : null}
-                <div
-                    className={classNames(
-                        styles.headerItem,
-                        styles.headerItemTitle
-                    )}
-                >
-                    {props.headerImage ? (
+                {props.headerImage ? (
+                    <div
+                        className={classNames(
+                            styles.headerItem,
+                            styles.headerItemTitle
+                        )}
+                    >
                         <img
                             className={styles.headerImage}
                             src={props.headerImage}
                             draggable={false}
                         />
-                    ) : null}
-                    {props.contentLabel}
-                </div>
+                    </div>
+                ) : null}
                 <div
                     className={classNames(
                         styles.headerItem,
@@ -71,9 +78,9 @@ const ModalComponent = props => (
                     )}
                 >
                     {props.fullScreen ? (
-                        <Button
-                            className={styles.backButton}
-                            iconSrc={backIcon}
+                        <MduiButton
+                            variant="text"
+                            icon="arrow-back"
                             onClick={props.onRequestClose}
                         >
                             <FormattedMessage
@@ -81,10 +88,10 @@ const ModalComponent = props => (
                                 description="Back button in modal"
                                 id="gui.modal.back"
                             />
-                        </Button>
+                        </MduiButton>
                     ) : (
-                        <CloseButton
-                            size={CloseButton.SIZE_LARGE}
+                        <MduiIconButton
+                            icon="close"
                             onClick={props.onRequestClose}
                         />
                     )}
@@ -92,7 +99,7 @@ const ModalComponent = props => (
             </div>
             {props.children}
         </Box>
-    </ReactModal>
+    </MduiDialog>
 );
 
 ModalComponent.propTypes = {

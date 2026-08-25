@@ -5,6 +5,7 @@ import styles from './fonts-modal.css';
 import VanillaFonts from 'scratch-paint/src/lib/fonts';
 import bindAll from 'lodash.bindall';
 import classNames from 'classnames';
+import {MduiButton} from '../../lib/mdui';
 
 class FontFallbackButton extends React.Component {
     constructor (props) {
@@ -35,7 +36,8 @@ class FontFallbackButton extends React.Component {
 
     render () {
         return (
-            <button
+            <MduiButton
+                variant={this.props.selected ? 'filled' : 'tonal'}
                 className={classNames(styles.fallbackButton, {[styles.fallbackButtonSelected]: this.props.selected})}
                 onClick={this.handleClick}
                 style={{
@@ -43,7 +45,7 @@ class FontFallbackButton extends React.Component {
                 }}
             >
                 {this.formatName()}
-            </button>
+            </MduiButton>
         );
     }
 }

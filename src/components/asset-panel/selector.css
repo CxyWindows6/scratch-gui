@@ -8,6 +8,7 @@
     flex-direction: column;
     justify-content: space-between;
     background: $ui-tertiary;
+    background: rgb(var(--mdui-color-surface-container-low, 247, 242, 250));
 }
 
 .new-buttons {
@@ -21,6 +22,7 @@
     justify-content: space-around;
     padding: 0.75rem 0;
     color: $looks-secondary;
+    color: rgb(var(--mdui-color-on-surface-variant, 73, 69, 78));
     text-align: center;
     background: none;
 }
@@ -80,5 +82,6 @@ $fade-out-distance: 100px;
 
 .list-item.placeholder {
     background: $ui-white;
+    background: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
     filter: opacity(15%) brightness(0%);
 }

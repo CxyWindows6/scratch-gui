@@ -13,9 +13,11 @@
     justify-content: center;
     align-items: center;
     background-color: $menu-bar-background;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: rgb(var(--mdui-color-surface-container, 243, 237, 247));
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-align: center;
     color: white;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
 }
 
 .fullscreen {
@@ -178,6 +180,7 @@
     height: 8px;
     border-radius: 8px;
     background-color: $ui-white-transparent-default;
+    background-color: rgb(var(--mdui-color-surface-container-high, 240, 234, 244));
     overflow: hidden;
     position: relative;
     margin: auto;
@@ -189,4 +192,5 @@
     width: 0;
     height: 100%;
     background-color: $ui-white-default;
+    background-color: rgb(var(--mdui-color-primary, 103, 80, 164));
 }

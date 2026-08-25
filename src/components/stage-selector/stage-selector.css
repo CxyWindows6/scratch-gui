@@ -10,11 +10,13 @@ $header-height: calc($stage-menu-height - 2px);
     align-items: center;
     position: relative; /* For the add backdrop button */
     flex-grow: 1;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: $ui-white;
+    background-color: rgb(var(--mdui-color-surface-container, 255, 255, 255));
     color: $text-primary;
-    border-top-left-radius: $space;
-    border-top-right-radius: $space;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
     border: none;
     cursor: pointer;
     transition: all 0.25s ease;
@@ -24,11 +26,13 @@ $header-height: calc($stage-menu-height - 2px);
     border-top-left-radius: .625rem;
     border-top-right-radius: .625rem;
     border-color: $looks-secondary;
-    box-shadow: 0px 0px 0px 4px $looks-transparent;
+    border-color: rgb(var(--mdui-color-primary, 76, 151, 255));
+    box-shadow: 0px 0px 0px 4px rgba(var(--mdui-color-primary, 76, 151, 255), 0.2);
 }
 
 .stage-selector:hover {
     border-color: $looks-secondary;
+    border-color: rgb(var(--mdui-color-primary, 76, 151, 255));
 }
 
 .header {
@@ -38,9 +42,11 @@ $header-height: calc($stage-menu-height - 2px);
     justify-content: center;
     height: $header-height;
     background-color: $ui-white;
+    background-color: rgb(var(--mdui-color-surface-container, 255, 255, 255));
     color: $text-primary;
-    border-top-left-radius: $space;
-    border-top-right-radius: $space;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
     width: 100%;
     transition: background-color 0.25s ease;
 }
@@ -49,6 +55,7 @@ $header-height: calc($stage-menu-height - 2px);
     font-size: 0.625rem;
     font-weight: bold;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
 
     /* @todo: make this a mixin for all UI text labels */
     user-select: none;
@@ -57,16 +64,19 @@ $header-height: calc($stage-menu-height - 2px);
 
 .stage-selector.is-selected .header {
     background-color: $looks-secondary;
+    background-color: rgb(var(--mdui-color-primary-container, 222, 216, 255));
 }
 
 .stage-selector.is-selected .header-title {
     color: #ffffff;
+    color: rgb(var(--mdui-color-on-primary-container, 30, 25, 67));
 }
 
 .count {
     padding: 0.3rem 0.75rem;
     font-size: 0.625rem;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface-variant, 0, 0, 0));
     user-select: none;
 }
 
@@ -74,6 +84,7 @@ $header-height: calc($stage-menu-height - 2px);
     margin: 0.75rem 0 0.25rem;
     font-size: 0.6rem;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface-variant, 0, 0, 0));
     user-select: none;
     text-align: center;
 }

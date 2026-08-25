@@ -5,6 +5,7 @@ import React from 'react';
 
 import Box from '../box/box.jsx';
 import Modal from '../../containers/modal.jsx';
+import {MduiTextField, MduiButton, MduiRadioGroup, MduiRadio, MduiCheckbox} from '../../lib/mdui';
 
 import styles from './prompt.css';
 import {SCRATCH_MAX_CLOUD_VARIABLES} from '../../lib/tw-cloud-limits.js';
@@ -64,14 +65,24 @@ const PromptComponent = props => (
                 {props.label}
             </Box>
             <Box>
-                <input
-                    autoFocus
-                    className={styles.variableNameTextInput}
+                <MduiTextField
+                    variant="outlined"
+                    label={props.label}
                     defaultValue={props.defaultValue}
                     name={props.label}
-                    onChange={props.onChange}
+                    onInput={props.onChange}
                     onFocus={props.onFocus}
                     onKeyPress={props.onKeyPress}
+                    ref={instance => {
+                        if (instance && instance.elementRef && instance.elementRef.current) {
+                            const el = instance.elementRef.current;
+                            // defaultValue is a JS-only property on mdui-text-field;
+                            // the wrapper can only set attributes, so set it via the element.
+                            if (props.defaultValue && !el.value) {
+                                el.value = props.defaultValue;
+                            }
+                        }
+                    }}
                 />
             </Box>
             {props.showVariableOptions ?
@@ -89,49 +100,40 @@ const PromptComponent = props => (
                             )}
                         </div> :
                         <Box className={styles.optionsRow}>
-                            <label>
-                                <input
-                                    checked={props.globalSelected}
-                                    name="variableScopeOption"
-                                    type="radio"
-                                    value="global"
-                                    onChange={props.onScopeOptionSelection}
-                                />
-                                <FormattedMessage
-                                    {...messages.forAllSpritesMessage}
-                                />
-                            </label>
-                            <label
-                                className={classNames({[styles.disabledLabel]: props.cloudSelected})}
+                            <MduiRadioGroup
+                                value={props.globalSelected ? 'global' : 'local'}
+                                onChange={props.onScopeOptionSelection}
                             >
-                                <input
+                                <MduiRadio
+                                    value="global"
+                                    checked={props.globalSelected}
+                                >
+                                    <FormattedMessage
+                                        {...messages.forAllSpritesMessage}
+                                    />
+                                </MduiRadio>
+                                <MduiRadio
+                                    value="local"
                                     checked={!props.globalSelected}
                                     disabled={props.cloudSelected}
-                                    name="variableScopeOption"
-                                    type="radio"
-                                    value="local"
-                                    onChange={props.onScopeOptionSelection}
-                                />
-                                <FormattedMessage
-                                    {...messages.forThisSpriteMessage}
-                                />
-                            </label>
+                                >
+                                    <FormattedMessage
+                                        {...messages.forThisSpriteMessage}
+                                    />
+                                </MduiRadio>
+                            </MduiRadioGroup>
                         </Box>}
                     {props.showCloudOption ?
                         <Box className={classNames(styles.cloudOption)}>
-                            <label
-                                className={classNames({[styles.disabledLabel]: !props.canAddCloudVariable})}
+                            <MduiCheckbox
+                                checked={props.cloudSelected && props.canAddCloudVariable}
+                                disabled={!props.canAddCloudVariable}
+                                onChange={props.onCloudVarOptionChange}
                             >
-                                <input
-                                    checked={props.cloudSelected && props.canAddCloudVariable}
-                                    disabled={!props.canAddCloudVariable}
-                                    type="checkbox"
-                                    onChange={props.onCloudVarOptionChange}
-                                />
                                 <FormattedMessage
                                     {...messages.cloudVarOptionMessage}
                                 />
-                            </label>
+                            </MduiCheckbox>
                         </Box> : null}
                 </div> : null}
 
@@ -178,8 +180,8 @@ const PromptComponent = props => (
             )}
 
             <Box className={styles.buttonRow}>
-                <button
-                    className={styles.cancelButton}
+                <MduiButton
+                    variant="text"
                     onClick={props.onCancel}
                 >
                     <FormattedMessage
@@ -187,9 +189,9 @@ const PromptComponent = props => (
                         description="Button in prompt for cancelling the dialog"
                         id="gui.prompt.cancel"
                     />
-                </button>
-                <button
-                    className={styles.okButton}
+                </MduiButton>
+                <MduiButton
+                    variant="text"
                     onClick={props.onOk}
                 >
                     <FormattedMessage
@@ -197,7 +199,7 @@ const PromptComponent = props => (
                         description="Button in prompt for confirming the dialog"
                         id="gui.prompt.ok"
                     />
-                </button>
+                </MduiButton>
             </Box>
         </Box>
     </Modal>

@@ -12,11 +12,14 @@
     max-width: 160px;
     margin: $space;
     padding: 1rem 1rem 0 1rem;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, system-ui, sans-serif;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
     background: $ui-white;
+    background: rgb(var(--mdui-color-surface-container-low, 247, 242, 250));
     border: none;
     border-radius: $space;
+    border-radius: 12px;
     text-align: center;
     cursor: pointer;
 }

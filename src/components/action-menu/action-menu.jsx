@@ -119,8 +119,9 @@ class ActionMenu extends React.Component {
                 onMouseEnter={this.handleToggleOpenState}
                 onMouseLeave={this.handleClosePopover}
             >
-                <button
+                <mdui-icon-button
                     aria-label={mainTitle}
+                    variant="filled"
                     className={classNames(styles.button, styles.mainButton)}
                     data-for={this.mainTooltipId}
                     data-tip={mainTitle}
@@ -132,7 +133,7 @@ class ActionMenu extends React.Component {
                         draggable={false}
                         src={mainImg}
                     />
-                </button>
+                </mdui-icon-button>
                 <ReactTooltip
                     className={styles.tooltip}
                     effect="solid"
@@ -148,8 +149,9 @@ class ActionMenu extends React.Component {
                             const tooltipId = `${this.mainTooltipId}-${title}`;
                             return (
                                 <div key={`${tooltipId}-${keyId}`}>
-                                    <button
+                                    <mdui-icon-button
                                         aria-label={title}
+                                        variant="standard"
                                         className={classNames(styles.button, styles.moreButton, {
                                             [styles.comingSoon]: isComingSoon
                                         })}
@@ -171,7 +173,7 @@ class ActionMenu extends React.Component {
                                                 type="file"
                                                 onChange={fileChange}
                                             />) : null}
-                                    </button>
+                                    </mdui-icon-button>
                                     <ReactTooltip
                                         className={classNames(styles.tooltip, {
                                             [styles.comingSoonTooltip]: isComingSoon

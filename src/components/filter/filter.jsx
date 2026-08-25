@@ -2,9 +2,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import TWRenderRecoloredImage from '../../lib/tw-recolor/render.jsx';
-import filterIcon from '!../../lib/tw-recolor/build!./icon--filter.svg';
-import xIcon from '!../../lib/tw-recolor/build!./icon--x.svg';
+import {MduiTextField} from '../../lib/mdui';
 import styles from './filter.css';
 
 const FilterComponent = props => {
@@ -22,26 +20,17 @@ const FilterComponent = props => {
                 [styles.isActive]: filterQuery.length > 0
             })}
         >
-            <TWRenderRecoloredImage
-                className={styles.filterIcon}
-                src={filterIcon}
-            />
-            <input
+            <MduiTextField
+                variant="outlined"
+                icon="search"
                 className={classNames(styles.filterInput, inputClassName)}
                 placeholder={placeholderText}
                 type="text"
                 value={filterQuery}
-                onChange={onChange}
+                onInput={onChange}
+                clearable
+                onClear={onClear}
             />
-            <div
-                className={styles.xIconWrapper}
-                onClick={onClear}
-            >
-                <TWRenderRecoloredImage
-                    className={styles.xIcon}
-                    src={xIcon}
-                />
-            </div>
         </div>
     );
 };

@@ -53,20 +53,21 @@
 [dir="rtl"] .button:last-child,
 .button:first-child:focus::before,
 [dir="rtl"] .button:last-child:focus::before {
-    border-radius: $form-radius 0 0 $form-radius;
+    border-radius: 0.5rem 0 0 0.5rem;
 }
 
 .button:last-child,
 [dir="rtl"] .button:first-child,
 .button:last-child:focus::before,
 [dir="rtl"] .button:first-child:focus::before {
-    border-radius: 0 $form-radius $form-radius 0;
+    border-radius: 0 0.5rem 0.5rem 0;
 }
 
 /* selected button styling */
 
 .button[aria-pressed='true'] {
     background-color: $looks-light-transparent;
+    background-color: rgba(var(--mdui-color-primary, 103, 80, 164), 0.16);
 }
 
 .button[aria-pressed='true'] > img {
@@ -77,6 +78,7 @@
 
 .button:active {
     background-color: $looks-transparent;
+    background-color: rgba(var(--mdui-color-primary, 103, 80, 164), 0.24);
 }
 
 /* disabled styling */

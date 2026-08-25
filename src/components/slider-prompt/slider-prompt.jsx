@@ -4,6 +4,7 @@ import React from 'react';
 
 import Box from '../box/box.jsx';
 import Modal from '../../containers/modal.jsx';
+import {MduiTextField, MduiButton} from '../../lib/mdui';
 
 import styles from './slider-prompt.css';
 
@@ -38,13 +39,13 @@ const SliderPromptComponent = props => (
                 {props.intl.formatMessage(messages.minValue)}
             </Box>
             <Box>
-                <input
-                    className={styles.minInput}
+                <MduiTextField
+                    variant="outlined"
+                    label={props.intl.formatMessage(messages.minValue)}
                     name={props.intl.formatMessage(messages.minValue)}
                     pattern="-?[0-9]*(\.[0-9]+)?"
-                    type="text"
                     value={props.minValue}
-                    onChange={props.onChangeMin}
+                    onInput={props.onChangeMin}
                     onKeyPress={props.onKeyPress}
                 />
             </Box>
@@ -52,19 +53,19 @@ const SliderPromptComponent = props => (
                 {props.intl.formatMessage(messages.maxValue)}
             </Box>
             <Box>
-                <input
-                    className={styles.maxInput}
+                <MduiTextField
+                    variant="outlined"
+                    label={props.intl.formatMessage(messages.maxValue)}
                     name={props.intl.formatMessage(messages.maxValue)}
                     pattern="-?[0-9]*(\.[0-9]+)?"
-                    type="text"
                     value={props.maxValue}
-                    onChange={props.onChangeMax}
+                    onInput={props.onChangeMax}
                     onKeyPress={props.onKeyPress}
                 />
             </Box>
             <Box className={styles.buttonRow}>
-                <button
-                    className={styles.cancelButton}
+                <MduiButton
+                    variant="text"
                     onClick={props.onCancel}
                 >
                     <FormattedMessage
@@ -72,9 +73,9 @@ const SliderPromptComponent = props => (
                         description="Button in prompt for cancelling the dialog"
                         id="gui.sliderPrompt.cancel"
                     />
-                </button>
-                <button
-                    className={styles.okButton}
+                </MduiButton>
+                <MduiButton
+                    variant="text"
                     onClick={props.onOk}
                 >
                     <FormattedMessage
@@ -82,7 +83,7 @@ const SliderPromptComponent = props => (
                         description="Button in prompt for confirming the dialog"
                         id="gui.sliderPrompt.ok"
                     />
-                </button>
+                </MduiButton>
             </Box>
         </Box>
     </Modal>

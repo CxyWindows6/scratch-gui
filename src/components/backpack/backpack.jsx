@@ -5,6 +5,7 @@ import {FormattedMessage, defineMessages, injectIntl, intlShape} from 'react-int
 import DragConstants from '../../lib/drag-constants';
 import {ComingSoonTooltip} from '../coming-soon/coming-soon.jsx';
 import SpriteSelectorItem from '../../containers/sprite-selector-item.jsx';
+import {MduiButton} from '../../lib/mdui';
 import styles from './backpack.css';
 
 // TODO make sprite selector item not require onClick
@@ -130,7 +131,8 @@ const Backpack = ({
                                     />
                                 ))}
                                 {showMore && (
-                                    <button
+                                    <MduiButton
+                                        variant="text"
                                         className={styles.more}
                                         onClick={onMore}
                                     >
@@ -139,7 +141,7 @@ const Backpack = ({
                                             description="Load more from backpack"
                                             id="gui.backpack.more"
                                         />
-                                    </button>
+                                    </MduiButton>
                                 )}
                             </div>
                         ) : (

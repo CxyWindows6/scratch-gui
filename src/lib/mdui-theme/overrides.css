@@ -1,0 +1,112 @@
+/* Surge Editor — mdui theme overrides
+   ====================================
+   Resolves the concrete conflicts between mdui/mdui.css (global design tokens
+   & base styles, imported by src/lib/mdui-bootstrap.js) and the scratch-gui
+   global styles:
+     - src/lib/themes/global-styles.css  (imported via guiHelpers.js)
+     - src/css/typography.css            (@import'ed by modal components)
+     - src/components/gui/gui.css        (.body-wrapper background)
+
+   Scope: page-level (<html>) defaults only. mdui components render in Shadow
+   DOM and are deliberately left untouched, so this file does not restyle any
+   mdui component.
+
+   Usage: import AFTER 'mdui/mdui.css' so these rules win the cascade, e.g.
+   right after `import '../../lib/mdui-bootstrap';` in
+   src/components/gui/gui.jsx:
+       import '../../lib/mdui-theme/overrides.css';
+*/
+
+/*
+ * Conflict inventory (mdui.css vs project globals):
+ *
+ * 1. `color-scheme` on :root
+ *    - mdui:  .mdui-theme-light, :root { color-scheme: light }  (plus
+ *             .mdui-theme-dark/.mdui-theme-auto rules)
+ *    - project: src/lib/themes/global-styles.css
+ *             :root { color-scheme: var(--color-scheme) }  (theme-driven)
+ *    Both have :root specificity (0,1,0); the winner depends on webpack
+ *    bundle order, so native scrollbars / form controls may get the wrong
+ *    scheme.
+ *
+ * 2. `color` on :root
+ *    - mdui:  .mdui-theme-light, :root { color: rgb(var(--mdui-color-on-background)) }
+ *    - project: no global text color; components set their own via CSS
+ *      Modules. mdui's value becomes the inherited default for any unstyled
+ *      text in the scratch-gui shell.
+ *
+ * 3. `background-color` on :root
+ *    - mdui:  .mdui-theme-light, :root { background-color: rgb(var(--mdui-color-background)) }
+ *    - project: src/components/gui/gui.css .body-wrapper { background-color: $ui-primary }
+ *      The html canvas becomes a Material background tone (purple-ish by
+ *      default, orange-tinted from the #ff6b35 seed), clashing with the
+ *      scratch-gui canvas (#E5F0FF family) on overscroll / scroll margins.
+ *
+ * 4. setColorScheme() scheme class
+ *    - mdui injects <style id="mdui-custom-color-scheme-..."> plus
+ *      .mdui-custom-color-scheme-* { color: ...; background-color: ... } on
+ *      <html>. Same clash as 2/3, active as soon as initSurgeTheme() runs.
+ *
+ * No-conflict items (checked, left untouched):
+ *    - font-size: 16px on :root (mdui) — project sets no root font-size;
+ *      scratch-gui rem math assumes 16px anyway.
+ *    - font-family — mdui does not set a global font-family (only inside
+ *      components / .mdui-prose); src/css/typography.css body font is safe.
+ *    - .mdui-prose element styles — scoped to .mdui-prose, unused by the app.
+ *    - normalize.css and .body-wrapper * { box-sizing: border-box } — mdui
+ *      components are Shadow DOM; no cascade leaks either way.
+ *    - --mdui-* vs --ui-*/--motion-*/--looks-* — disjoint variable namespaces.
+ *    - data-gui attribute (scratch-gui theme) vs mdui-theme-* class —
+ *      independent mechanisms.
+ *
+ * Fix: html:root has specificity (0,1,1), beating both the mdui :root rule
+ * (0,1,0) and the .mdui-theme-* / .mdui-custom-color-scheme-* class rules
+ * (0,1,0), so the Surge Editor theme variables win whenever they are
+ * defined, regardless of bundle order. On pages that never run the
+ * scratch-gui theme system the variables are undefined and fall back to the
+ * mdui tokens, so pure-mdui pages keep their Material defaults.
+ */
+html:root {
+    color-scheme: var(--color-scheme, light);
+    color: var(--text-primary, rgb(var(--mdui-color-on-background)));
+    background-color: var(--ui-primary, rgb(var(--mdui-color-background)));
+}
+
+/*
+ * Icon font: the project ships Material Symbols (imported by
+ * src/lib/mdui-bootstrap.js as @material-symbols/font-400/rounded.css,
+ * font-family "Material Symbols Rounded"), while mdui-icon hardcodes
+ * font-family 'Material Icons' in its shadow :host (and <mdui-icon> always
+ * lives inside another component's shadow root, so external `mdui-icon {}`
+ * rules can never reach it). Register the same Material Symbols glyphs under
+ * mdui's hardcoded family names instead — the browser dedupes the woff2 URL,
+ * so no extra font download occurs.
+ */
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('~@material-symbols/font-400/material-symbols-rounded.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Material Icons Round';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('~@material-symbols/font-400/material-symbols-rounded.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Material Icons Outlined';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('~@material-symbols/font-400/material-symbols-outlined.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Material Icons Sharp';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('~@material-symbols/font-400/material-symbols-sharp.woff2') format('woff2');
+}

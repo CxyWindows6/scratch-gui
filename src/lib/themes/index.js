@@ -7,11 +7,6 @@ import * as accentRainbow from './accent/rainbow';
 import * as accentGray from './accent/gray';
 import * as accentOrange from './accent/orange';
 
-import * as guiLight from './gui/light';
-import * as guiDark from './gui/dark';
-import * as guiMidnight from './gui/midnight';
-import * as guiEmber from './gui/ember';
-
 import * as blocksThree from './blocks/three';
 import * as blocksHighContrast from './blocks/high-contrast';
 import * as blocksDark from './blocks/dark';
@@ -31,18 +26,6 @@ const ACCENT_MAP = {
     [ACCENT_ORANGE]: accentOrange
 };
 const ACCENT_DEFAULT = ACCENT_RED;
-
-const GUI_LIGHT = 'light';
-const GUI_DARK = 'dark';
-const GUI_MIDNIGHT = 'midnight';
-const GUI_EMBER = 'ember';
-const GUI_MAP = {
-    [GUI_LIGHT]: guiLight,
-    [GUI_DARK]: guiDark,
-    [GUI_MIDNIGHT]: guiMidnight,
-    [GUI_EMBER]: guiEmber
-};
-const GUI_DEFAULT = GUI_LIGHT;
 
 const BLOCKS_THREE = 'three';
 const BLOCKS_DARK = 'dark';
@@ -84,31 +67,28 @@ const BLOCKS_MAP = {
 
 let themeObjectsCreated = 0;
 
+// Surge Editor (mdui): the legacy GUI theme layer (light/dark/midnight/ember)
+// was retired — mdui's own light/dark/auto theme drives the interface chrome.
+// The theme object now only carries the accent color and the block palette.
 class Theme {
-    constructor (accent, gui, blocks) {
+    constructor (accent, blocks) {
         // do not modify these directly
         /** @readonly */
         this.id = ++themeObjectsCreated;
         /** @readonly */
         this.accent = Object.prototype.hasOwnProperty.call(ACCENT_MAP, accent) ? accent : ACCENT_DEFAULT;
         /** @readonly */
-        this.gui = Object.prototype.hasOwnProperty.call(GUI_MAP, gui) ? gui : GUI_DEFAULT;
-        /** @readonly */
         this.blocks = Object.prototype.hasOwnProperty.call(BLOCKS_MAP, blocks) ? blocks : BLOCKS_DEFAULT;
     }
 
-    static light = new Theme(ACCENT_DEFAULT, GUI_LIGHT, BLOCKS_DEFAULT);
-    static dark = new Theme(ACCENT_DEFAULT, GUI_DARK, BLOCKS_DEFAULT);
-    static midnight = new Theme(ACCENT_DEFAULT, GUI_MIDNIGHT, BLOCKS_DEFAULT);
-    static highContrast = new Theme(ACCENT_DEFAULT, GUI_DEFAULT, BLOCKS_HIGH_CONTRAST);
+    static light = new Theme(ACCENT_DEFAULT, BLOCKS_DEFAULT);
+    static highContrast = new Theme(ACCENT_DEFAULT, BLOCKS_HIGH_CONTRAST);
 
     set (what, to) {
         if (what === 'accent') {
-            return new Theme(to, this.gui, this.blocks);
-        } else if (what === 'gui') {
-            return new Theme(this.accent, to, this.blocks);
+            return new Theme(to, this.blocks);
         } else if (what === 'blocks') {
-            return new Theme(this.accent, this.gui, to);
+            return new Theme(this.accent, to);
         }
         throw new Error(`Unknown theme property: ${what}`);
     }
@@ -117,20 +97,16 @@ class Theme {
         return BLOCKS_MAP[this.blocks].blocksMediaFolder;
     }
 
+    // Accent-driven color overrides for legacy UI variables that are not part
+    // of the mdui color system (block category colors, highlight colors, ...).
     getGuiColors () {
-        return defaultsDeep(
-            {},
-            ACCENT_MAP[this.accent].guiColors,
-            GUI_MAP[this.gui].guiColors,
-            guiLight.guiColors
-        );
+        return ACCENT_MAP[this.accent].guiColors;
     }
 
     getBlockColors () {
         return defaultsDeep(
             {},
             ACCENT_MAP[this.accent].blockColors,
-            GUI_MAP[this.gui].blockColors,
             BLOCKS_MAP[this.blocks].colors
         );
     }
@@ -139,15 +115,21 @@ class Theme {
         return BLOCKS_MAP[this.blocks].extensions;
     }
 
+    // The GUI theme layer is gone: dark mode now belongs to mdui, which
+    // applies the `mdui-theme-dark` class on <html>.
     isDark () {
-        return this.getGuiColors()['color-scheme'] === 'dark';
+        return document.documentElement.classList.contains('mdui-theme-dark');
     }
 
     getStageBlockColors () {
         if (BLOCKS_MAP[this.blocks].useForStage) {
             return this.getBlockColors();
         }
-        return Theme.light.getBlockColors();
+        return defaultsDeep(
+            {},
+            ACCENT_MAP[this.accent].blockColors,
+            defaultBlockColors
+        );
     }
 
     getCustomExtensionColors () {
@@ -166,12 +148,6 @@ export {
     ACCENT_RAINBOW,
     ACCENT_ORANGE,
     ACCENT_MAP,
-
-    GUI_LIGHT,
-    GUI_DARK,
-    GUI_MIDNIGHT,
-    GUI_EMBER,
-    GUI_MAP,
 
     BLOCKS_THREE,
     BLOCKS_DARK,

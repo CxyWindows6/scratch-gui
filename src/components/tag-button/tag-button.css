@@ -2,10 +2,8 @@
 @import "../../css/units.css";
 
 .tag-button {
-    padding: .625rem 1rem;
-    background: $looks-secondary;
+    /* MD3 chip-like shape; background comes from MduiButton variant="tonal" */
     border-radius: 1.375rem;
-    color: white;
     height: $library-filter-bar-height;
 }
 
@@ -14,6 +12,9 @@
     max-height: 1rem;
 }
 
-.active {
+/* Selected tag: swap the tonal container for the primary color */
+.active::part(button) {
     background: $data-primary;
+    background: rgb(var(--mdui-color-primary, 103, 80, 164));
+    color: rgb(var(--mdui-color-on-primary, 255, 255, 255));
 }

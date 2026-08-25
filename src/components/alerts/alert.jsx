@@ -4,16 +4,11 @@ import classNames from 'classnames';
 import {FormattedMessage} from 'react-intl';
 
 import Box from '../box/box.jsx';
-import CloseButton from '../close-button/close-button.jsx';
 import Spinner from '../spinner/spinner.jsx';
 import {AlertLevels} from '../../lib/alerts/index.jsx';
+import {MduiButton, MduiIconButton} from '../../lib/mdui';
 
 import styles from './alert.css';
-
-const closeButtonColors = {
-    [AlertLevels.SUCCESS]: CloseButton.COLOR_GREEN,
-    [AlertLevels.WARN]: CloseButton.COLOR_ORANGE
-};
 
 const AlertComponent = ({
     content,
@@ -67,7 +62,8 @@ const AlertComponent = ({
         </div>
         <div className={styles.alertButtons}>
             {showSaveNow && (
-                <button
+                <MduiButton
+                    variant="filled"
                     className={styles.alertConnectionButton}
                     onClick={onSaveNow}
                 >
@@ -76,10 +72,11 @@ const AlertComponent = ({
                         description="Button to try saving again"
                         id="gui.alerts.tryAgain"
                     />
-                </button>
+                </MduiButton>
             )}
             {showDownload && (
-                <button
+                <MduiButton
+                    variant="filled"
                     className={styles.alertConnectionButton}
                     onClick={onDownload}
                 >
@@ -88,10 +85,11 @@ const AlertComponent = ({
                         description="Button to download project locally"
                         id="gui.alerts.download"
                     />
-                </button>
+                </MduiButton>
             )}
             {showReconnect && (
-                <button
+                <MduiButton
+                    variant="filled"
                     className={styles.alertConnectionButton}
                     onClick={onReconnect}
                 >
@@ -100,16 +98,15 @@ const AlertComponent = ({
                         description="Button to reconnect the device"
                         id="gui.connection.reconnect"
                     />
-                </button>
+                </MduiButton>
             )}
             {closeButton && (
                 <Box
                     className={styles.alertCloseButtonContainer}
                 >
-                    <CloseButton
+                    <MduiIconButton
+                        icon="close"
                         className={classNames(styles.alertCloseButton)}
-                        color={closeButtonColors[level]}
-                        size={CloseButton.SIZE_LARGE}
                         onClick={onCloseAlert}
                     />
                 </Box>

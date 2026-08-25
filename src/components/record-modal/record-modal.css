@@ -7,6 +7,7 @@
 
 .body {
     background: $ui-modal-background;
+    background: rgb(var(--mdui-color-surface-container, 243, 237, 247));
     padding: 1.5rem 2.25rem;
 }
 
@@ -17,7 +18,8 @@
 
 .meter-container, .waveform-container {
     background: $ui-primary;
-    border-radius: 5px;
+    background: rgb(var(--mdui-color-surface-container-high, 240, 234, 244));
+    border-radius: 12px;
     padding: 3px;
     /* Force these to be on their own render layer because they update often */
     transform: translateZ(0);
@@ -39,18 +41,21 @@
 
 .help-text {
     margin: 10px auto 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: rgb(167, 170, 181);
+    color: rgb(var(--mdui-color-on-surface-variant, 70, 70, 79));
     font-size: 0.95rem;
     font-weight: 500;
 }
 
 .playing-text {
     color: $looks-secondary;
+    color: rgb(var(--mdui-color-primary, 103, 80, 164));
 }
 
 .recording-text {
     color: $red-primary;
+    color: rgb(var(--mdui-color-error, 179, 38, 30));
 }
 
 .main-button-row {
@@ -59,45 +64,15 @@
     margin-top: 15px;
 }
 
-.main-button-row button {
+.main-button-row mdui-button {
     padding: 0.5rem 0.75rem;
-    border-radius: 0.25rem;
-    background: transparent;
-    border: none;
-}
-
-.main-button-row button:disabled {
-    opacity: 0.25;
-}
-
-.main-button-row button:active, .main-button-row button:focus {
-    outline: none;
 }
 
 .button-row {
-    font-weight: bolder;
     text-align: right;
     display: flex;
     justify-content: space-between;
-}
-
-.button-row button {
-    padding: 0.75rem 1rem;
-    border-radius: 0.25rem;
-    background: $ui-white;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: $looks-secondary;
-}
-
-.button-row button.ok-button {
-    background: $looks-secondary;
-    border: $looks-secondary;
-    color: white;
-}
-
-.button-row button + button {
-    margin-left: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .main-button {
@@ -111,11 +86,13 @@ svg.record-button {
 
 .record-button-circle {
     fill: $red-primary;
+    fill: rgb(var(--mdui-color-error, 179, 38, 30));
     stroke: $red-tertiary;
 }
 
 .record-button-circle-outline {
     fill: $red-primary;
+    fill: rgb(var(--mdui-color-error, 179, 38, 30));
     opacity: 0.2;
     transition: 0.1s;
 }

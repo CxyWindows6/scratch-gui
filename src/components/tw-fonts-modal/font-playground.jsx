@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './fonts-modal.css';
 import bindAll from 'lodash.bindall';
+import {MduiTextField} from '../../lib/mdui';
 
 // TODO: is this something to localize?
 const QUICK_BROWN_FOX = 'The quick brown fox jumps over the lazy dog.';
@@ -25,10 +26,13 @@ class FontPlayground extends React.Component {
 
     render () {
         return (
-            <textarea
+            <MduiTextField
+                variant="outlined"
+                multiline
+                rows={4}
                 className={styles.fontPlayground}
                 value={this.state.value}
-                onChange={this.handleChange}
+                onInput={this.handleChange}
                 placeholder={QUICK_BROWN_FOX}
                 style={{
                     fontFamily: this.props.family

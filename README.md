@@ -1,5 +1,10 @@
 scratch-gui modified for use in [TurboWarp](https://turbowarp.org/)
 
+This fork's UI has been restyled with [MDUI](https://www.mdui.org/) (Material Design 3 Web Components):
+- All UI chrome (menu bar, dialogs, prompts, buttons, inputs, dropdowns, panels, backpack, libraries, record modal, font manager) uses MD3 design tokens via `src/lib/mdui/` (React wrappers) and `src/lib/mdui-theme/` (theme bootstrap).
+- Theme system: the old theme system is retired; dynamic color and light/dark switching are driven by MDUI's theme (`mdui-theme-auto`, Material blue-violet default).
+- Blockly (blocks area) and the WebGL stage keep their internal rendering; they are wrapped in the MDUI chrome.
+
 ## Setup
 
 See https://docs.turbowarp.org/development/getting-started to setup the complete TurboWarp environment.

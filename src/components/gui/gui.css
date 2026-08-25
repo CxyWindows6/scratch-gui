@@ -11,6 +11,7 @@
 .body-wrapper {
     flex-grow: 1;
     background-color: $ui-primary;
+    background-color: rgb(var(--mdui-color-surface-container, 243, 237, 247));
     background-image: var(--noise-texture);
 }
 
@@ -63,7 +64,7 @@
     display: flex;
     flex-shrink: 0;
 
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: Roboto, system-ui, sans-serif;
     font-weight: 500;
     font-size: 0.80rem;
 
@@ -72,6 +73,7 @@
     border-bottom: none;
 
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
 }
 
 .tab {
@@ -80,12 +82,14 @@
 
     border: none;
     border-bottom: 2px solid transparent;
+    border-radius: 0;
 
     padding: 0 1.25rem;
     font-size: 0.75rem;
 
     background-color: transparent;
     color: $text-primary;
+    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
 
     display: flex;
     justify-content: center;
@@ -99,11 +103,14 @@
 
 .tab:hover {
     background-color: $ui-hover;
+    background-color: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
 }
 
 .tab.is-selected {
     color: $looks-secondary;
+    color: rgb(var(--mdui-color-primary, 103, 80, 164));
     border-bottom-color: $looks-secondary;
+    border-bottom-color: rgb(var(--mdui-color-primary, 103, 80, 164));
 }
 
 .tab img {
@@ -136,6 +143,7 @@
     outline: none;
     box-shadow: none;
     border-bottom-color: $looks-secondary;
+    border-bottom-color: rgb(var(--mdui-color-primary, 103, 80, 164));
 }
 
 /* Body of the tabs */
@@ -205,6 +213,7 @@
     right: 0;
     z-index: $z-index-extension-button;
     background: $looks-secondary;
+    background: rgb(var(--mdui-color-primary, 103, 80, 164));
 
     border: none;
     box-sizing: content-box; /* To match scratch-block vertical toolbox borders */

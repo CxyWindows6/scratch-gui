@@ -4,6 +4,7 @@ import {injectIntl, intlShape, defineMessages, FormattedMessage} from 'react-int
 import bindAll from 'lodash.bindall';
 import {formatBytes} from '../../lib/tw-bytes-utils';
 import downloadBlob from '../../lib/download-blob';
+import {MduiIconButton} from '../../lib/mdui';
 import styles from './fonts-modal.css';
 import deleteIcon from './delete.svg';
 import exportIcon from './export.svg';
@@ -72,28 +73,30 @@ class ManageFont extends React.Component {
 
                 <div className={styles.manageFontButtons}>
                     {!this.props.system && (
-                        <button
+                        <MduiIconButton
                             className={styles.manageFontButton}
                             onClick={this.handleExport}
+                            title="Export"
                         >
                             <img
                                 src={exportIcon}
                                 alt="Export"
                                 draggable={false}
                             />
-                        </button>
+                        </MduiIconButton>
                     )}
 
-                    <button
+                    <MduiIconButton
                         className={styles.manageFontButton}
                         onClick={this.handleDelete}
+                        title="Delete"
                     >
                         <img
                             src={deleteIcon}
                             alt="Delete"
                             draggable={false}
                         />
-                    </button>
+                    </MduiIconButton>
                 </div>
             </div>
         );

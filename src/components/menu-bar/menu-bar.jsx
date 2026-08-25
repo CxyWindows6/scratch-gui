@@ -10,15 +10,11 @@ import React from 'react';
 import VM from 'scratch-vm';
 
 import Box from '../box/box.jsx';
-import Button from '../button/button.jsx';
 import CommunityButton from './community-button.jsx';
 import ShareButton from './share-button.jsx';
 import {ComingSoonTooltip} from '../coming-soon/coming-soon.jsx';
 import Divider from '../divider/divider.jsx';
 import ProjectWatcher from '../../containers/project-watcher.jsx';
-import MenuBarMenu from './menu-bar-menu.jsx';
-import MenuLabel from './tw-menu-label.jsx';
-import {MenuItem, MenuSection} from '../menu/menu.jsx';
 import ProjectTitleInput from './project-title-input.jsx';
 import AuthorInfo from './author-info.jsx';
 import SB3Downloader from '../../containers/sb3-downloader.jsx';
@@ -83,15 +79,6 @@ import {setFileHandle} from '../../reducers/tw.js';
 import collectMetadata from '../../lib/collect-metadata';
 
 import styles from './menu-bar.css';
-
-import remixIcon from './icon--remix.svg';
-import dropdownCaret from './dropdown-caret.svg';
-import aboutIcon from './icon--about.svg';
-import fileIcon from './icon--file.svg';
-import editIcon from './icon--edit.svg';
-import addonsIcon from './addons.svg';
-import errorIcon from './tw-error.svg';
-import advancedIcon from './tw-advanced.svg';
 
 import ninetiesLogo from './nineties_logo.svg';
 import catLogo from './cat_logo.svg';
@@ -168,10 +155,8 @@ MenuItemTooltip.propTypes = {
 };
 
 const AboutButton = props => (
-    <Button
-        className={classNames(styles.menuBarItem, styles.hoverable)}
-        iconClassName={styles.aboutIcon}
-        iconSrc={aboutIcon}
+    <mdui-icon-button
+        icon="help"
         onClick={props.onClick}
     />
 );
@@ -180,16 +165,15 @@ AboutButton.propTypes = {
     onClick: PropTypes.func.isRequired
 };
 
-// Unlike <MenuItem href="">, this uses an actual <a>
+// Unlike <MenuItem href="">, this uses an actual <a> (rendered by mdui-menu-item's href support)
 const MenuItemLink = props => (
-    <a
+    <mdui-menu-item
         href={props.href}
         rel="noreferrer"
         target="_blank"
-        className={styles.menuItemLink}
     >
-        <MenuItem>{props.children}</MenuItem>
-    </a>
+        {props.children}
+    </mdui-menu-item>
 );
 
 MenuItemLink.propTypes = {
@@ -217,21 +201,120 @@ class MenuBar extends React.Component {
             'handleRestoreOption',
             'getSaveToComputerHandler',
             'restoreOptionMessage',
-            'updateAlignment'
+            'updateAlignment',
+            'handleFileMenuOpened',
+            'handleFileMenuClosed',
+            'handleEditMenuOpened',
+            'handleEditMenuClosed',
+            'handleModeMenuOpened',
+            'handleModeMenuClosed',
+            'handleErrorsMenuOpened',
+            'handleErrorsMenuClosed',
+            'handleAboutMenuOpened',
+            'handleAboutMenuClosed',
+            'setErrorsDropdownRef',
+            'setAboutDropdownRef'
         ]);
         this.menuBarInnerRef = React.createRef();
+        this.fileDropdownRef = React.createRef();
+        this.editDropdownRef = React.createRef();
+        this.modeDropdownRef = React.createRef();
+        this.errorsDropdownRef = null;
+        this.aboutDropdownRef = null;
     }
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
         this.updateAlignment(this.props.menuBarAlignment, false);
+        this.bindMenuDropdowns();
     }
     componentDidUpdate (prevProps) {
         if (prevProps.menuBarAlignment !== this.props.menuBarAlignment) {
             this.updateAlignment(this.props.menuBarAlignment, true);
         }
+        this.syncMenuDropdowns(prevProps);
+        this.bindMenuDropdowns();
     }
     componentWillUnmount () {
         document.removeEventListener('keydown', this.handleKeyPress);
+    }
+    // Attach mdui-dropdown custom event listeners to sync Redux open state.
+    // mdui custom events (opened/closed) cannot be bound via React props, so we
+    // bind them directly on the custom elements.
+    bindMenuDropdowns () {
+        this.bindDropdown(this.fileDropdownRef, this.handleFileMenuOpened, this.handleFileMenuClosed);
+        this.bindDropdown(this.editDropdownRef, this.handleEditMenuOpened, this.handleEditMenuClosed);
+        this.bindDropdown(this.modeDropdownRef, this.handleModeMenuOpened, this.handleModeMenuClosed);
+        if (this.errorsDropdownRef) {
+            this.bindDropdownElement(this.errorsDropdownRef, this.handleErrorsMenuOpened, this.handleErrorsMenuClosed);
+        }
+        if (this.aboutDropdownRef) {
+            this.bindDropdownElement(this.aboutDropdownRef, this.handleAboutMenuOpened, this.handleAboutMenuClosed);
+        }
+    }
+    bindDropdown (ref, onOpened, onClosed) {
+        if (ref && ref.current) {
+            this.bindDropdownElement(ref.current, onOpened, onClosed);
+        }
+    }
+    bindDropdownElement (element, onOpened, onClosed) {
+        if (!element || element.dataset.mduiMenuBarBound) return;
+        element.dataset.mduiMenuBarBound = 'true';
+        element.addEventListener('opened', onOpened);
+        element.addEventListener('closed', onClosed);
+    }
+    // Push Redux open state changes into the mdui-dropdown elements
+    // (the dropdowns manage their own visual state, so this only fires on
+    // programmatic changes such as sibling menu collapsing).
+    syncMenuDropdowns (prevProps) {
+        const sync = (ref, wasOpen, isOpen) => {
+            const element = ref && ref.current;
+            if (element && wasOpen !== isOpen) element.open = isOpen;
+        };
+        sync(this.fileDropdownRef, prevProps.fileMenuOpen, this.props.fileMenuOpen);
+        sync(this.editDropdownRef, prevProps.editMenuOpen, this.props.editMenuOpen);
+        sync(this.modeDropdownRef, prevProps.modeMenuOpen, this.props.modeMenuOpen);
+        if (this.errorsDropdownRef && prevProps.errorsMenuOpen !== this.props.errorsMenuOpen) {
+            this.errorsDropdownRef.open = this.props.errorsMenuOpen;
+        }
+        if (this.aboutDropdownRef && prevProps.aboutMenuOpen !== this.props.aboutMenuOpen) {
+            this.aboutDropdownRef.open = this.props.aboutMenuOpen;
+        }
+    }
+    handleFileMenuOpened () {
+        if (!this.props.fileMenuOpen) this.props.onClickFile();
+    }
+    handleFileMenuClosed () {
+        if (this.props.fileMenuOpen) this.props.onRequestCloseFile();
+    }
+    handleEditMenuOpened () {
+        if (!this.props.editMenuOpen) this.props.onClickEdit();
+    }
+    handleEditMenuClosed () {
+        if (this.props.editMenuOpen) this.props.onRequestCloseEdit();
+    }
+    handleModeMenuOpened () {
+        if (!this.props.modeMenuOpen) this.props.onClickMode();
+    }
+    handleModeMenuClosed () {
+        if (this.props.modeMenuOpen) this.props.onRequestCloseMode();
+    }
+    handleErrorsMenuOpened () {
+        if (!this.props.errorsMenuOpen) this.props.onClickErrors();
+    }
+    handleErrorsMenuClosed () {
+        if (this.props.errorsMenuOpen) this.props.onRequestCloseErrors();
+    }
+    handleAboutMenuOpened () {
+        if (!this.props.aboutMenuOpen) this.props.onRequestOpenAbout();
+    }
+    handleAboutMenuClosed () {
+        if (this.props.aboutMenuOpen) this.props.onRequestCloseAbout();
+    }
+    setErrorsDropdownRef (element) {
+        this.errorsDropdownRef = element;
+    }
+    setAboutDropdownRef (element) {
+        this.aboutDropdownRef = element;
     }
     updateAlignment (alignment, animate) {
         const inner = this.menuBarInnerRef.current;
@@ -449,34 +532,27 @@ class MenuBar extends React.Component {
         // each item must have a 'title' FormattedMessage and a 'handleClick' function
         // generate a menu with items for each object in the array
         return (
-            <MenuLabel
-                open={this.props.aboutMenuOpen}
-                onOpen={this.props.onRequestOpenAbout}
-                onClose={this.props.onRequestCloseAbout}
+            <mdui-dropdown
+                ref={this.setAboutDropdownRef}
+                placement={this.props.isRtl ? 'bottom-start' : 'bottom-end'}
             >
-                <img
-                    className={styles.aboutIcon}
-                    src={aboutIcon}
-                    draggable={false}
+                <mdui-icon-button
+                    slot="trigger"
+                    icon="help"
                 />
-                <MenuBarMenu
-                    className={classNames(styles.menuBarMenu)}
-                    open={this.props.aboutMenuOpen}
-                    place={this.props.isRtl ? 'right' : 'left'}
-                >
+                <mdui-menu>
                     {
                         onClickAbout.map(itemProps => (
-                            <MenuItem
+                            <mdui-menu-item
                                 key={itemProps.title}
-                                isRtl={this.props.isRtl}
                                 onClick={this.wrapAboutMenuCallback(itemProps.onClick)}
                             >
                                 {itemProps.title}
-                            </MenuItem>
+                            </mdui-menu-item>
                         ))
                     }
-                </MenuBarMenu>
-            </MenuLabel>
+                </mdui-menu>
+            </mdui-dropdown>
         );
     }
     wrapAboutMenuCallback (callback) {
@@ -515,17 +591,17 @@ class MenuBar extends React.Component {
             />
         );
         const remixButton = (
-            <Button
+            <mdui-button
+                variant="filled"
+                icon="sync"
                 className={classNames(
                     styles.menuBarButton,
                     styles.remixButton
                 )}
-                iconClassName={styles.remixButtonIcon}
-                iconSrc={remixIcon}
                 onClick={this.handleClickRemix}
             >
                 {remixMessage}
-            </Button>
+            </mdui-button>
         );
         // Show the About button only if we have a handler for it (like in the desktop app)
         const aboutButton = this.buildAboutMenu(this.props.onClickAbout);
@@ -544,56 +620,40 @@ class MenuBar extends React.Component {
                     <div className={styles.mainMenu}>
                         <div className={styles.fileGroup}>
                             {this.props.errors.length > 0 && <div>
-                                <MenuLabel
-                                    open={this.props.errorsMenuOpen}
-                                    onOpen={this.props.onClickErrors}
-                                    onClose={this.props.onRequestCloseErrors}
+                                <mdui-dropdown
+                                    ref={this.setErrorsDropdownRef}
+                                    placement={this.props.isRtl ? 'bottom-end' : 'bottom-start'}
                                 >
-                                    <img
-                                        src={errorIcon}
-                                        draggable={false}
-                                        width={20}
-                                        height={20}
+                                    <mdui-icon-button
+                                        slot="trigger"
+                                        icon="warning"
                                     />
-                                    <img
-                                        src={dropdownCaret}
-                                        draggable={false}
-                                        width={8}
-                                        height={5}
-                                    />
-                                    <MenuBarMenu
-                                        className={classNames(styles.menuBarMenu)}
-                                        open={this.props.errorsMenuOpen}
-                                        place={this.props.isRtl ? 'left' : 'right'}
-                                    >
-                                        <MenuSection>
-                                            <MenuItemLink href="https://scratch.mit.edu/users/GarboMuffin/#comments">
-                                                <FormattedMessage
-                                                    defaultMessage="部分脚本出错了"
-                                                    description="Link in error menu"
-                                                    id="tw.menuBar.reportError1"
-                                                />
-                                            </MenuItemLink>
-                                            <MenuItemLink href="https://scratch.mit.edu/users/GarboMuffin/#comments">
-                                                <FormattedMessage
-                                                    defaultMessage="请报告此问题"
-                                                    description="Link in error menu"
-                                                    id="tw.menuBar.reportError2"
-                                                />
-                                            </MenuItemLink>
-                                        </MenuSection>
-                                        <MenuSection>
-                                            {this.props.errors.map(({id, sprite, error}) => (
-                                                <MenuItem key={id}>
-                                                    {this.props.intl.formatMessage(twMessages.compileError, {
-                                                        sprite,
-                                                        error
-                                                    })}
-                                                </MenuItem>
-                                            ))}
-                                        </MenuSection>
-                                    </MenuBarMenu>
-                                </MenuLabel>
+                                    <mdui-menu>
+                                        <MenuItemLink href="https://scratch.mit.edu/users/GarboMuffin/#comments">
+                                            <FormattedMessage
+                                                defaultMessage="部分脚本出错了"
+                                                description="Link in error menu"
+                                                id="tw.menuBar.reportError1"
+                                            />
+                                        </MenuItemLink>
+                                        <MenuItemLink href="https://scratch.mit.edu/users/GarboMuffin/#comments">
+                                            <FormattedMessage
+                                                defaultMessage="请报告此问题"
+                                                description="Link in error menu"
+                                                id="tw.menuBar.reportError2"
+                                            />
+                                        </MenuItemLink>
+                                        <mdui-divider />
+                                        {this.props.errors.map(({id, sprite, error}) => (
+                                            <mdui-menu-item key={id}>
+                                                {this.props.intl.formatMessage(twMessages.compileError, {
+                                                    sprite,
+                                                    error
+                                                })}
+                                            </mdui-menu-item>
+                                        ))}
+                                    </mdui-menu>
+                                </mdui-dropdown>
                             </div>}
                             {(this.props.canChangeTheme || this.props.canChangeLanguage) && (<SettingsMenu
                                 canChangeLanguage={this.props.canChangeLanguage}
@@ -613,44 +673,32 @@ class MenuBar extends React.Component {
                                 settingsMenuOpen={this.props.settingsMenuOpen}
                             />)}
                             {(this.props.canManageFiles) && (
-                                <MenuLabel
-                                    open={this.props.fileMenuOpen}
-                                    onOpen={this.props.onClickFile}
-                                    onClose={this.props.onRequestCloseFile}
+                                <mdui-dropdown
+                                    ref={this.fileDropdownRef}
+                                    placement={this.props.isRtl ? 'bottom-end' : 'bottom-start'}
                                 >
-                                    <img
-                                        src={fileIcon}
-                                        draggable={false}
-                                        width={20}
-                                        height={20}
-                                    />
-                                    <span className={styles.collapsibleLabel}>
-                                        <FormattedMessage
-                                            defaultMessage="文件"
-                                            description="Text for file dropdown menu"
-                                            id="gui.menuBar.file"
-                                        />
-                                    </span>
-                                    <img
-                                        src={dropdownCaret}
-                                        draggable={false}
-                                        width={8}
-                                        height={5}
-                                    />
-                                    <MenuBarMenu
-                                        className={classNames(styles.menuBarMenu)}
-                                        open={this.props.fileMenuOpen}
-                                        place={this.props.isRtl ? 'left' : 'right'}
+                                    <mdui-button
+                                        slot="trigger"
+                                        variant="text"
+                                        icon="folder_open"
+                                        className={styles.menuBarItem}
                                     >
-                                        <MenuItem
-                                            isRtl={this.props.isRtl}
+                                        <span className={styles.collapsibleLabel}>
+                                            <FormattedMessage
+                                                defaultMessage="文件"
+                                                description="Text for file dropdown menu"
+                                                id="gui.menuBar.file"
+                                            />
+                                        </span>
+                                    </mdui-button>
+                                    <mdui-menu>
+                                        <mdui-menu-item
                                             onClick={this.handleClickNew}
                                         >
                                             {newProjectMessage}
-                                        </MenuItem>
+                                        </mdui-menu-item>
                                         {this.props.onClickNewWindow && (
-                                            <MenuItem
-                                                isRtl={this.props.isRtl}
+                                            <mdui-menu-item
                                                 onClick={this.handleClickNewWindow}
                                             >
                                                 <FormattedMessage
@@ -659,92 +707,92 @@ class MenuBar extends React.Component {
                                                     description="Part of desktop app. Menu bar item that creates a new window."
                                                     id="tw.menuBar.newWindow"
                                                 />
-                                            </MenuItem>
+                                            </mdui-menu-item>
                                         )}
                                         {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && (
-                                            <MenuSection>
+                                            <React.Fragment>
                                                 {this.props.canSave && (
-                                                    <MenuItem onClick={this.handleClickSave}>
+                                                    <mdui-menu-item onClick={this.handleClickSave}>
                                                         {saveNowMessage}
-                                                    </MenuItem>
+                                                    </mdui-menu-item>
                                                 )}
                                                 {this.props.canCreateCopy && (
-                                                    <MenuItem onClick={this.handleClickSaveAsCopy}>
+                                                    <mdui-menu-item onClick={this.handleClickSaveAsCopy}>
                                                         {createCopyMessage}
-                                                    </MenuItem>
+                                                    </mdui-menu-item>
                                                 )}
                                                 {this.props.canRemix && (
-                                                    <MenuItem onClick={this.handleClickRemix}>
+                                                    <mdui-menu-item onClick={this.handleClickRemix}>
                                                         {remixMessage}
-                                                    </MenuItem>
+                                                    </mdui-menu-item>
                                                 )}
-                                            </MenuSection>
+                                                <mdui-divider />
+                                            </React.Fragment>
                                         )}
-                                        <MenuSection>
-                                            <MenuItem
-                                                onClick={this.props.onStartSelectingFileUpload}
-                                            >
-                                                {this.props.intl.formatMessage(sharedMessages.loadFromComputerTitle)}
-                                            </MenuItem>
-                                            <SB3Downloader
-                                                showSaveFilePicker={this.props.showSaveFilePicker}
-                                            >
-                                                {(_className, downloadProject, extended) => (
-                                                    <React.Fragment>
-                                                        {extended.available && (
-                                                            <React.Fragment>
-                                                                {extended.name !== null && (
-                                                                // eslint-disable-next-line max-len
-                                                                    <MenuItem onClick={this.getSaveToComputerHandler(extended.saveToLastFile)}>
-                                                                        <FormattedMessage
-                                                                            defaultMessage="保存到 {file}"
-                                                                            // eslint-disable-next-line max-len
-                                                                            description="Menu bar item to save project to an existing file on the user's computer"
-                                                                            id="tw.saveTo"
-                                                                            values={{
-                                                                                file: extended.name
-                                                                            }}
-                                                                        />
-                                                                    </MenuItem>
-                                                                )}
-                                                                {/* eslint-disable-next-line max-len */}
-                                                                <MenuItem onClick={this.getSaveToComputerHandler(extended.saveAsNew)}>
+                                        <mdui-menu-item
+                                            onClick={this.props.onStartSelectingFileUpload}
+                                        >
+                                            {this.props.intl.formatMessage(sharedMessages.loadFromComputerTitle)}
+                                        </mdui-menu-item>
+                                        <SB3Downloader
+                                            showSaveFilePicker={this.props.showSaveFilePicker}
+                                        >
+                                            {(_className, downloadProject, extended) => (
+                                                <React.Fragment>
+                                                    {extended.available && (
+                                                        <React.Fragment>
+                                                            {extended.name !== null && (
+                                                            // eslint-disable-next-line max-len
+                                                                <mdui-menu-item onClick={this.getSaveToComputerHandler(extended.saveToLastFile)}>
                                                                     <FormattedMessage
-                                                                        defaultMessage="另存为..."
+                                                                        defaultMessage="保存到 {file}"
                                                                         // eslint-disable-next-line max-len
-                                                                        description="Menu bar item to select a new file to save the project as"
-                                                                        id="tw.saveAs"
+                                                                        description="Menu bar item to save project to an existing file on the user's computer"
+                                                                        id="tw.saveTo"
+                                                                        values={{
+                                                                            file: extended.name
+                                                                        }}
                                                                     />
-                                                                </MenuItem>
-                                                            </React.Fragment>
-                                                        )}
-                                                        {notScratchDesktop() && (
-                                                            <MenuItem
-                                                                onClick={this.getSaveToComputerHandler(downloadProject)}
-                                                            >
-                                                                {extended.available ? (
-                                                                    <FormattedMessage
-                                                                        defaultMessage="保存到单独文件..."
-                                                                        // eslint-disable-next-line max-len
-                                                                        description="Download the project once, without being able to easily save to the same spot"
-                                                                        id="tw.oldDownload"
-                                                                    />
-                                                                ) : (
-                                                                    <FormattedMessage
-                                                                        defaultMessage="保存到电脑"
-                                                                        description="Menu bar item for downloading a project to your computer" // eslint-disable-line max-len
-                                                                        id="gui.menuBar.downloadToComputer"
-                                                                    />
-                                                                )}
-                                                            </MenuItem>
-                                                        )}
-                                                    </React.Fragment>
-                                                )}
-                                            </SB3Downloader>
-                                        </MenuSection>
+                                                                </mdui-menu-item>
+                                                            )}
+                                                            {/* eslint-disable-next-line max-len */}
+                                                            <mdui-menu-item onClick={this.getSaveToComputerHandler(extended.saveAsNew)}>
+                                                                <FormattedMessage
+                                                                    defaultMessage="另存为..."
+                                                                    // eslint-disable-next-line max-len
+                                                                    description="Menu bar item to select a new file to save the project as"
+                                                                    id="tw.saveAs"
+                                                                />
+                                                            </mdui-menu-item>
+                                                        </React.Fragment>
+                                                    )}
+                                                    {notScratchDesktop() && (
+                                                        <mdui-menu-item
+                                                            onClick={this.getSaveToComputerHandler(downloadProject)}
+                                                        >
+                                                            {extended.available ? (
+                                                                <FormattedMessage
+                                                                    defaultMessage="保存到单独文件..."
+                                                                    // eslint-disable-next-line max-len
+                                                                    description="Download the project once, without being able to easily save to the same spot"
+                                                                    id="tw.oldDownload"
+                                                                />
+                                                            ) : (
+                                                                <FormattedMessage
+                                                                    defaultMessage="保存到电脑"
+                                                                    description="Menu bar item for downloading a project to your computer" // eslint-disable-line max-len
+                                                                    id="gui.menuBar.downloadToComputer"
+                                                                />
+                                                            )}
+                                                        </mdui-menu-item>
+                                                    )}
+                                                </React.Fragment>
+                                            )}
+                                        </SB3Downloader>
                                         {this.props.onClickPackager && (
-                                            <MenuSection>
-                                                <MenuItem
+                                            <React.Fragment>
+                                                <mdui-divider />
+                                                <mdui-menu-item
                                                     onClick={this.handleClickPackager}
                                                 >
                                                     <FormattedMessage
@@ -753,201 +801,183 @@ class MenuBar extends React.Component {
                                                         description="Menu bar item to open the current project in the packager"
                                                         id="tw.menuBar.package"
                                                     />
-                                                </MenuItem>
-                                            </MenuSection>
+                                                </mdui-menu-item>
+                                            </React.Fragment>
                                         )}
-                                        <MenuSection>
-                                            <MenuItem onClick={this.handleClickRestorePoints}>
-                                                <FormattedMessage
-                                                    defaultMessage="恢复点"
-                                                    description="Menu bar item to manage restore points"
-                                                    id="tw.menuBar.restorePoints"
-                                                />
-                                            </MenuItem>
-                                        </MenuSection>
-                                    </MenuBarMenu>
-                                </MenuLabel>
+                                        <mdui-divider />
+                                        <mdui-menu-item onClick={this.handleClickRestorePoints}>
+                                            <FormattedMessage
+                                                defaultMessage="恢复点"
+                                                description="Menu bar item to manage restore points"
+                                                id="tw.menuBar.restorePoints"
+                                            />
+                                        </mdui-menu-item>
+                                    </mdui-menu>
+                                </mdui-dropdown>
                             )}
-                            <MenuLabel
-                                open={this.props.editMenuOpen}
-                                onOpen={this.props.onClickEdit}
-                                onClose={this.props.onRequestCloseEdit}
+                            <mdui-dropdown
+                                ref={this.editDropdownRef}
+                                placement={this.props.isRtl ? 'bottom-end' : 'bottom-start'}
                             >
-                                <img
-                                    src={editIcon}
-                                    draggable={false}
-                                    width={20}
-                                    height={20}
-                                />
-                                <span className={styles.collapsibleLabel}>
-                                    <FormattedMessage
-                                        defaultMessage="编辑"
-                                        description="Text for edit dropdown menu"
-                                        id="gui.menuBar.edit"
-                                    />
-                                </span>
-                                <img
-                                    src={dropdownCaret}
-                                    draggable={false}
-                                    width={8}
-                                    height={5}
-                                />
-                                <MenuBarMenu
-                                    className={classNames(styles.menuBarMenu)}
-                                    open={this.props.editMenuOpen}
-                                    place={this.props.isRtl ? 'left' : 'right'}
+                                <mdui-button
+                                    slot="trigger"
+                                    variant="text"
+                                    icon="edit"
+                                    className={styles.menuBarItem}
                                 >
+                                    <span className={styles.collapsibleLabel}>
+                                        <FormattedMessage
+                                            defaultMessage="编辑"
+                                            description="Text for edit dropdown menu"
+                                            id="gui.menuBar.edit"
+                                        />
+                                    </span>
+                                </mdui-button>
+                                <mdui-menu>
                                     {this.props.isPlayerOnly ? null : (
                                         <DeletionRestorer>{(handleRestore, {restorable, deletedItem}) => (
-                                            <MenuItem
+                                            <mdui-menu-item
                                                 className={classNames({[styles.disabled]: !restorable})}
                                                 onClick={this.handleRestoreOption(handleRestore)}
                                             >
                                                 {this.restoreOptionMessage(deletedItem)}
-                                            </MenuItem>
+                                            </mdui-menu-item>
                                         )}</DeletionRestorer>
                                     )}
-                                    <MenuSection>
-                                        <TurboMode>{(toggleTurboMode, {turboMode}) => (
-                                            <MenuItem onClick={toggleTurboMode}>
-                                                {turboMode ? (
-                                                    <FormattedMessage
-                                                        defaultMessage="关闭加速模式"
-                                                        description="Menu bar item for turning off turbo mode"
-                                                        id="gui.menuBar.turboModeOff"
-                                                    />
-                                                ) : (
-                                                    <FormattedMessage
-                                                        defaultMessage="开启加速模式"
-                                                        description="Menu bar item for turning on turbo mode"
-                                                        id="gui.menuBar.turboModeOn"
-                                                    />
-                                                )}
-                                            </MenuItem>
-                                        )}</TurboMode>
-                                        <FramerateChanger>{(changeFramerate, {framerate}) => (
-                                            <MenuItem onClick={changeFramerate}>
-                                                {framerate === 60 ? (
-                                                    <FormattedMessage
-                                                        defaultMessage="关闭60帧模式"
-                                                        description="Menu bar item for turning off 60 FPS mode"
-                                                        id="tw.menuBar.60off"
-                                                    />
-                                                ) : (
-                                                    <FormattedMessage
-                                                        defaultMessage="开启60帧模式"
-                                                        description="Menu bar item for turning on 60 FPS mode"
-                                                        id="tw.menuBar.60on"
-                                                    />
-                                                )}
-                                            </MenuItem>
-                                        )}</FramerateChanger>
-                                        <ChangeUsername>{changeUsername => (
-                                            <MenuItem onClick={changeUsername}>
+                                    <mdui-divider />
+                                    <TurboMode>{(toggleTurboMode, {turboMode}) => (
+                                        <mdui-menu-item onClick={toggleTurboMode}>
+                                            {turboMode ? (
                                                 <FormattedMessage
-                                                    defaultMessage="修改用户名"
-                                                    description="Menu bar item for changing the username"
-                                                    id="tw.menuBar.changeUsername"
+                                                    defaultMessage="关闭加速模式"
+                                                    description="Menu bar item for turning off turbo mode"
+                                                    id="gui.menuBar.turboModeOff"
                                                 />
-                                            </MenuItem>
-                                        )}</ChangeUsername>
-                                        {/* eslint-disable-next-line max-len */}
-                                        <CloudVariablesToggler>{(toggleCloudVariables, {enabled, canUseCloudVariables}) => (
-                                            <MenuItem
-                                                className={classNames({[styles.disabled]: !canUseCloudVariables})}
-                                                onClick={toggleCloudVariables}
-                                            >
-                                                {canUseCloudVariables ? (
-                                                    enabled ? (
-                                                        <FormattedMessage
-                                                            defaultMessage="禁用云变量"
-                                                            description="Menu bar item for disabling cloud variables"
-                                                            id="tw.menuBar.cloudOff"
-                                                        />
-                                                    ) : (
-                                                        <FormattedMessage
-                                                            defaultMessage="启用云变量"
-                                                            description="Menu bar item for enabling cloud variables"
-                                                            id="tw.menuBar.cloudOn"
-                                                        />
-                                                    )
-                                                ) : (
-                                                    <FormattedMessage
-                                                        defaultMessage="云变量不可用"
-                                                        // eslint-disable-next-line max-len
-                                                        description="Menu bar item for when cloud variables are not available"
-                                                        id="tw.menuBar.cloudUnavailable"
-                                                    />
-                                                )}
-                                            </MenuItem>
-                                        )}</CloudVariablesToggler>
-                                    </MenuSection>
-                                    <MenuSection>
-                                        <MenuItem onClick={this.props.onClickSettingsModal}>
+                                            ) : (
+                                                <FormattedMessage
+                                                    defaultMessage="开启加速模式"
+                                                    description="Menu bar item for turning on turbo mode"
+                                                    id="gui.menuBar.turboModeOn"
+                                                />
+                                            )}
+                                        </mdui-menu-item>
+                                    )}</TurboMode>
+                                    <FramerateChanger>{(changeFramerate, {framerate}) => (
+                                        <mdui-menu-item onClick={changeFramerate}>
+                                            {framerate === 60 ? (
+                                                <FormattedMessage
+                                                    defaultMessage="关闭60帧模式"
+                                                    description="Menu bar item for turning off 60 FPS mode"
+                                                    id="tw.menuBar.60off"
+                                                />
+                                            ) : (
+                                                <FormattedMessage
+                                                    defaultMessage="开启60帧模式"
+                                                    description="Menu bar item for turning on 60 FPS mode"
+                                                    id="tw.menuBar.60on"
+                                                />
+                                            )}
+                                        </mdui-menu-item>
+                                    )}</FramerateChanger>
+                                    <ChangeUsername>{changeUsername => (
+                                        <mdui-menu-item onClick={changeUsername}>
                                             <FormattedMessage
-                                                defaultMessage="高级设置"
-                                                description="Menu bar item for advanced settings"
-                                                id="tw.menuBar.moreSettings"
+                                                defaultMessage="修改用户名"
+                                                description="Menu bar item for changing the username"
+                                                id="tw.menuBar.changeUsername"
                                             />
-                                        </MenuItem>
-                                    </MenuSection>
-                                </MenuBarMenu>
-                            </MenuLabel>
+                                        </mdui-menu-item>
+                                    )}</ChangeUsername>
+                                    {/* eslint-disable-next-line max-len */}
+                                    <CloudVariablesToggler>{(toggleCloudVariables, {enabled, canUseCloudVariables}) => (
+                                        <mdui-menu-item
+                                            className={classNames({[styles.disabled]: !canUseCloudVariables})}
+                                            onClick={toggleCloudVariables}
+                                        >
+                                            {canUseCloudVariables ? (
+                                                enabled ? (
+                                                    <FormattedMessage
+                                                        defaultMessage="禁用云变量"
+                                                        description="Menu bar item for disabling cloud variables"
+                                                        id="tw.menuBar.cloudOff"
+                                                    />
+                                                ) : (
+                                                    <FormattedMessage
+                                                        defaultMessage="启用云变量"
+                                                        description="Menu bar item for enabling cloud variables"
+                                                        id="tw.menuBar.cloudOn"
+                                                    />
+                                                )
+                                            ) : (
+                                                <FormattedMessage
+                                                    defaultMessage="云变量不可用"
+                                                    // eslint-disable-next-line max-len
+                                                    description="Menu bar item for when cloud variables are not available"
+                                                    id="tw.menuBar.cloudUnavailable"
+                                                />
+                                            )}
+                                        </mdui-menu-item>
+                                    )}</CloudVariablesToggler>
+                                    <mdui-divider />
+                                    <mdui-menu-item onClick={this.props.onClickSettingsModal}>
+                                        <FormattedMessage
+                                            defaultMessage="高级设置"
+                                            description="Menu bar item for advanced settings"
+                                            id="tw.menuBar.moreSettings"
+                                        />
+                                    </mdui-menu-item>
+                                </mdui-menu>
+                            </mdui-dropdown>
                             {this.props.isTotallyNormal && (
-                                <MenuLabel
-                                    open={this.props.modeMenuOpen}
-                                    onOpen={this.props.onClickMode}
-                                    onClose={this.props.onRequestCloseMode}
+                                <mdui-dropdown
+                                    ref={this.modeDropdownRef}
+                                    placement={this.props.isRtl ? 'bottom-end' : 'bottom-start'}
                                 >
-                                    <FormattedMessage
-                                        defaultMessage="模式"
-                                        description="Mode menu item in the menu bar"
-                                        id="gui.menuBar.modeMenu"
-                                    />
-                                    <MenuBarMenu
-                                        className={classNames(styles.menuBarMenu)}
-                                        open={this.props.modeMenuOpen}
-                                        place={this.props.isRtl ? 'left' : 'right'}
+                                    <mdui-button
+                                        slot="trigger"
+                                        variant="text"
+                                        className={styles.menuBarItem}
                                     >
-                                        <MenuSection>
-                                            <MenuItem onClick={this.handleSetMode('NOW')}>
-                                                <span className={classNames({[styles.inactive]: !this.props.modeNow})}>
-                                                    {'✓'}
-                                                </span>
-                                                {' '}
-                                                <FormattedMessage
-                                                    defaultMessage="普通模式"
-                                                    description="April fools: resets editor to not have any pranks"
-                                                    id="gui.menuBar.normalMode"
-                                                />
-                                            </MenuItem>
-                                            <MenuItem onClick={this.handleSetMode('2020')}>
-                                                <span className={classNames({[styles.inactive]: !this.props.mode2020})}>
-                                                    {'✓'}
-                                                </span>
-                                                {' '}
-                                                <FormattedMessage
-                                                    defaultMessage="猫咪模式"
-                                                    description="April fools: Cat blocks mode"
-                                                    id="gui.menuBar.caturdayMode"
-                                                />
-                                            </MenuItem>
-                                        </MenuSection>
-                                    </MenuBarMenu>
-                                </MenuLabel>
+                                        <FormattedMessage
+                                            defaultMessage="模式"
+                                            description="Mode menu item in the menu bar"
+                                            id="gui.menuBar.modeMenu"
+                                        />
+                                    </mdui-button>
+                                    <mdui-menu>
+                                        <mdui-menu-item onClick={this.handleSetMode('NOW')}>
+                                            <span className={classNames({[styles.inactive]: !this.props.modeNow})}>
+                                                {'✓'}
+                                            </span>
+                                            {' '}
+                                            <FormattedMessage
+                                                defaultMessage="普通模式"
+                                                description="April fools: resets editor to not have any pranks"
+                                                id="gui.menuBar.normalMode"
+                                            />
+                                        </mdui-menu-item>
+                                        <mdui-menu-item onClick={this.handleSetMode('2020')}>
+                                            <span className={classNames({[styles.inactive]: !this.props.mode2020})}>
+                                                {'✓'}
+                                            </span>
+                                            {' '}
+                                            <FormattedMessage
+                                                defaultMessage="猫咪模式"
+                                                description="April fools: Cat blocks mode"
+                                                id="gui.menuBar.caturdayMode"
+                                            />
+                                        </mdui-menu-item>
+                                    </mdui-menu>
+                                </mdui-dropdown>
                             )}
 
                             {this.props.onClickAddonSettings && (
-                                <div
-                                    className={classNames(styles.menuBarItem, styles.hoverable)}
+                                <mdui-button
+                                    variant="text"
+                                    icon="extension"
+                                    className={styles.menuBarItem}
                                     onClick={this.props.onClickAddonSettings}
                                 >
-                                    <img
-                                        src={addonsIcon}
-                                        draggable={false}
-                                        width={20}
-                                        height={20}
-                                    />
                                     <span className={styles.collapsibleLabel}>
                                         <FormattedMessage
                                             defaultMessage="插件"
@@ -955,19 +985,15 @@ class MenuBar extends React.Component {
                                             id="tw.menuBar.addons"
                                         />
                                     </span>
-                                </div>
+                                </mdui-button>
                             )}
                             {this.props.onClickSettingsModal && (
-                                <div
-                                    className={classNames(styles.menuBarItem, styles.hoverable)}
+                                <mdui-button
+                                    variant="text"
+                                    icon="tune"
+                                    className={styles.menuBarItem}
                                     onClick={this.props.onClickSettingsModal}
                                 >
-                                    <img
-                                        src={advancedIcon}
-                                        draggable={false}
-                                        width={20}
-                                        height={20}
-                                    />
                                     <span className={styles.collapsibleLabel}>
                                         <FormattedMessage
                                             defaultMessage="高级"
@@ -975,7 +1001,7 @@ class MenuBar extends React.Component {
                                             id="tw.menuBar.advanced"
                                         />
                                     </span>
-                                </div>
+                                </mdui-button>
                             )}
                         </div>
 
@@ -1065,7 +1091,7 @@ class MenuBar extends React.Component {
                         </div>
                         {/* tw: add a feedback button */}
                         <div className={styles.menuBarItem}>
-                            <Button
+                            <mdui-button
                                 className={styles.feedbackButton}
                                 onClick={this.props.onClickFeedback}
                             >
@@ -1077,7 +1103,7 @@ class MenuBar extends React.Component {
                                         APP_NAME
                                     }}
                                 />
-                            </Button>
+                            </mdui-button>
                         </div>
 
                     </div>

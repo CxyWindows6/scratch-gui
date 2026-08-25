@@ -18,19 +18,18 @@ $more-button-size: 2.25rem;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: $looks-secondary;
-    outline: none;
-    border: none;
     transition: background-color 0.2s;
 }
 
-button::-moz-focus-inner {
-    border: 0;
+/* mdui-icon-button size: the main button is a bit larger than the default */
+.button::part(button) {
+    width: $more-button-size;
+    height: $more-button-size;
 }
 
 .button:hover {
-    background: $extensions-primary;
+    /* MD3 hover state */
+    background-color: rgba(var(--mdui-color-on-surface, 255, 255, 255), 0.08);
 }
 
 .button:active {
@@ -38,21 +37,26 @@ button::-moz-focus-inner {
 }
 
 .button.coming-soon:hover {
-    background: $data-primary;
+    opacity: 0.5;
 }
 
 .main-button {
     border-radius: 100%;
     width: $main-button-size;
     height: $main-button-size;
-    box-shadow: 0 0 0 4px $looks-transparent;
+    box-shadow: 0 0 0 4px rgba(var(--mdui-color-on-surface, 255, 255, 255), 0.2);
     z-index: $z-index-add-button;
     transition: transform, box-shadow 0.5s;
 }
 
+.main-button::part(button) {
+    width: $main-button-size;
+    height: $main-button-size;
+}
+
 .main-button:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 0 6px $looks-transparent;
+  box-shadow: 0 0 0 6px rgba(var(--mdui-color-on-surface, 255, 255, 255), 0.2);
 }
 
 .main-icon {
@@ -72,7 +76,8 @@ button::-moz-focus-inner {
     */
     overflow-y: hidden;
 
-    background: $looks-secondary-dark;
+    /* MD3 surface for the stacked action buttons */
+    background: rgb(var(--mdui-color-surface-container-low, 247, 242, 250));
     border-top-left-radius: $more-button-size;
     border-top-right-radius: $more-button-size;
     width: $more-button-size;
@@ -115,7 +120,6 @@ button::-moz-focus-inner {
 .more-button {
     width: $more-button-size;
     height: $more-button-size;
-    background: $looks-secondary-dark;
 }
 
 .more-icon {
@@ -134,30 +138,30 @@ button::-moz-focus-inner {
 */
 .tooltip {
     background-color: $extensions-primary !important;
+    background-color: rgb(var(--mdui-color-inverse-surface, 49, 48, 51)) !important;
+    color: rgb(var(--mdui-color-inverse-on-surface, 244, 239, 244)) !important;
     opacity: 1 !important;
-    border: 1px solid hsla(0, 0%, 0%, .1) !important;
-    box-shadow: 0 0 .5rem hsla(0, 0%, 0%, .25) !important;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    border: 1px solid rgba(var(--mdui-color-outline-variant, 202, 196, 208), 0.2) !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.25) !important;
+    font-family: Roboto, system-ui, "Noto Sans", sans-serif !important;
+    z-index: $z-index-tooltip !important;
 }
 
 .tooltip:after {
     background-color: $extensions-primary;
+    background-color: rgb(var(--mdui-color-inverse-surface, 49, 48, 51));
 }
 
 .coming-soon-tooltip {
     background-color: $data-primary !important;
+    background-color: rgb(var(--mdui-color-inverse-surface, 49, 48, 51)) !important;
+    color: rgb(var(--mdui-color-inverse-on-surface, 244, 239, 244)) !important;
 }
 
 .coming-soon-tooltip:after {
     background-color: $data-primary !important;
-}
-
-.tooltip {
-    border: 1px solid hsla(0, 0%, 0%, .1) !important;
-    border-radius: $form-radius !important;
-    box-shadow: 0 0 .5rem hsla(0, 0%, 0%, .25) !important;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-    z-index: $z-index-tooltip !important;
+    background-color: rgb(var(--mdui-color-inverse-surface, 49, 48, 51)) !important;
 }
 
 $arrow-size: 0.5rem;

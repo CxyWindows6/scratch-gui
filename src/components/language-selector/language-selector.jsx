@@ -2,13 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import locales from '@turbowarp/scratch-l10n';
+import {MduiSelect, MduiMenuItem} from '../../lib/mdui';
 import styles from './language-selector.css';
 
 // Only keep English, Simplified Chinese and Traditional Chinese
 const supportedLocales = ['en', 'zh-cn', 'zh-tw'];
 
 const LanguageSelector = ({currentLocale, label, onChange}) => (
-    <select
+    <MduiSelect
         aria-label={label}
         className={styles.languageSelect}
         value={currentLocale}
@@ -18,15 +19,15 @@ const LanguageSelector = ({currentLocale, label, onChange}) => (
             Object.keys(locales)
                 .filter(l => supportedLocales.includes(l))
                 .map(locale => (
-                    <option
+                    <MduiMenuItem
                         key={locale}
                         value={locale}
                     >
                         {locales[locale].name}
-                    </option>
+                    </MduiMenuItem>
                 ))
         }
-    </select>
+    </MduiSelect>
 );
 
 LanguageSelector.propTypes = {

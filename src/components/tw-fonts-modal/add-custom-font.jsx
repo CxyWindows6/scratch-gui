@@ -8,12 +8,18 @@ import FontName from './font-name.jsx';
 import FontPlayground from './font-playground.jsx';
 import FontFallback from './font-fallback.jsx';
 import AddButton from './add-button.jsx';
+import {MduiButton} from '../../lib/mdui';
 
 const messages = defineMessages({
     error: {
         defaultMessage: 'Failed to read font file: {error}',
         description: 'Part of font management modal. Appears when a font from a local file could not be read.',
         id: 'tw.fonts.readError'
+    },
+    chooseFile: {
+        defaultMessage: 'Choose a font file…',
+        description: 'Part of font management modal. Button that opens the file picker.',
+        id: 'tw.fonts.chooseFile'
     }
 });
 
@@ -50,7 +56,9 @@ class AddCustomFont extends React.Component {
             'handleChangeFile',
             'handleChangeName',
             'handleChangeFallback',
-            'handleFinish'
+            'handleFinish',
+            'handleChooseFile',
+            'fileInputRef'
         ]);
         this.state = {
             file: null,
@@ -129,6 +137,14 @@ class AddCustomFont extends React.Component {
         fr.readAsArrayBuffer(this.state.file);
     }
 
+    handleChooseFile () {
+        this.fileInput.click();
+    }
+
+    fileInputRef (input) {
+        this.fileInput = input;
+    }
+
     render () {
         return (
             <React.Fragment>
@@ -146,7 +162,16 @@ class AddCustomFont extends React.Component {
                     className={styles.fileInput}
                     accept={FONT_FORMATS.map(ext => `.${ext}`).join(',')}
                     readOnly={this.state.loading}
+                    ref={this.fileInputRef}
                 />
+
+                <MduiButton
+                    variant="outlined"
+                    onClick={this.handleChooseFile}
+                    disabled={this.state.loading}
+                >
+                    {this.state.file ? this.state.file.name : this.props.intl.formatMessage(messages.chooseFile)}
+                </MduiButton>
 
                 {this.state.file && (
                     <React.Fragment>

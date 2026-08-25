@@ -52,6 +52,14 @@ import codeIcon from '!../../lib/tw-recolor/build!./icon--code.svg';
 import costumesIcon from '!../../lib/tw-recolor/build!./icon--costumes.svg';
 import soundsIcon from '!../../lib/tw-recolor/build!./icon--sounds.svg';
 
+// Surge Editor: mdui (Material Design 3 / Web Components) global styles & component registration
+import '../../lib/mdui-bootstrap';
+// Surge Editor: mdui theme system (dynamic color scheme + light/dark mode), must load after mdui.css
+import '../../lib/mdui-theme/overrides.css';
+import {initSurgeTheme} from '../../lib/mdui-theme';
+
+initSurgeTheme();
+
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',

@@ -2,26 +2,40 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 
-import styles from './input.css';
+import {MduiTextField} from '../../lib/mdui';
 
+// Surge Editor: the project-wide text input is now an mdui (MD3) outlined
+// text field. The props contract is unchanged; callers pass `onChange` with
+// React semantics (fires on every keystroke), which is mapped to mdui's
+// `input` event (mdui's `change` event only fires on blur).
 const Input = props => {
-    const {small, ...componentProps} = props;
+    const {
+        small,
+        className,
+        onChange,
+        label,
+        ...componentProps
+    } = props;
     return (
-        <input
+        <MduiTextField
+            variant="outlined"
             {...componentProps}
-            className={classNames(
-                styles.inputForm,
-                props.className,
-                {
-                    [styles.inputSmall]: small
-                }
-            )}
+            onInput={onChange}
+            // mdui's label attribute must be a string; callers sometimes pass
+            // a React element (rendered by the surrounding <Label> component),
+            // which must not be serialized to an attribute.
+            label={typeof label === 'string' ? label : null}
+            className={classNames(className, {
+                'mdui-text-field-dense': small
+            })}
         />
     );
 };
 
 Input.propTypes = {
     className: PropTypes.string,
+    label: PropTypes.node,
+    onChange: PropTypes.func,
     small: PropTypes.bool
 };
 

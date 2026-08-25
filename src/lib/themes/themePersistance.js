@@ -13,9 +13,9 @@ const systemPreferencesTheme = () => {
     if (PREFERS_HIGH_CONTRAST_QUERY && PREFERS_HIGH_CONTRAST_QUERY.matches) {
         return Theme.highContrast;
     }
-    if (PREFERS_DARK_QUERY && PREFERS_DARK_QUERY.matches) {
-        return Theme.dark;
-    }
+    // Surge Editor (mdui): the GUI theme layer was retired — light/dark mode
+    // belongs to mdui (which follows the system preference itself), so the
+    // scratch theme only reacts to the contrast preference.
     return Theme.light;
 };
 
@@ -52,11 +52,9 @@ const detectTheme = () => {
     try {
         const local = localStorage.getItem(STORAGE_KEY);
 
-        // Migrate legacy preferences
-        if (local === 'dark') {
-            return Theme.dark;
-        }
-        if (local === 'light') {
+        // Migrate legacy preferences (pre-mdui values only carried a GUI
+        // theme, which is now handled by mdui itself)
+        if (local === 'dark' || local === 'light') {
             return Theme.light;
         }
 
@@ -64,7 +62,6 @@ const detectTheme = () => {
         // Any invalid values in storage will be handled by Theme itself
         return new Theme(
             parsed.accent || systemPreferences.accent,
-            parsed.gui || systemPreferences.gui,
             parsed.blocks || systemPreferences.blocks
         );
     } catch (e) {
@@ -83,9 +80,6 @@ const persistTheme = theme => {
 
     if (theme.accent !== systemPreferences.accent) {
         nonDefaultSettings.accent = theme.accent;
-    }
-    if (theme.gui !== systemPreferences.gui) {
-        nonDefaultSettings.gui = theme.gui;
     }
     // custom blocks are managed by addon at runtime, don't save here
     if (theme.blocks !== systemPreferences.blocks && theme.blocks !== BLOCKS_CUSTOM) {
