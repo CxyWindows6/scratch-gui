@@ -19,17 +19,6 @@ const ModalComponent = props => (
         className={classNames(styles.modalContent, props.className, {
             [styles.fullScreen]: props.fullScreen
         })}
-        ref={instance => {
-            // Wrapper does not forward ref; access the underlying
-            // mdui-dialog element via its internal elementRef to set
-            // camelCase-to-kebab properties that the wrapper cannot set
-            // as attributes (closeOnEsc, closeOnOverlayClick).
-            if (instance && instance.elementRef && instance.elementRef.current) {
-                const el = instance.elementRef.current;
-                el.closeOnEsc = true;
-                el.closeOnOverlayClick = true;
-            }
-        }}
     >
         <Box
             dir={props.isRtl ? 'rtl' : 'ltr'}
@@ -80,7 +69,7 @@ const ModalComponent = props => (
                     {props.fullScreen ? (
                         <MduiButton
                             variant="text"
-                            icon="arrow-back"
+                            icon="arrow_back"
                             onClick={props.onRequestClose}
                         >
                             <FormattedMessage

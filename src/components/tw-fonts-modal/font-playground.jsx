@@ -28,7 +28,6 @@ class FontPlayground extends React.Component {
         return (
             <MduiTextField
                 variant="outlined"
-                multiline
                 rows={4}
                 className={styles.fontPlayground}
                 value={this.state.value}

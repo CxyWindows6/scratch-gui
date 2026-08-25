@@ -116,9 +116,16 @@ class Theme {
     }
 
     // The GUI theme layer is gone: dark mode now belongs to mdui, which
-    // applies the `mdui-theme-dark` class on <html>.
+    // applies the `mdui-theme-dark` class (or `mdui-theme-auto` matching system) on <html>.
     isDark () {
-        return document.documentElement.classList.contains('mdui-theme-dark');
+        if (typeof document === 'undefined') return false;
+        const doc = document.documentElement;
+        if (doc.classList.contains('mdui-theme-dark')) return true;
+        if (doc.classList.contains('mdui-theme-light')) return false;
+        // Auto mode: check system preference
+        return typeof window !== 'undefined' &&
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
 
     getStageBlockColors () {

@@ -24,6 +24,7 @@ const ButtonComponent = ({
 
     const icon = iconSrc && (
         <img
+            slot="icon"
             className={iconClassName}
             draggable={false}
             src={iconSrc}

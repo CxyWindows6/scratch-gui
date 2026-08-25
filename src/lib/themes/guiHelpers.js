@@ -42,6 +42,16 @@ const mduiColor = (name, alpha, fallback) => {
     return fallback;
 };
 
+const isThemeDark = () => {
+    if (typeof document === 'undefined') return false;
+    const doc = document.documentElement;
+    if (doc.classList.contains('mdui-theme-dark')) return true;
+    if (doc.classList.contains('mdui-theme-light')) return false;
+    return typeof window !== 'undefined' &&
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches;
+};
+
 /**
  * Build the legacy --ui-* color table from the mdui (MD3) design tokens, so
  * the remaining scratch-gui chrome and addons follow the mdui light/dark
@@ -50,7 +60,7 @@ const mduiColor = (name, alpha, fallback) => {
  * @returns {object} gui color table (keys map to --<key> CSS variables)
  */
 const mduiGuiColors = () => {
-    const isDark = document.documentElement.classList.contains('mdui-theme-dark');
+    const isDark = isThemeDark();
     const surface = mduiColor('--mdui-color-surface', null, '#ffffff');
     const onSurface = mduiColor('--mdui-color-on-surface', null, '#1c1b1f');
     const surfaceLow = mduiColor('--mdui-color-surface-container-low', null, surface);
@@ -60,7 +70,6 @@ const mduiGuiColors = () => {
     const onPrimary = mduiColor('--mdui-color-on-primary', null, '#ffffff');
     const outline = mduiColor('--mdui-color-outline', null, '#79747e');
     const outlineVariant = mduiColor('--mdui-color-outline-variant', null, '#cac4d0');
-    const scrim = mduiColor('--mdui-color-scrim', null, '#000000');
 
     return {
         'color-scheme': isDark ? 'dark' : 'light',
@@ -71,7 +80,7 @@ const mduiGuiColors = () => {
         'ui-border': outlineVariant,
         'ui-hover': mduiColor('--mdui-color-primary', 0.12, 'rgba(255, 107, 53, 0.12)'),
 
-        'ui-modal-overlay': `${scrim.replace('rgb(', 'rgba(').replace(')', ', 0.4)')}`,
+        'ui-modal-overlay': mduiColor('--mdui-color-scrim', 0.4, 'rgba(0, 0, 0, 0.4)'),
         'ui-modal-background': surfaceLow,
         'ui-modal-foreground': onSurface,
         'ui-modal-header-background': primary,

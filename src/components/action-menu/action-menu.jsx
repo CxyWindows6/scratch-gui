@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import bindAll from 'lodash.bindall';
 import ReactTooltip from 'react-tooltip';
 
+import {MduiIconButton} from '../../lib/mdui';
 import styles from './action-menu.css';
 
 const CLOSE_DELAY = 300; // ms
@@ -119,7 +120,7 @@ class ActionMenu extends React.Component {
                 onMouseEnter={this.handleToggleOpenState}
                 onMouseLeave={this.handleClosePopover}
             >
-                <mdui-icon-button
+                <MduiIconButton
                     aria-label={mainTitle}
                     variant="filled"
                     className={classNames(styles.button, styles.mainButton)}
@@ -133,7 +134,7 @@ class ActionMenu extends React.Component {
                         draggable={false}
                         src={mainImg}
                     />
-                </mdui-icon-button>
+                </MduiIconButton>
                 <ReactTooltip
                     className={styles.tooltip}
                     effect="solid"
@@ -149,7 +150,7 @@ class ActionMenu extends React.Component {
                             const tooltipId = `${this.mainTooltipId}-${title}`;
                             return (
                                 <div key={`${tooltipId}-${keyId}`}>
-                                    <mdui-icon-button
+                                    <MduiIconButton
                                         aria-label={title}
                                         variant="standard"
                                         className={classNames(styles.button, styles.moreButton, {
@@ -173,7 +174,7 @@ class ActionMenu extends React.Component {
                                                 type="file"
                                                 onChange={fileChange}
                                             />) : null}
-                                    </mdui-icon-button>
+                                    </MduiIconButton>
                                     <ReactTooltip
                                         className={classNames(styles.tooltip, {
                                             [styles.comingSoonTooltip]: isComingSoon

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import bindAll from 'lodash.bindall';
 import styles from './fonts-modal.css';
 import FontDropdownItem from './font-dropdown-item.jsx';
+import {MduiTextField} from '../../lib/mdui';
 
 class FontName extends React.Component {
     constructor (props) {
@@ -121,7 +122,7 @@ class FontName extends React.Component {
         const filteredOptions = this.getFilteredOptions();
         return (
             <div className={styles.fontInputOuter}>
-                <mdui-text-field
+                <MduiTextField
                     {...props}
                     type="text"
                     variant="outlined"
