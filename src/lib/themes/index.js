@@ -25,6 +25,14 @@ const ACCENT_MAP = {
     [ACCENT_RAINBOW]: accentRainbow,
     [ACCENT_ORANGE]: accentOrange
 };
+const ACCENT_SEED_COLORS = {
+    [ACCENT_RED]: '#ff4c4c',
+    [ACCENT_ORANGE]: '#ff6b35',
+    [ACCENT_PURPLE]: '#6750a4',
+    [ACCENT_BLUE]: '#00639b',
+    [ACCENT_GRAY]: '#79747e',
+    [ACCENT_RAINBOW]: '#9c27b0'
+};
 const ACCENT_DEFAULT = ACCENT_RED;
 
 const BLOCKS_THREE = 'three';
@@ -154,6 +162,7 @@ export {
     ACCENT_BLUE,
     ACCENT_RAINBOW,
     ACCENT_ORANGE,
+    ACCENT_SEED_COLORS,
     ACCENT_MAP,
 
     BLOCKS_THREE,

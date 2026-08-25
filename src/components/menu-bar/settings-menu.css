@@ -22,6 +22,21 @@
     font-size: var(--mdui-typescale-label-large-size, 0.875rem);
 }
 
+/* Surge Editor (mdui): inline row icon for submenu headers (e.g. theme mode
+   palette icon). Sized like the Material Symbols header icons. */
+.option-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+}
+
+.option .option-icon mdui-icon {
+    font-size: 1.5rem;
+}
+
 /* Surge Editor (mdui): header icons are Material Symbols font icons — keep
    them at the standard 24px menu icon size so all labels share one
    left-alignment line. */

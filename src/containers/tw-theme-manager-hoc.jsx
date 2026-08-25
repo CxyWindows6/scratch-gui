@@ -18,6 +18,10 @@ const TWThemeManagerHOC = function (WrappedComponent) {
         }
         componentDidMount () {
             this.removeListeners = onSystemPreferenceChange(this.handleSystemThemeChange);
+            this.handleSurgeThemeChanged = () => {
+                applyGuiColors(this.props.reduxTheme);
+            };
+            window.addEventListener('surge-theme-changed', this.handleSurgeThemeChanged);
         }
         componentDidUpdate (prevProps) {
             if (prevProps.reduxTheme !== this.props.reduxTheme) {
@@ -26,6 +30,9 @@ const TWThemeManagerHOC = function (WrappedComponent) {
         }
         componentWillUnmount () {
             this.removeListeners();
+            if (this.handleSurgeThemeChanged) {
+                window.removeEventListener('surge-theme-changed', this.handleSurgeThemeChanged);
+            }
         }
         // Surge Editor (mdui): the GUI theme layer was retired — mdui follows
         // the system preference on its own. Re-run applyGuiColors here so the

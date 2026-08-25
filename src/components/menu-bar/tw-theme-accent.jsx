@@ -5,7 +5,7 @@ import {FormattedMessage, defineMessages} from 'react-intl';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 
-import {ACCENT_BLUE, ACCENT_MAP, ACCENT_ORANGE, ACCENT_PURPLE,
+import {ACCENT_BLUE, ACCENT_GRAY, ACCENT_MAP, ACCENT_ORANGE, ACCENT_PURPLE,
     ACCENT_RED, ACCENT_RAINBOW, Theme} from '../../lib/themes/index.js';
 import {openAccentMenu, closeAccentMenu, accentMenuOpen, closeSettingsMenu} from '../../reducers/menus.js';
 import {setTheme} from '../../reducers/theme.js';
@@ -33,6 +33,11 @@ const options = defineMessages({
         defaultMessage: 'Blue',
         description: 'Name of the blue color scheme. Matches Scratch before the high contrast update.',
         id: 'tw.accent.blue'
+    },
+    [ACCENT_GRAY]: {
+        defaultMessage: 'Gray',
+        description: 'Name of the gray color scheme.',
+        id: 'tw.accent.gray'
     },
     [ACCENT_RAINBOW]: {
         defaultMessage: 'Rainbow',

@@ -6,6 +6,7 @@ import bindAll from 'lodash.bindall';
 import LanguageMenu from './language-menu.jsx';
 import TWAccentThemeMenu from './tw-theme-accent.jsx';
 import TWBlocksThemeMenu from './tw-theme-blocks.jsx';
+import TWSurgeThemeMenu from './tw-surge-theme.jsx';
 import TWDesktopSettings from './tw-desktop-settings.jsx';
 import TWMenuBarAlignmentMenu from './tw-menu-bar-alignment.jsx';
 
@@ -81,6 +82,9 @@ class SettingsMenu extends React.Component {
                     {canChangeLanguage && <LanguageMenu onRequestCloseSettings={this.props.onRequestClose} />}
                     {canChangeTheme && (
                         <React.Fragment>
+                            <TWSurgeThemeMenu
+                                onRequestCloseSettings={this.props.onRequestClose}
+                            />
                             <TWBlocksThemeMenu
                                 onOpenCustomSettings={onOpenCustomSettings}
                             />

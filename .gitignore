@@ -26,3 +26,11 @@ npm-*
 
 # for act
 .secrets
+
+# Local debris
+/logs
+/.playwright-mcp
+/capture-tests.js
+/run-verify.js
+/*.png
+/.dsh

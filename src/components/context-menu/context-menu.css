@@ -1,32 +1,47 @@
-@import "../../css/colors.css";
 @import "../../css/units.css";
 @import "../../css/z-index.css";
 
 .context-menu {
-    min-width: 130px;
-    padding: 5px 0; /* The white strip at the top and bottom of the menu */
-    margin: 2px 0 0; /* To keep the menu below the cursor comfortably */
-    font-size: 0.85rem;
+    min-width: 140px;
+    padding: 6px 0;
+    margin: 2px 0 0;
+    font-size: 0.875rem;
     text-align: left;
-    background-color: $ui-white;
-    border-radius: calc($space / 2);
-    box-shadow: 0px 0px 5px 1px $shadow;
+    background-color: rgb(var(--mdui-color-surface-container, 243, 237, 247));
+    color: rgb(var(--mdui-color-on-surface, 28, 27, 31));
+    border: 1px solid rgb(var(--mdui-color-outline-variant, 202, 196, 208));
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     pointer-events: none;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.15s ease;
     z-index: $z-index-context-menu;
 }
 
 .menu-item {
-    padding: 8px 12px;
+    padding: 8px 16px;
     white-space: nowrap;
     cursor: pointer;
-    transition: 0.1s ease;
-}
-.menu-item:hover {
-    background: $looks-secondary;
-    color: white;
+    color: rgb(var(--mdui-color-on-surface, 28, 27, 31));
+    transition: background-color 0.15s ease, color 0.15s ease;
+    outline: none;
 }
 
-.menu-item-danger:hover {
-    background: $error-primary;
+.menu-item:hover,
+.menu-item:focus {
+    background-color: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
+    color: rgb(var(--mdui-color-on-surface, 28, 27, 31));
+    outline: none;
+}
+
+.menu-item-bordered {
+    border-top: 1px solid rgb(var(--mdui-color-outline-variant, 202, 196, 208));
+    margin-top: 4px;
+    padding-top: 8px;
+}
+
+.menu-item-danger:hover,
+.menu-item-danger:focus {
+    background-color: rgb(var(--mdui-color-error-container, 255, 218, 214));
+    color: rgb(var(--mdui-color-on-error-container, 65, 0, 2));
+    outline: none;
 }

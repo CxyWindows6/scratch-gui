@@ -275,7 +275,7 @@ $fade-out-distance: 15px;
 .menu-bar-position {
     position: relative;
     z-index: $z-index-menu-bar;
-    background-color: $menu-bar-background;
+    background-color: var(--menu-bar-background, rgb(var(--mdui-color-surface-container)));
 }
 
 .menu-bar-position.fullscreenMenuBar {

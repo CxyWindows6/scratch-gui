@@ -40,10 +40,20 @@
     fill: rgb(var(--mdui-color-surface, 254, 247, 255));
 }
 
+.blocks :global(.blocklySvg),
+.blocks :global(.injectionDiv) {
+    background-color: rgb(var(--mdui-color-surface, 254, 247, 255)) !important;
+}
+
+.blocks :global(pattern[id*="GridPattern"] line),
+.blocks :global(pattern[id*="gridPattern"] line) {
+    stroke: rgba(var(--mdui-color-outline-variant, 121, 116, 126), 0.5) !important;
+}
+
 .blocks :global(.blocklyToolboxDiv) {
     box-sizing: content-box;
     height: calc(100% - 3.25rem) !important;
-    background-color: rgb(var(--mdui-color-surface-container, 247, 242, 250)) !important;
+    background-color: rgb(var(--mdui-color-surface-container-low, 247, 242, 250)) !important;
     color: rgb(var(--mdui-color-on-surface, 29, 27, 32));
 
     /*
@@ -53,6 +63,36 @@
         same for Firefox, so a different solution may be needed for them.
     */
     -ms-overflow-style: none;
+}
+
+.blocks :global(.scratchCategoryMenu),
+.blocks :global(.scratchCategoryMenuHorizontal) {
+    background: transparent !important;
+    color: rgb(var(--mdui-color-on-surface, 29, 27, 32)) !important;
+}
+
+.blocks :global(.scratchCategoryMenuRow) {
+    background: transparent !important;
+}
+
+.blocks :global(.scratchCategoryMenuItem) {
+    color: rgb(var(--mdui-color-on-surface-variant, 73, 69, 79)) !important;
+    border-radius: 4px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.blocks :global(.scratchCategoryMenuItem:hover) {
+    background-color: rgb(var(--mdui-color-surface-container-high, 230, 224, 233)) !important;
+    color: rgb(var(--mdui-color-on-surface, 29, 27, 32)) !important;
+}
+
+.blocks :global(.scratchCategoryMenuItem.categorySelected) {
+    background: rgb(var(--mdui-color-primary-container, 234, 221, 255)) !important;
+    color: rgb(var(--mdui-color-on-primary-container, 33, 0, 93)) !important;
+}
+
+.blocks :global(.scratchCategoryMenuItem.categorySelected .scratchCategoryMenuItemLabel) {
+    color: rgb(var(--mdui-color-on-primary-container, 33, 0, 93)) !important;
 }
 
 [dir="rtl"] .blocks :global(.blocklyToolboxDiv) {

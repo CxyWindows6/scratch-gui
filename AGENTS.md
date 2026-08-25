@@ -17,5 +17,5 @@
 | 工作流 | `.dsh/skills/env-workflow/SKILL.md`（根目录 `AGENTS-workflow.md` 为指针页） | 执行命令/改动范围/测试门禁 |
 | 部署/发布 | `.dsh/skills/env-network/SKILL.md`（根目录 `AGENTS-network.md` 为指针页） | CI/release/gh-pages 部署/构建产物 |
 | 项目总览 | `AGENTS-overview.md` | 需要项目全貌、架构、i18n 或命令速查 |
-| 仓库/上游同步 | `AGENTS-repo.md` | 远程结构、推送规则、gui/VM 同步上游流程 |
+| 仓库/上游同步 | `AGENTS-repo.md` | 远程结构、推送规则、各 fork 同步上游流程 |
 | UI 组件 | `.dsh/skills/mdui/SKILL.md` | 创建/修改/检查任何 mdui UI |

@@ -1,5 +1,6 @@
 import defaultsDeep from 'lodash.defaultsdeep';
-import {ACCENT_MAP} from '.';
+import {removeColorScheme, setColorScheme} from 'mdui';
+import {ACCENT_MAP, ACCENT_SEED_COLORS} from '.';
 import AddonHooks from '../../addons/hooks';
 import './global-styles.css';
 
@@ -169,6 +170,16 @@ const mduiGuiColors = () => {
 const applyGuiColors = theme => {
     const doc = document.documentElement;
 
+    // Apply the accent theme to mdui's Material 3 dynamic color system
+    if (typeof document !== 'undefined') {
+        const seedColor = ACCENT_SEED_COLORS && ACCENT_SEED_COLORS[theme.accent];
+        if (seedColor) {
+            setColorScheme(seedColor);
+        } else {
+            removeColorScheme();
+        }
+    }
+
     // The legacy GUI theme layer is retired: the --ui-* variables are now
     // driven by the mdui tokens, with the accent color layered on top for the
     // block category colors that mdui does not own.
@@ -194,15 +205,12 @@ const applyGuiColors = theme => {
     // Pass MD3 background colors to ScratchBlocks if available
     const surfaceLow = mduiColor('--mdui-color-surface-container-low', null, null);
     const surfaceVal = mduiColor('--mdui-color-surface', null, null);
-    const surfaceContainerVal = mduiColor('--mdui-color-surface-container', null, null);
     if (surfaceLow) {
         doc.style.setProperty('--blockly-flyout-background', surfaceLow);
+        doc.style.setProperty('--blockly-toolbox-background', surfaceLow);
     }
     if (surfaceVal) {
         doc.style.setProperty('--blockly-main-background', surfaceVal);
-    }
-    if (surfaceContainerVal) {
-        doc.style.setProperty('--blockly-toolbox-background', surfaceContainerVal);
     }
 
     doc.setAttribute('data-gui', theme.isDark() ? 'dark' : 'light');

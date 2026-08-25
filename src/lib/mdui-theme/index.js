@@ -80,8 +80,11 @@ const setSurgeThemeMode = mode => {
     } catch (e) {
         // ignore
     }
-    // Update theme-color meta tag on the next tick once class mutations propagate
-    requestAnimationFrame(() => syncThemeColorMeta());
+    // Update theme-color meta tag and dispatch theme change event
+    requestAnimationFrame(() => {
+        syncThemeColorMeta();
+        window.dispatchEvent(new CustomEvent('surge-theme-changed', {detail: {mode: nextMode}}));
+    });
     return nextMode;
 };
 

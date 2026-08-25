@@ -1,8 +1,7 @@
-@import "../../css/colors.css";
 @import "../../css/units.css";
 
 .inline-message {
-    color: $menu-bar-foreground;
+    color: rgb(var(--mdui-color-on-surface, 28, 27, 31));
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     display: flex;
     justify-content: flex-end;
@@ -13,15 +12,17 @@
 }
 
 .success {
-    color: $ui-white-dim;
+    color: rgb(var(--mdui-color-on-surface, 28, 27, 31));
 }
 
 .info {
-    color: $menu-bar-foreground;
+    color: rgb(var(--mdui-color-on-surface, 28, 27, 31));
 }
 
 .warn {
-    color: $error-light;
+    background-color: rgb(var(--mdui-color-error-container, 255, 218, 214));
+    color: rgb(var(--mdui-color-on-error-container, 65, 0, 2));
+    border-radius: calc($space / 2);
 }
 
 .spinner {
