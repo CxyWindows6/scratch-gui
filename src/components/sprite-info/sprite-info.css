@@ -64,3 +64,48 @@
 .sprite-input {
     width: 8rem;
 }
+
+/*
+ * Surge Editor: restyle every input in this pane to match the project-title
+ * input in the menu bar (see components/menu-bar/project-title-input.css).
+ * Both are the same mdui outlined text field; these rules override its parts
+ * with the same filled look (gray rounded container, 2rem height, shared
+ * typography). Keep the two files in sync when tweaking one of them.
+ */
+.sprite-info mdui-text-field {
+    border-radius: 0.5rem;
+    height: 2rem;
+    padding: 0;
+    margin: 0;
+}
+
+.sprite-info mdui-text-field::part(container) {
+    height: 2rem;
+    min-height: 2rem;
+    background-color: rgba(var(--mdui-color-on-surface, 29, 27, 32), 0.06);
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.sprite-info mdui-text-field:hover::part(container) {
+    background-color: rgba(var(--mdui-color-on-surface, 29, 27, 32), 0.1);
+}
+
+.sprite-info mdui-text-field:focus-within::part(container) {
+    background-color: rgb(var(--mdui-color-surface, 254, 247, 255));
+}
+
+.sprite-info mdui-text-field::part(input) {
+    font-family: Roboto, system-ui, "Noto Sans", sans-serif;
+    font-weight: 500;
+    font-size: 0.8125rem;
+    color: rgb(var(--mdui-color-on-surface, 29, 27, 32));
+    padding: 0 0.625rem;
+    line-height: 2rem;
+}
+
+.sprite-info mdui-text-field::part(input)::placeholder {
+    color: rgba(var(--mdui-color-on-surface, 29, 27, 32), 0.6);
+    font-weight: normal;
+    font-style: normal;
+}

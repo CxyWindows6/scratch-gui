@@ -275,6 +275,14 @@ button[class*="action-menu_more-button"] {
 .sa-find-wrapper {
   height: 20px;
 }
+/* Surge Editor: shrink the find input along with its wrapper (the default
+   height now matches the mdui text fields at 2rem, see find-bar userstyle) */
+.sa-find-bar .sa-find-input {
+  height: 20px;
+  border-radius: 0.25rem;
+  padding: 0 0.375rem;
+  font-size: 0.75rem;
+}
 .sa-find-dropdown-out {
   margin-top: 0;
 }

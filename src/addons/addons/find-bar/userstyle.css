@@ -52,21 +52,46 @@
   flex-grow: 0;
 }
 
-.sa-find-input {
+/*
+ * Surge Editor: style the find input to match the mdui text fields used
+ * across the editor (menu-bar project title, sprite-info pane) — filled
+ * rounded container, same typography and hover/focus states. Mirrors
+ * components/menu-bar/project-title-input.css.
+ * The selector is prefixed with .sa-find-bar to reliably win over the
+ * injected scratch input_input-form styles regardless of injection order.
+ * (editor-compact shrinks this further via its own userstyle.css.)
+ */
+.sa-find-bar .sa-find-input {
   width: 100%;
   box-sizing: border-box !important;
   /* !important required for extension, because CSS injection method (and hence order) differs from addon */
-  height: 1.5rem;
-
-  /* Change Scratch default styles */
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  padding-left: 0.4em;
+  height: 2rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: rgba(var(--mdui-color-on-surface, 29, 27, 32), 0.06);
+  /* Same 1px inset outline as mdui's outlined text-field variant */
+  box-shadow: inset 0 0 0 1px rgb(var(--mdui-color-outline));
+  font-family: Roboto, system-ui, "Noto Sans", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgb(var(--mdui-color-on-surface, 29, 27, 32));
+  padding: 0 0.625rem;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.sa-find-input:focus {
-  /* Change Scratch default styles */
-  box-shadow: none;
+.sa-find-bar .sa-find-input::placeholder {
+  color: rgba(var(--mdui-color-on-surface, 29, 27, 32), 0.6);
+  font-weight: normal;
+}
+
+.sa-find-bar .sa-find-input:hover {
+  background-color: rgba(var(--mdui-color-on-surface, 29, 27, 32), 0.1);
+}
+
+.sa-find-bar .sa-find-input:focus {
+  background-color: rgb(var(--mdui-color-surface, 254, 247, 255));
+  /* Same 2px primary inset outline as mdui's focused outlined variant */
+  box-shadow: inset 0 0 0 2px rgb(var(--mdui-color-primary));
 }
 
 .sa-find-dropdown {
