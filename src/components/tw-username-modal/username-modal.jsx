@@ -33,7 +33,7 @@ const UsernameModalComponent = props => (
                         id="tw.usernameModal.mustChange"
                         values={{
                             resetIt: (
-                                <a
+                                <button
                                     className={styles.resetLink}
                                     onClick={props.onReset}
                                 >
@@ -42,7 +42,7 @@ const UsernameModalComponent = props => (
                                         description="link to reset username"
                                         id="tw.usernameModal.mustChange.resetIt"
                                     />
-                                </a>
+                                </button>
                             )
                         }}
                     />

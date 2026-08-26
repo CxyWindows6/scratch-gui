@@ -1,11 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {FormattedMessage} from 'react-intl';
+import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
 import styles from './monitor.css';
 import ListMonitorScroller from './list-monitor-scroller.jsx';
 
-const ListMonitor = ({draggable, label, width, height, value, onResizeMouseDown, onAdd, ...rowProps}) => (
+const messages = defineMessages({
+    addItem: {
+        id: 'gui.monitor.listMonitor.addItem',
+        description: 'Button in the list monitor footer to append an item',
+        defaultMessage: 'Add item'
+    },
+    resize: {
+        id: 'gui.monitor.listMonitor.resize',
+        description: 'Handle in the list monitor footer to resize the monitor by dragging',
+        defaultMessage: 'Resize list'
+    }
+});
+
+// Activate div buttons with Enter / Space, like native <button> elements
+const buttonKeyDownHandler = action => e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        action(e);
+    }
+};
+
+const ListMonitor = ({draggable, intl, label, width, height, value, onResizeMouseDown, onAdd, ...rowProps}) => (
     <div
         className={styles.listMonitor}
         style={{
@@ -27,8 +48,12 @@ const ListMonitor = ({draggable, label, width, height, value, onResizeMouseDown,
         </div>
         <div className={styles.listFooter}>
             <div
+                aria-label={draggable ? intl.formatMessage(messages.addItem) : null}
                 className={classNames(draggable ? styles.addButton : null, 'no-drag')}
                 onClick={draggable ? onAdd : null}
+                onKeyDown={draggable ? buttonKeyDownHandler(onAdd) : null}
+                role={draggable ? 'button' : null}
+                tabIndex={draggable ? 0 : null}
             >
                 {'+' /* TODO waiting on asset */}
             </div>
@@ -43,8 +68,19 @@ const ListMonitor = ({draggable, label, width, height, value, onResizeMouseDown,
                 />
             </div>
             <div
+                aria-label={draggable ? intl.formatMessage(messages.resize) : null}
                 className={classNames(draggable ? styles.resizeHandle : null, 'no-drag')}
                 onMouseDown={draggable ? onResizeMouseDown : null}
+                onKeyDown={draggable ? buttonKeyDownHandler(e => {
+                    // Start resizing from the center of the handle
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    onResizeMouseDown({
+                        clientX: rect.left + (rect.width / 2),
+                        clientY: rect.top + (rect.height / 2)
+                    });
+                }) : null}
+                role={draggable ? 'button' : null}
+                tabIndex={draggable ? 0 : null}
             >
                 {'=' /* TODO waiting on asset */}
             </div>
@@ -60,6 +96,7 @@ ListMonitor.propTypes = {
     }).isRequired,
     draggable: PropTypes.bool.isRequired,
     height: PropTypes.number,
+    intl: intlShape.isRequired,
     label: PropTypes.string.isRequired,
     onActivate: PropTypes.func,
     onAdd: PropTypes.func,
@@ -80,4 +117,4 @@ ListMonitor.defaultProps = {
     height: 200
 };
 
-export default ListMonitor;
+export default injectIntl(ListMonitor);

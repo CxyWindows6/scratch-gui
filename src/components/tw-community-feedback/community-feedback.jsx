@@ -309,7 +309,8 @@ class CommunityFeedback extends React.Component {
                                 <div className={styles.commentToggle}>
                                     <button
                                         className={styles.commentToggleBtn}
-                                        onClick={this.handleToggleComments(entryId)}
+                                        // eslint-disable-next-line react/jsx-no-bind
+                                        onClick={() => this.handleToggleComments(entryId)}
                                     >
                                         {intl.formatMessage(messages.comments)}
                                         {entryComments ? ` (${entryComments.length})` : ''}
@@ -348,7 +349,8 @@ class CommunityFeedback extends React.Component {
                                             />
                                             <button
                                                 className={styles.commentPostBtn}
-                                                onClick={this.handlePostComment(entryId)}
+                                                // eslint-disable-next-line react/jsx-no-bind
+                                                onClick={() => this.handlePostComment(entryId)}
                                                 disabled={!commentInput.trim()}
                                             >
                                                 {intl.formatMessage(messages.postComment)}

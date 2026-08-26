@@ -50,6 +50,7 @@ const ThemeIcon = ({id}) => (
     ) : (
         <img
             src={icons[id]}
+            alt=""
             draggable={false}
             width={24}
         />

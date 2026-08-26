@@ -16,6 +16,39 @@ const messages = defineMessages({
     }
 });
 
+/**
+ * Builds a keydown handler for a type selector "button" so Enter/Space
+ * activates it just like a click.
+ * @param {Function} onSwitch Switch-to handler of the button.
+ * @returns {Function} A keydown event handler.
+ */
+const makeTypeSelectorKeyDownHandler = onSwitch => e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onSwitch();
+    }
+};
+
+// Wrapper around each type selector "button" (a clickable div) that adds
+// shared keyboard support (Enter/Space) next to the click handler.
+const TypeSelectorButton = ({active, onSwitch, children}) => (
+    <div
+        className={styles.typeSelectorButton}
+        data-active={active}
+        onClick={onSwitch}
+        onKeyDown={makeTypeSelectorKeyDownHandler(onSwitch)}
+        tabIndex={0}
+    >
+        {children}
+    </div>
+);
+
+TypeSelectorButton.propTypes = {
+    active: PropTypes.bool.isRequired,
+    onSwitch: PropTypes.func.isRequired,
+    children: PropTypes.node
+};
+
 const CustomExtensionModal = props => (
     <Modal
         className={styles.modalContent}
@@ -30,11 +63,9 @@ const CustomExtensionModal = props => (
             onDrop={props.onDrop}
         >
             <div className={styles.typeSelectorContainer}>
-                <div
-                    className={styles.typeSelectorButton}
-                    data-active={props.type === 'url'}
-                    onClick={props.onSwitchToURL}
-                    tabIndex={0}
+                <TypeSelectorButton
+                    active={props.type === 'url'}
+                    onSwitch={props.onSwitchToURL}
                 >
                     <FormattedMessage
                         defaultMessage="URL"
@@ -42,12 +73,10 @@ const CustomExtensionModal = props => (
                         description="Button to choose to load an extension from a remote URL. Not much space, so keep this short."
                         id="tw.customExtensionModal.url"
                     />
-                </div>
-                <div
-                    className={styles.typeSelectorButton}
-                    data-active={props.type === 'file'}
-                    onClick={props.onSwitchToFile}
-                    tabIndex={0}
+                </TypeSelectorButton>
+                <TypeSelectorButton
+                    active={props.type === 'file'}
+                    onSwitch={props.onSwitchToFile}
                 >
                     <FormattedMessage
                         defaultMessage="Files"
@@ -55,12 +84,10 @@ const CustomExtensionModal = props => (
                         description="Button to choose to load an extension from one or more local files. Not much space, so keep this short."
                         id="tw.customExtensionModal.file"
                     />
-                </div>
-                <div
-                    className={styles.typeSelectorButton}
-                    data-active={props.type === 'text'}
-                    onClick={props.onSwitchToText}
-                    tabIndex={0}
+                </TypeSelectorButton>
+                <TypeSelectorButton
+                    active={props.type === 'text'}
+                    onSwitch={props.onSwitchToText}
                 >
                     <FormattedMessage
                         defaultMessage="Text"
@@ -68,7 +95,7 @@ const CustomExtensionModal = props => (
                         description="Button to choose to load an extension from a text input. Not much space, so keep this short."
                         id="tw.customExtensionModal.text"
                     />
-                </div>
+                </TypeSelectorButton>
             </div>
 
             {props.type === 'url' ? (

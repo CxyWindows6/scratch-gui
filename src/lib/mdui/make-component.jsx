@@ -13,15 +13,17 @@ import PropTypes from 'prop-types';
 //  - camelCase prop names are automatically converted to kebab-case HTML attributes.
 //  - DOM properties requiring JavaScript synchronization (value, checked, open, disabled, etc.)
 //    are kept in sync with the underlying DOM custom element on mount and update.
-//  - Props named in config.events / STANDARD_EVENTS are bound natively via stable event proxies.
+//  - Props named in config.events / STANDARD_EVENTS are bound natively via stable event proxies,
+//    but only while a handler for that event is actually present in props.
+//
+// Note: focusin/focusout were dropped from STANDARD_EVENTS — they duplicated the
+// focus/blur mapping and no consumer ever passed onFocusIn/onFocusOut.
 
 const STANDARD_EVENTS = {
     onClick: 'click',
     onDoubleClick: 'dblclick',
     onFocus: 'focus',
     onBlur: 'blur',
-    onFocusIn: 'focusin',
-    onFocusOut: 'focusout',
     onKeyPress: 'keypress',
     onKeyDown: 'keydown',
     onKeyUp: 'keyup',
@@ -54,6 +56,19 @@ const STANDARD_EVENTS = {
 // Properties that need direct JavaScript property synchronization on the DOM node
 const SYNC_DOM_PROPERTIES = ['value', 'checked', 'open', 'disabled', 'indeterminate', 'loading'];
 
+// Safe DOM defaults written back when a synchronized prop transitions from
+// having a value to being absent/undefined, so elements cannot stay stuck in
+// an open/disabled/checked state after such a transition.
+// (Only used on updates; mount-time behavior is unchanged.)
+const SYNC_DOM_PROPERTY_DEFAULTS = {
+    value: '',
+    checked: false,
+    open: false,
+    disabled: false,
+    indeterminate: false,
+    loading: false
+};
+
 const toKebabCase = str => str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
 const makeMduiComponent = (tagName, config = {}) => {
@@ -66,12 +81,15 @@ const makeMduiComponent = (tagName, config = {}) => {
             super(props);
             this.elementRef = React.createRef();
             this.latestProps = props;
-            this.boundListeners = new Map();
+            this.boundListeners = new Map(); // native event name -> stable proxy
+            this.eventReactProps = new Map(); // native event name -> controlling React prop
+            this.attachedEvents = new Set(); // native event names currently attached
 
             // Create stable proxy handlers for every known event
             Object.keys(events).forEach(reactProp => {
                 const nativeName = events[reactProp];
                 if (!this.boundListeners.has(nativeName)) {
+                    this.eventReactProps.set(nativeName, reactProp);
                     this.boundListeners.set(nativeName, e => {
                         const handler = this.latestProps[reactProp];
                         if (typeof handler === 'function') {
@@ -87,9 +105,10 @@ const makeMduiComponent = (tagName, config = {}) => {
             this.syncProperties();
         }
 
-        componentDidUpdate () {
+        componentDidUpdate (prevProps) {
             this.latestProps = this.props;
-            this.syncProperties();
+            this.updateEvents();
+            this.syncProperties(prevProps);
         }
 
         componentWillUnmount () {
@@ -107,7 +126,7 @@ const makeMduiComponent = (tagName, config = {}) => {
             }
         };
 
-        syncProperties () {
+        syncProperties (prevProps) {
             const el = this.elementRef.current;
             if (!el) return;
 
@@ -116,6 +135,18 @@ const makeMduiComponent = (tagName, config = {}) => {
                     if (el[prop] !== this.props[prop]) {
                         el[prop] = this.props[prop];
                     }
+                } else if (
+                    prevProps &&
+                    prop in prevProps &&
+                    typeof prevProps[prop] !== 'undefined'
+                ) {
+                    // The prop transitioned from having a value to being absent
+                    // or undefined: write back the safe DOM default so the
+                    // element does not stay stuck open/disabled/etc.
+                    const defaultValue = SYNC_DOM_PROPERTY_DEFAULTS[prop];
+                    if (el[prop] !== defaultValue) {
+                        el[prop] = defaultValue;
+                    }
                 }
             });
         }
@@ -123,17 +154,42 @@ const makeMduiComponent = (tagName, config = {}) => {
         bindEvents () {
             const el = this.elementRef.current;
             if (!el) return;
+            // Attach a listener only while its handler prop is actually present.
             this.boundListeners.forEach((handler, nativeName) => {
-                el.addEventListener(nativeName, handler);
+                const reactProp = this.eventReactProps.get(nativeName);
+                if (typeof this.props[reactProp] === 'function') {
+                    el.addEventListener(nativeName, handler);
+                    this.attachedEvents.add(nativeName);
+                }
+            });
+        }
+
+        updateEvents () {
+            const el = this.elementRef.current;
+            if (!el) return;
+            // Incrementally attach listeners for newly provided handlers and
+            // detach those whose handler prop was removed.
+            this.boundListeners.forEach((handler, nativeName) => {
+                const reactProp = this.eventReactProps.get(nativeName);
+                const shouldAttach = typeof this.props[reactProp] === 'function';
+                const isAttached = this.attachedEvents.has(nativeName);
+                if (shouldAttach && !isAttached) {
+                    el.addEventListener(nativeName, handler);
+                    this.attachedEvents.add(nativeName);
+                } else if (!shouldAttach && isAttached) {
+                    el.removeEventListener(nativeName, handler);
+                    this.attachedEvents.delete(nativeName);
+                }
             });
         }
 
         unbindEvents () {
             const el = this.elementRef.current;
             if (!el) return;
-            this.boundListeners.forEach((handler, nativeName) => {
-                el.removeEventListener(nativeName, handler);
+            this.attachedEvents.forEach(nativeName => {
+                el.removeEventListener(nativeName, this.boundListeners.get(nativeName));
             });
+            this.attachedEvents.clear();
         }
 
         render () {

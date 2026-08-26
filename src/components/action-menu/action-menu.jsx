@@ -39,9 +39,18 @@ class ActionMenu extends React.Component {
         //  if anything substantial has changed
         // This is needed because of the sloppy way the props are passed as a new object,
         //  which should be refactored.
-        return newState.isOpen !== this.state.isOpen ||
+        if (newState.isOpen !== this.state.isOpen ||
             newState.forceHide !== this.state.forceHide ||
-            newProps.title !== this.props.title;
+            newProps.title !== this.props.title ||
+            newProps.onClick !== this.props.onClick ||
+            newProps.moreButtons !== this.props.moreButtons) {
+            return true;
+        }
+        // The array may also be mutated in place by the parent, so compare length too.
+        return Boolean(
+            newProps.moreButtons && this.props.moreButtons &&
+            newProps.moreButtons.length !== this.props.moreButtons.length
+        );
     }
     componentWillUnmount () {
         this.buttonRef.removeEventListener('touchstart', this.handleTouchStart);
@@ -147,6 +156,7 @@ class ActionMenu extends React.Component {
                             fileAccept, fileChange, fileInput, fileMultiple}, keyId) => {
                             const isComingSoon = !handleClick;
                             const hasFileInput = fileInput;
+                            const isDisabled = isComingSoon && !hasFileInput;
                             const tooltipId = `${this.mainTooltipId}-${title}`;
                             return (
                                 <div key={`${tooltipId}-${keyId}`}>
@@ -158,7 +168,10 @@ class ActionMenu extends React.Component {
                                         })}
                                         data-for={tooltipId}
                                         data-tip={title}
-                                        onClick={hasFileInput ? handleClick : this.clickDelayer(handleClick)}
+                                        disabled={isDisabled}
+                                        onClick={hasFileInput ? handleClick : (
+                                            isDisabled ? null : this.clickDelayer(handleClick)
+                                        )}
                                     >
                                         <img
                                             className={styles.moreIcon}

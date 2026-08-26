@@ -17,6 +17,6 @@
 .unsandboxed-warning {
     padding: 0.5rem;
     border-radius: 0.25rem;
-    background-color: rgba(255, 81, 81, 0.25);
+    background-color: rgba(var(--mdui-color-error, 179, 38, 30), 0.25);
     border: none;
 }

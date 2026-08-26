@@ -1,17 +1,26 @@
+import classNames from 'classnames';
+import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 
 import styles from './close-button.css';
 import closeIcon from './icon--close.svg';
 import closeIconOrange from './icon--close-orange.svg';
 import backIcon from '../../lib/assets/icon--back.svg';
 
+const messages = defineMessages({
+    closeLabel: {
+        defaultMessage: 'Close',
+        description: 'Accessible label for the close button',
+        id: 'gui.closeButton.close'
+    }
+});
+
 let closeIcons = {};
 
 const CloseButton = props => (
     <div
-        aria-label="Close"
+        aria-label={props.intl.formatMessage(messages.closeLabel)}
         className={classNames(
             styles.closeButton,
             props.className,
@@ -65,6 +74,7 @@ CloseButton.propTypes = {
     buttonType: PropTypes.oneOf(['back', 'close']),
     className: PropTypes.string,
     color: PropTypes.string,
+    intl: intlShape,
     onClick: PropTypes.func.isRequired,
     size: PropTypes.oneOf([CloseButton.SIZE_SMALL, CloseButton.SIZE_LARGE])
 };
@@ -75,4 +85,4 @@ CloseButton.defaultProps = {
     buttonType: 'close'
 };
 
-export default CloseButton;
+export default injectIntl(CloseButton);

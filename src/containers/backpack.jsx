@@ -48,6 +48,9 @@ class Backpack extends React.Component {
             'handleBlockDragUpdate',
             'handleMore'
         ]);
+        // Guards against out-of-order responses when paginating backpack contents.
+        this.contentsRequestSeq = 0;
+        this.contentsRequestInFlight = false;
         this.state = {
             // While the DroppableHOC manages drop interactions for asset tiles,
             // we still need to micromanage drops coming from the block workspace.
@@ -79,6 +82,8 @@ class Backpack extends React.Component {
     componentWillUnmount () {
         this.props.vm.removeListener('BLOCK_DRAG_END', this.handleBlockDragEnd);
         this.props.vm.removeListener('BLOCK_DRAG_UPDATE', this.handleBlockDragUpdate);
+        // Invalidate any in-flight request so its late response is discarded.
+        this.contentsRequestSeq++;
     }
     getBackpackAssetURL (asset) {
         return `${this.props.host}/${asset.assetId}.${asset.dataFormat}`;
@@ -90,16 +95,19 @@ class Backpack extends React.Component {
             window.dispatchEvent(new Event('resize'));
         });
         if (newState) {
+            // Toggling clears contents, so any in-flight response is now stale;
+            // release the flag, then let getContents supersede it via the sequence.
+            this.contentsRequestInFlight = false;
             this.getContents();
         }
     }
     handleError (error) {
+        // Technical details stay in the console; the UI shows a friendly message.
+        console.error(error);
         this.setState({
-            error: `${error}`,
+            error: true,
             loading: false
         });
-        // Log error to console and make the Promise reject.
-        throw error;
     }
     handleDrop (dragInfo) {
         let payloader = null;
@@ -128,7 +136,7 @@ class Backpack extends React.Component {
                 .then(payload => {
                     // Force the asset to save to the asset server before storing in backpack
                     // Ensures any asset present in the backpack is also on the asset server
-                    if (presaveAsset && !presaveAsset.clean && !this.props.host === LOCAL_API) {
+                    if (presaveAsset && !presaveAsset.clean && this.props.host !== LOCAL_API) {
                         return storage.store(
                             presaveAsset.assetType,
                             presaveAsset.dataFormat,
@@ -204,6 +212,10 @@ class Backpack extends React.Component {
     }
     getContents () {
         if ((this.props.token && this.props.username) || this.props.host === LOCAL_API) {
+            // Prevent duplicate requests from repeated clicks while one is in flight.
+            if (this.contentsRequestInFlight) return;
+            const seq = ++this.contentsRequestSeq;
+            this.contentsRequestInFlight = true;
             this.setState({loading: true, error: false}, () => {
                 getBackpackContents({
                     host: this.props.host,
@@ -213,6 +225,9 @@ class Backpack extends React.Component {
                     limit: this.state.itemsPerPage
                 })
                     .then(contents => {
+                        // Discard stale responses superseded by a newer request.
+                        if (seq !== this.contentsRequestSeq) return;
+                        this.contentsRequestInFlight = false;
                         this.setState({
                             contents: this.state.contents.concat(contents),
                             moreToLoad: contents.length === this.state.itemsPerPage,
@@ -220,6 +235,8 @@ class Backpack extends React.Component {
                         });
                     })
                     .catch(error => {
+                        if (seq !== this.contentsRequestSeq) return;
+                        this.contentsRequestInFlight = false;
                         this.handleError(error);
                     });
             });

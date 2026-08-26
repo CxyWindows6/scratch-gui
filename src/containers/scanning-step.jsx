@@ -10,8 +10,12 @@ class ScanningStep extends React.Component {
         bindAll(this, [
             'handlePeripheralListUpdate',
             'handlePeripheralScanTimeout',
-            'handleRefresh'
+            'handleRefresh',
+            'handleConnecting',
+            'stopPeripheralScan'
         ]);
+        // Set once a connect attempt is started, so unmounting this step won't cancel it.
+        this.connectInitiated = false;
         this.state = {
             scanning: true,
             peripheralList: []
@@ -25,11 +29,21 @@ class ScanningStep extends React.Component {
             'PERIPHERAL_SCAN_TIMEOUT', this.handlePeripheralScanTimeout);
     }
     componentWillUnmount () {
-        // @todo: stop the peripheral scan here
+        this.stopPeripheralScan();
         this.props.vm.removeListener(
             'PERIPHERAL_LIST_UPDATE', this.handlePeripheralListUpdate);
         this.props.vm.removeListener(
             'PERIPHERAL_SCAN_TIMEOUT', this.handlePeripheralScanTimeout);
+    }
+    stopPeripheralScan () {
+        // The VM has no dedicated scan-stop API; disconnecting the peripheral
+        // closes the scratch-link socket and clears the discover timeout,
+        // which stops an in-progress scan. Skip it if we just started
+        // connecting, since that uses the same socket.
+        if (this.connectInitiated) return;
+        if (!this.props.vm.getPeripheralIsConnected(this.props.extensionId)) {
+            this.props.vm.disconnectPeripheral(this.props.extensionId);
+        }
     }
     handlePeripheralScanTimeout () {
         this.setState({
@@ -51,16 +65,18 @@ class ScanningStep extends React.Component {
             peripheralList: []
         });
     }
+    handleConnecting (peripheralId) {
+        this.connectInitiated = true;
+        this.props.onConnecting(peripheralId);
+    }
     render () {
         return (
             <ScanningStepComponent
                 connectionSmallIconURL={this.props.connectionSmallIconURL}
                 peripheralList={this.state.peripheralList}
-                phase={this.state.phase}
                 scanning={this.state.scanning}
-                title={this.props.extensionId}
                 onConnected={this.props.onConnected}
-                onConnecting={this.props.onConnecting}
+                onConnecting={this.handleConnecting}
                 onRefresh={this.handleRefresh}
                 onUpdatePeripheral={this.props.onUpdatePeripheral}
             />

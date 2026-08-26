@@ -34,3 +34,6 @@ npm-*
 /run-verify.js
 /*.png
 /.dsh
+
+#AGENTS.md
+/AGENTS*.md

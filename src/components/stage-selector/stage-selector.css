@@ -68,8 +68,8 @@ $header-height: calc($stage-menu-height - 2px);
 }
 
 .stage-selector.is-selected .header-title {
-    color: #ffffff;
-    color: rgb(var(--mdui-color-on-primary-container, 30, 25, 67));
+    color: rgb(33, 0, 94);
+    color: rgb(var(--mdui-color-on-primary-container, 33, 0, 94));
 }
 
 .count {

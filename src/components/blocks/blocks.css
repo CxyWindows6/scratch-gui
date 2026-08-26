@@ -47,7 +47,7 @@
 
 .blocks :global(pattern[id*="GridPattern"] line),
 .blocks :global(pattern[id*="gridPattern"] line) {
-    stroke: rgba(var(--mdui-color-outline-variant, 121, 116, 126), 0.5) !important;
+    stroke: rgba(var(--mdui-color-outline-variant, 196, 199, 197), 0.5) !important;
 }
 
 .blocks :global(.blocklyToolboxDiv) {

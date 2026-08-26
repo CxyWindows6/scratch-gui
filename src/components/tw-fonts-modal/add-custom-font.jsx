@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {injectIntl, intlShape, defineMessages, FormattedMessage} from 'react-intl';
 import bindAll from 'lodash.bindall';
+import {alert as mduiAlert} from 'mdui';
 import styles from './fonts-modal.css';
 import LoadTemporaryFont from './load-temporary-font.jsx';
 import FontName from './font-name.jsx';
@@ -125,9 +126,11 @@ class AddCustomFont extends React.Component {
             this.props.onClose();
         };
         fr.onerror = () => {
-            // eslint-disable-next-line no-alert
-            alert(this.props.intl.formatMessage(messages.error), {
-                error: fr.error
+            const errorDetail = fr.error && fr.error.message ? fr.error.message : String(fr.error);
+            mduiAlert(this.props.intl.formatMessage(messages.error, {
+                error: errorDetail
+            })).catch(() => {
+                // Alert was dismissed without pressing the confirm button; nothing to do.
             });
 
             this.setState({

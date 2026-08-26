@@ -19,16 +19,16 @@ import playIcon from './icon--play.svg';
 import stopIcon from './icon--stop.svg';
 import redoIcon from '!../../lib/tw-recolor/build!./icon--redo.svg';
 import undoIcon from '!../../lib/tw-recolor/build!./icon--undo.svg';
-import fasterIcon from './icon--faster.svg';
-import slowerIcon from './icon--slower.svg';
-import louderIcon from './icon--louder.svg';
-import softerIcon from './icon--softer.svg';
-import robotIcon from './icon--robot.svg';
-import echoIcon from './icon--echo.svg';
-import reverseIcon from './icon--reverse.svg';
-import fadeOutIcon from './icon--fade-out.svg';
-import fadeInIcon from './icon--fade-in.svg';
-import muteIcon from './icon--mute.svg';
+import fasterIcon from '!../../lib/tw-recolor/build!./icon--faster.svg';
+import slowerIcon from '!../../lib/tw-recolor/build!./icon--slower.svg';
+import louderIcon from '!../../lib/tw-recolor/build!./icon--louder.svg';
+import softerIcon from '!../../lib/tw-recolor/build!./icon--softer.svg';
+import robotIcon from '!../../lib/tw-recolor/build!./icon--robot.svg';
+import echoIcon from '!../../lib/tw-recolor/build!./icon--echo.svg';
+import reverseIcon from '!../../lib/tw-recolor/build!./icon--reverse.svg';
+import fadeOutIcon from '!../../lib/tw-recolor/build!./icon--fade-out.svg';
+import fadeInIcon from '!../../lib/tw-recolor/build!./icon--fade-in.svg';
+import muteIcon from '!../../lib/tw-recolor/build!./icon--mute.svg';
 
 import deleteIcon from '!../../lib/tw-recolor/build!./icon--delete.svg';
 import copyIcon from '!../../lib/tw-recolor/build!./icon--copy.svg';
@@ -115,7 +115,7 @@ const messages = defineMessages({
     },
     softer: {
         id: 'gui.soundEditor.softer',
-        description: 'Title of the button to apply thr.softer effect',
+        description: 'Title of the button to apply the softer effect',
         defaultMessage: 'Softer'
     },
     reverse: {
@@ -268,18 +268,7 @@ const SoundEditor = props => (
         </div>
         <div className={classNames(styles.row, styles.rowReverse)}>
             <div className={classNames(styles.roundButtonOuter, styles.inputGroup)}>
-                {props.playhead ? (
-                    <button
-                        className={classNames(styles.roundButton, styles.stopButtonn)}
-                        title={props.intl.formatMessage(messages.stop)}
-                        onClick={props.onStop}
-                    >
-                        <img
-                            draggable={false}
-                            src={stopIcon}
-                        />
-                    </button>
-                ) : (
+                {props.playhead === null ? (
                     <button
                         className={classNames(styles.roundButton, styles.playButton)}
                         title={props.intl.formatMessage(messages.play)}
@@ -288,6 +277,17 @@ const SoundEditor = props => (
                         <img
                             draggable={false}
                             src={playIcon}
+                        />
+                    </button>
+                ) : (
+                    <button
+                        className={classNames(styles.roundButton)}
+                        title={props.intl.formatMessage(messages.stop)}
+                        onClick={props.onStop}
+                    >
+                        <img
+                            draggable={false}
+                            src={stopIcon}
                         />
                     </button>
                 )}
@@ -360,7 +360,7 @@ const SoundEditor = props => (
             <div className={styles.duration}>
                 {formatDuration(props.playhead, props.trimStart, props.trimEnd, props.duration)}
             </div>
-            <div className={styles.advancedInfo}>
+            <div>
                 {props.isStereo ? (
                     <FormattedMessage
                         defaultMessage="Stereo"

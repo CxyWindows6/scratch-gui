@@ -18,10 +18,11 @@ class StageHeader extends React.Component {
         bindAll(this, [
             'handleKeyPress'
         ]);
-        this.checkInvalidStageSizeMode();
     }
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
+        // Dispatching here instead of the constructor keeps side effects out of render
+        this.checkInvalidStageSizeMode();
     }
     componentDidUpdate () {
         this.checkInvalidStageSizeMode();

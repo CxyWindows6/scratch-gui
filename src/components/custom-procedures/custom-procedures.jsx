@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Modal from '../../containers/modal.jsx';
 import Box from '../box/box.jsx';
+import {activateByKeyboard} from '../box/keyboard';
 import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-intl';
 
 import booleanInputIcon from './icon--boolean-input.svg';
@@ -36,6 +37,7 @@ const CustomProcedures = props => (
                     role="button"
                     tabIndex="0"
                     onClick={props.onAddTextNumber}
+                    onKeyDown={activateByKeyboard(props.onAddTextNumber)}
                 >
                     <img
                         className={styles.optionIcon}
@@ -62,6 +64,7 @@ const CustomProcedures = props => (
                     role="button"
                     tabIndex="0"
                     onClick={props.onAddBoolean}
+                    onKeyDown={activateByKeyboard(props.onAddBoolean)}
                 >
                     <img
                         className={styles.optionIcon}
@@ -88,6 +91,7 @@ const CustomProcedures = props => (
                     role="button"
                     tabIndex="0"
                     onClick={props.onAddLabel}
+                    onKeyDown={activateByKeyboard(props.onAddLabel)}
                 >
                     <img
                         className={styles.optionIcon}

@@ -13,6 +13,7 @@ import soundIconRtl from '../components/library-item/lib-icon--sound-rtl.svg';
 
 import {getSoundLibrary} from '../lib/libraries/tw-async-libraries';
 import soundTags from '../lib/libraries/sound-tags';
+import log from '../lib/log';
 
 import {connect} from 'react-redux';
 
@@ -71,11 +72,25 @@ class SoundLibrary extends React.PureComponent {
     }
     /* eslint-disable react/no-did-mount-set-state */
     componentDidMount () {
+        this.mounted = true;
         const soundLibrary = getSoundLibrary();
         if (soundLibrary.then) {
-            soundLibrary.then(data => this.setState({
-                data: getSoundLibraryThumbnailData(data, this.props.isRtl)
-            }));
+            soundLibrary
+                .then(data => {
+                    if (this.mounted) {
+                        this.setState({
+                            data: getSoundLibraryThumbnailData(data, this.props.isRtl)
+                        });
+                    }
+                })
+                .catch(error => {
+                    log.error(error);
+                    if (this.mounted) {
+                        this.setState({
+                            requestFailed: true
+                        });
+                    }
+                });
         } else {
             this.setState({
                 data: getSoundLibraryThumbnailData(soundLibrary, this.props.isRtl)
@@ -87,6 +102,7 @@ class SoundLibrary extends React.PureComponent {
         this.playingSoundPromise = null;
     }
     componentWillUnmount () {
+        this.mounted = false;
         this.stopPlayingSound();
     }
     onStop () {
@@ -184,7 +200,7 @@ class SoundLibrary extends React.PureComponent {
         return (
             <LibraryComponent
                 showPlayButton
-                data={this.state.data}
+                data={this.state.requestFailed ? [] : this.state.data}
                 id="soundLibrary"
                 setStopHandler={this.setStopHandler}
                 tags={soundTags}

@@ -58,12 +58,15 @@ class LibraryComponent extends React.Component {
         };
     }
     componentDidMount () {
+        this.mounted = true;
         // Rendering all the items in the library can take a bit, so we'll always
         // show one frame with a loading spinner.
         setTimeout(() => {
-            this.setState({
-                canDisplay: true
-            });
+            if (this.mounted) {
+                this.setState({
+                    canDisplay: true
+                });
+            }
         });
         if (this.props.setStopHandler) this.props.setStopHandler(this.handlePlayingEnd);
     }
@@ -80,6 +83,9 @@ class LibraryComponent extends React.Component {
                 // ignore
             }
         }
+    }
+    componentWillUnmount () {
+        this.mounted = false;
     }
     handleSelect (id) {
         this.handleClose();
@@ -304,10 +310,17 @@ class LibraryComponent extends React.Component {
                     })}
                     ref={this.setFilteredDataRef}
                 >
-                    {filteredData && this.getFilteredData().map((dataItem, index) => (
-                        dataItem === '---' ? (
-                            <Separator key={index} />
-                        ) : (
+                    {filteredData && filteredData.map((dataItem, index) => {
+                        if (dataItem === '---') {
+                            return <Separator key={index} />;
+                        }
+                        // Only items with a valid persistable key value may be
+                        // favorited; link cards (e.g. the extension gallery
+                        // placeholder entries) must not render a favorite star
+                        const persistableValue = dataItem[this.props.persistableKey];
+                        const canFavorite = typeof persistableValue === 'string' &&
+                            persistableValue.length > 0 && !dataItem.href;
+                        return (
                             <LibraryItem
                                 bluetoothRequired={dataItem.bluetoothRequired}
                                 collaborator={dataItem.collaborator}
@@ -322,8 +335,10 @@ class LibraryComponent extends React.Component {
                                 icons={dataItem.costumes}
                                 id={index}
                                 incompatibleWithScratch={dataItem.incompatibleWithScratch}
-                                favorite={this.state.favorites.includes(dataItem[this.props.persistableKey])}
-                                onFavorite={this.handleFavorite}
+                                favorite={canFavorite ?
+                                    this.state.favorites.includes(persistableValue) :
+                                    false}
+                                onFavorite={canFavorite ? this.handleFavorite : null}
                                 insetIconURL={dataItem.insetIconURL}
                                 internetConnectionRequired={dataItem.internetConnectionRequired}
                                 isPlaying={this.state.playingItem === index}
@@ -341,8 +356,8 @@ class LibraryComponent extends React.Component {
                                 onMouseLeave={this.handleMouseLeave}
                                 onSelect={this.handleSelect}
                             />
-                        )
-                    ))}
+                        );
+                    })}
                     {filteredData && this.props.removedTrademarks && (
                         <React.Fragment>
                             {filteredData.length > 0 && (

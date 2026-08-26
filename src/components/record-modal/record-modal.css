@@ -1,8 +1,14 @@
 @import "../../css/colors.css";
 @import "../../css/units.css";
 
-.modal-content {
-    width: 600px;
+/* mdui-dialog exposes its panel as part="panel" (min-width:17.5rem;
+   max-width:35rem). Widen it for the recorder, but only on large screens
+   where a 600px panel still fits beside the dialog host's 3rem padding. */
+@media only screen and (min-width: 45rem) {
+    .modal-content::part(panel) {
+        width: 600px;
+        max-width: none;
+    }
 }
 
 .body {

@@ -1,5 +1,5 @@
-@import "../../css/colors.css";
-
-.divider {
-    /* border-right: 1px dashed $ui-border; */
-}
+/*
+ * Intentionally empty of base styles: the Divider base component carries no
+ * styling of its own. Consumers (library, menu-bar) supply their own layout
+ * via className on <Divider />.
+ */

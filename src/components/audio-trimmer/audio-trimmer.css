@@ -117,11 +117,16 @@ $hover-scale: 1.25;
     user-select: none;
 }
 
-.trimmer .trim-handle {
-    filter: hue-rotate(-240deg) brightness(1.35);
+.selector .trim-handle {
+    color: rgb(var(--mdui-color-primary, 103, 80, 164));
 }
 
-.trim-handle img {
+.trimmer .trim-handle {
+    /* Matches the red-toned trim region stripes instead of hue-rotating the icon */
+    color: rgb(var(--mdui-color-error, 179, 38, 30));
+}
+
+.trim-handle svg {
     position: absolute;
     width: $trim-handle-width;
     height: $trim-handle-height;
@@ -143,6 +148,6 @@ $hover-scale: 1.25;
     bottom: calc(-$trim-handle-height + $trim-handle-border);
 }
 
-.top-trim-handle img {
+.top-trim-handle svg {
     transform: scaleY(-1);
 }

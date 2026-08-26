@@ -38,10 +38,18 @@ const ProgressRingComponent = ({
         r: radius
     };
 
+    const progressAriaProps = typeof value === 'number' ? {
+        'role': 'progressbar',
+        'aria-valuemin': 0,
+        'aria-valuemax': max,
+        'aria-valuenow': value
+    } : {};
+
     return (
         <div
             className={classNames(styles.progressRing, className)}
             style={{width: sizePx, height: sizePx}}
+            {...progressAriaProps}
             {...props}
         >
             <svg

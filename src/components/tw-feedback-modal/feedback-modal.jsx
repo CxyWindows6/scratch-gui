@@ -146,6 +146,7 @@ class FeedbackModal extends React.Component {
             'handleKindChange',
             'handleUsernameChange',
             'handleUsernameClick',
+            'handleUsernameKeyDown',
             'handleContentChange',
             'handleScreenshotPick',
             'handleScreenshotRemove',
@@ -237,6 +238,13 @@ class FeedbackModal extends React.Component {
                     daysAgo: this.cooldownDaysAgo
                 })
             });
+        }
+    }
+
+    handleUsernameKeyDown (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.handleUsernameClick();
         }
     }
 
@@ -402,6 +410,7 @@ class FeedbackModal extends React.Component {
                                 <div
                                     className={styles.usernameLockedText}
                                     onClick={this.handleUsernameClick}
+                                    onKeyDown={this.handleUsernameKeyDown}
                                     role="button"
                                     tabIndex={0}
                                 >

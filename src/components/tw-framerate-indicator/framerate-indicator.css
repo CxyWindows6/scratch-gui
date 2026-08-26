@@ -11,6 +11,6 @@
     font-size: 0.625rem;
     font-weight: bold;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: $control-primary;
+    color: rgb(var(--mdui-color-primary, 103, 80, 164));
     white-space: nowrap;
 }

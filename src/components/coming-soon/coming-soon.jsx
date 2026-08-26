@@ -61,6 +61,7 @@ class ComingSoonContent extends React.Component {
                             className={styles.comingSoonImage}
                             src={images[imageNumber]}
                             draggable={false}
+                            alt="" /* decorative emoji */
                         />
                     )
                 }}

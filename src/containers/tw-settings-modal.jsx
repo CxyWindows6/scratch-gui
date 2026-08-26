@@ -21,7 +21,7 @@ const messages = defineMessages({
     }
 });
 
-class UsernameModal extends React.Component {
+class SettingsModal extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
@@ -143,7 +143,7 @@ class UsernameModal extends React.Component {
     }
 }
 
-UsernameModal.propTypes = {
+SettingsModal.propTypes = {
     intl: intlShape,
     onClose: PropTypes.func,
     vm: PropTypes.shape({
@@ -198,4 +198,4 @@ const mapDispatchToProps = dispatch => ({
 export default injectIntl(connect(
     mapStateToProps,
     mapDispatchToProps
-)(UsernameModal));
+)(SettingsModal));

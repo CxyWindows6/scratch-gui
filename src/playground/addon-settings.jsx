@@ -16,12 +16,13 @@
 
 import React from 'react';
 import downloadBlob from '../lib/download-blob.js';
+import {APP_NAME} from '../lib/brand.js';
 import Settings from '../addons/settings/settings.jsx';
 import render from './app-target';
 
 const onExportSettings = settings => {
     const blob = new Blob([JSON.stringify(settings)]);
-    downloadBlob('turbowarp-addon-settings.json', blob);
+    downloadBlob(`${APP_NAME.toLowerCase().replace(/\s+/g, '-')}-addon-settings.json`, blob);
 };
 
 render((

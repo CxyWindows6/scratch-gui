@@ -160,7 +160,6 @@ FontModal.propTypes = {
         'custom'
     ]),
     onOpenSystemFonts: PropTypes.func.isRequired,
-    // onOpenLibraryFonts: PropTypes.func.isRequired,
     onOpenCustomFonts: PropTypes.func.isRequired
 };
 

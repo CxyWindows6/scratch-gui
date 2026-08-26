@@ -7,14 +7,11 @@
     border-radius: 0.25rem;
     user-select: none;
     cursor: pointer;
+    opacity: 0.5;
 }
 
 .stop-all:hover {
     background-color: $looks-light-transparent;
-}
-
-.stop-all {
-    opacity: 0.5;
 }
 
 .stop-all.is-active {

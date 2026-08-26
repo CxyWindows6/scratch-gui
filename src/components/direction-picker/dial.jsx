@@ -61,7 +61,15 @@ class Dial extends React.Component {
         path.push(`M ${radius} 0`);
         path.push(`L ${radius} ${radius}`);
         path.push(`L ${radius + (radius * Math.sin(rads))} ${radius - (radius * Math.cos(rads))}`);
-        path.push(`A ${radius} ${radius} 0 0 ${direction < 0 ? 1 : 0} ${radius} 0`);
+        // Reduce the direction modulo 360 while keeping its sign: values may come
+        // straight from directionToMouseEvent, whose atan2(+90) range is (-90, 270].
+        // Once more than half the circle has been swept the SVG large-arc-flag must
+        // be 1, otherwise the arc flips to the complementary sector and no longer
+        // matches the pointer.
+        const sweptAngle = direction % 360;
+        const largeArcFlag = Math.abs(sweptAngle) > 180 ? 1 : 0;
+        const sweepFlag = sweptAngle < 0 ? 1 : 0;
+        path.push(`A ${radius} ${radius} 0 ${largeArcFlag} ${sweepFlag} ${radius} 0`);
         path.push(`Z`);
         return path.join(' ');
     }
@@ -85,7 +93,9 @@ class Dial extends React.Component {
         this.directionOffset = this.props.direction - this.directionToMouseEvent(e);
         window.addEventListener('mousemove', this.handleMouseMove);
         window.addEventListener('mouseup', this.unbindMouseEvents);
-        window.addEventListener('touchmove', this.handleMouseMove);
+        // Chrome makes window-level touchmove listeners passive by default;
+        // opt out so preventDefault in handleMouseMove can block scrolling.
+        window.addEventListener('touchmove', this.handleMouseMove, {passive: false});
         window.addEventListener('touchend', this.unbindMouseEvents);
         e.preventDefault();
     }

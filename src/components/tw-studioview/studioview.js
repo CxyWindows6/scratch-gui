@@ -2,7 +2,8 @@
 // Imported from:
 // https://github.com/forkphorus/forkphorus/tree/master/studioview
 // With changes to make it work properly in the scratch-gui environment.
-// todo: we have to see if we are leaking memory when this is mounted and unmounted, esp. because of event listeners
+// Memory leaks when mounted/unmounted (observers + per-element event listeners)
+// are handled by StudioView.prototype.destroy(), called from studioview.jsx.
 // todo: use react-intl for translations
 
 import styles from './studioview.css';
@@ -24,11 +25,17 @@ var StudioView = function (studioId) {
     this.projectList.className = styles.studioviewList;
     this.root.appendChild(this.projectList);
 
+    // Bound once so listeners can be removed in destroy()
+    this.boundHandleIntersection = this.handleIntersection.bind(this);
+    this.boundHandleLoadNextPageIntersection = this.handleLoadNextPageIntersection.bind(this);
+    this.boundHandleClick = this.handleClick.bind(this);
+    this.boundHandleKeyDown = this.handleKeyDown.bind(this);
+
     if ('IntersectionObserver' in window) {
-        this.intersectionObserver = new IntersectionObserver(this.handleIntersection.bind(this), {
+        this.intersectionObserver = new IntersectionObserver(this.boundHandleIntersection, {
             root: this.projectList
         });
-        this.loadNextPageObserver = new IntersectionObserver(this.handleLoadNextPageIntersection.bind(this), {
+        this.loadNextPageObserver = new IntersectionObserver(this.boundHandleLoadNextPageIntersection, {
             root: this.projectList
         });
     } else {
@@ -119,8 +126,8 @@ StudioView.prototype.placeholderToProject = function (el, id, title, author) {
     el.titleEl.innerText = title;
     el.authorEl.innerText = this.messages.AUTHOR_ATTRIBUTION.replace('$author', author);
 
-    el.addEventListener('click', this.handleClick.bind(this), true);
-    el.addEventListener('keydown', this.handleKeyDown.bind(this), true);
+    el.addEventListener('click', this.boundHandleClick, true);
+    el.addEventListener('keydown', this.boundHandleKeyDown, true);
 
     return el;
 };
@@ -186,6 +193,28 @@ StudioView.prototype.handleIntersection = function (entries, observer) {
  */
 StudioView.prototype.canLoadNext = function () {
     return !this.loadingPage && !this.ended;
+};
+
+/**
+ * Stop observing and remove all event listeners,
+ * allowing this instance and its DOM tree to be garbage collected.
+ */
+StudioView.prototype.destroy = function () {
+    if (this.intersectionObserver) {
+        this.intersectionObserver.disconnect();
+        this.intersectionObserver = null;
+    }
+    if (this.loadNextPageObserver) {
+        this.loadNextPageObserver.disconnect();
+        this.loadNextPageObserver = null;
+    }
+    if (this.projectList) {
+        var loadedProjects = this.projectList.querySelectorAll('.' + styles.studioviewLoaded);
+        for (var i = 0; i < loadedProjects.length; i++) {
+            loadedProjects[i].removeEventListener('click', this.boundHandleClick, true);
+            loadedProjects[i].removeEventListener('keydown', this.boundHandleKeyDown, true);
+        }
+    }
 };
 
 /**

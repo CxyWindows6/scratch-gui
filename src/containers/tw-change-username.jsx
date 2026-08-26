@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
+import {alert as mduiAlert} from 'mdui';
 import {openUsernameModal} from '../reducers/modals';
 import {closeEditMenu} from '../reducers/menus';
 import isScratchDesktop from '../lib/isScratchDesktop';
@@ -24,8 +25,10 @@ class ChangeUsername extends React.Component {
     }
     changeUsername () {
         if (this.props.running && !isScratchDesktop()) {
-            // eslint-disable-next-line no-alert
-            alert(this.props.intl.formatMessage(messages.cannotChangeWhileRunning));
+            // Catches the rejection when the dialog is closed by other means than OK
+            mduiAlert(this.props.intl.formatMessage(messages.cannotChangeWhileRunning)).catch(() => {
+                // ignore
+            });
             return;
         }
         this.props.onOpenUsernameModal();

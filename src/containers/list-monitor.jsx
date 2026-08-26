@@ -146,24 +146,31 @@ class ListMonitor extends React.Component {
         this.initialWidth = this.state.width;
         this.initialHeight = this.state.height;
 
-        const onMouseMove = ev => {
+        // Compute dimensions from the event so mouseup can read the final
+        // values directly instead of the possibly-stale this.state
+        const getDimensions = ev => {
             const newPosition = getEventXY(ev);
             const dx = newPosition.x - this.initialPosition.x;
             const dy = newPosition.y - this.initialPosition.y;
-            this.setState({
+            return {
                 width: Math.max(Math.min(this.initialWidth + dx, this.props.customStageSize.width), 100),
                 height: Math.max(Math.min(this.initialHeight + dy, this.props.customStageSize.height), 60)
-            });
+            };
+        };
+
+        const onMouseMove = ev => {
+            this.setState(getDimensions(ev));
         };
 
         const onMouseUp = ev => {
-            onMouseMove(ev); // Make sure width/height are up-to-date
+            const dimensions = getDimensions(ev); // Make sure width/height are up-to-date
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseup', onMouseUp);
+            this.setState(dimensions);
             this.props.vm.runtime.requestUpdateMonitor({
                 id: this.props.id,
-                height: this.state.height,
-                width: this.state.width
+                height: dimensions.height,
+                width: dimensions.width
             });
         };
 

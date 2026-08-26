@@ -9,10 +9,10 @@
 }
 
 .progress-ring .progress-ring-ring {
-    stroke: $looks-light-transparent;
+    stroke: rgb(var(--mdui-color-surface-container-highest, 230, 224, 233));
 }
 
 .progress-ring .progress-ring-value {
-    stroke: $looks-secondary;
+    stroke: rgb(var(--mdui-color-primary, 103, 80, 164));
     stroke-linecap: round;
 }

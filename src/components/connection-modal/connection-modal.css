@@ -7,16 +7,11 @@
 }
 
 .header {
-    background-color: $pen-tertiary;
+    background-color: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
 }
 
 .body {
     background: $ui-modal-background;
-}
-
-.label {
-    font-weight: 500;
-    margin: 0 0 0.75rem;
 }
 
 .centered-row {
@@ -106,7 +101,7 @@
 .signal-bar {
     width: 4px;
     border-radius: 4px;
-    background-color: #DBDBDB;
+    background-color: rgb(var(--mdui-color-outline-variant, 196, 199, 197));
 }
 
 .signal-bar:nth-of-type(1) { height: 25%; }
@@ -140,14 +135,6 @@
     animation: spin 4s linear infinite;
 }
 
-[dir="ltr"] .radar {
-    margin-right: .5rem;
-}
-
-[dir="rtl"] .radar {
-    margin-left: .5rem;
-}
-
 @keyframes spin {
     100% {
         transform: rotate(360deg);
@@ -156,11 +143,6 @@
 
 .peripheral-activity {
     position: relative;
-}
-
-.peripheral-activity-icon {
-    /* width: 80px;
-    height: 80px; */
 }
 
 .connection-tip-icon {
@@ -176,15 +158,8 @@
     background-color: $looks-secondary;
     border-radius: 100%;
     box-shadow: 0px 0px 0px 4px $looks-transparent;
-    /* animation: pulse-blue-ring 1s infinite ease-in-out alternate; */
     animation: wiggle 0.5s infinite var(--ease-counter) alternate;
 
-}
-
-@keyframes pulse-blue-ring {
-    100% {
-        box-shadow: 0px 0px 0px 8px $looks-light-transparent;
-    }
 }
 
 .bluetooth-connected-icon {

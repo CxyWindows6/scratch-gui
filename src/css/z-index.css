@@ -14,7 +14,13 @@ $z-index-stage-question: 49; /* "ask" block text input goes above monitors */
 
 $z-index-card: 480;
 $z-index-alerts: 490;
-$z-index-menu-bar: 510; /* menu-bar dropdown should go over modals */
+/* NOTE: despite the original intent, menu-bar (510) actually sits BELOW modal
+   (511) and loader (512): when a modal or the loader is open, the menu-bar and
+   its dropdown are covered by them. Values kept as-is — changing them affects
+   the whole stacking context.
+   TODO: realizing the original "dropdown over modals" intent requires a value
+   greater than 512. */
+$z-index-menu-bar: 510;
 $z-index-loader: 512; /* above menu-bar and modals */
 $z-index-modal: 511;
 

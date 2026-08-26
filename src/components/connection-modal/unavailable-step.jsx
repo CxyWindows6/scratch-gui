@@ -27,7 +27,7 @@ const UnavailableStep = props => (
                             draggable={false}
                         />
                     </div>
-                    <div className={styles.helpStepText}>
+                    <div>
                         <FormattedMessage
                             defaultMessage="Make sure you have Scratch Link installed and running"
                             description="Message for getting Scratch Link installed"
@@ -46,7 +46,7 @@ const UnavailableStep = props => (
                             draggable={false}
                         />
                     </div>
-                    <div className={styles.helpStepText}>
+                    <div>
                         <FormattedMessage
                             defaultMessage="Check that Bluetooth is enabled"
                             description="Message for making sure Bluetooth is enabled"

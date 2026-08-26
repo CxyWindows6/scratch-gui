@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {
-    closeAlert,
+    closeAlertWithId,
     filterPopupAlerts
 } from '../reducers/alerts';
 
@@ -33,7 +33,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    onCloseAlert: index => dispatch(closeAlert(index))
+    // Close by stable alertId, not by index: alertsList is filtered before
+    // rendering, so filtered indexes don't match the full list in the store.
+    onCloseAlert: alertId => dispatch(closeAlertWithId(alertId))
 });
 
 export default connect(

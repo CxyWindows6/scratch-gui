@@ -32,7 +32,7 @@
 }
 
 .error {
-    color: #ff6b35;
+    color: rgb(var(--mdui-color-error, 179, 38, 30));
     text-align: center;
     padding: 1rem 0;
     font-size: 0.85rem;
@@ -87,23 +87,23 @@
 }
 
 .kind-bug {
-    background: #ffe0e0;
-    color: #c53030;
+    background: rgb(var(--mdui-color-error-container, 249, 222, 220));
+    color: rgb(var(--mdui-color-on-error-container, 65, 14, 11));
 }
 
 .kind-feature {
-    background: #e0f0ff;
-    color: #2b6cb0;
+    background: rgb(var(--mdui-color-primary-container, 234, 221, 255));
+    color: rgb(var(--mdui-color-on-primary-container, 33, 0, 94));
 }
 
 .kind-translation {
-    background: #e0ffe0;
-    color: #276749;
+    background: rgb(var(--mdui-color-tertiary-container, 255, 216, 228));
+    color: rgb(var(--mdui-color-on-tertiary-container, 55, 11, 30));
 }
 
 .kind-other {
-    background: #f0f0f0;
-    color: #555;
+    background: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
+    color: rgb(var(--mdui-color-on-surface-variant, 73, 69, 78));
 }
 
 .entry-username {

@@ -55,9 +55,11 @@ class LoaderComponent extends React.Component {
             'handleAssetProgress',
             'handleProjectLoaded',
             'barInnerRef',
+            'barOuterRef',
             'messageRef'
         ]);
         this.barInnerEl = null;
+        this.barOuterEl = null;
         this.messageEl = null;
         this.ignoreProgress = false;
     }
@@ -74,16 +76,19 @@ class LoaderComponent extends React.Component {
         this.props.vm.runtime.off('PROJECT_LOADED', this.handleProjectLoaded);
     }
     handleAssetProgress (finished, total) {
-        if (this.ignoreProgress || !this.barInnerEl || !this.messageEl) {
+        if (this.ignoreProgress || !this.barInnerEl || !this.barOuterEl || !this.messageEl) {
             return;
         }
 
         if (total === 0) {
             // Started loading a new project.
             this.barInnerEl.style.width = '0';
+            this.barOuterEl.setAttribute('aria-valuenow', '0');
             this.messageEl.textContent = this.props.intl.formatMessage(messages.projectData);
         } else {
+            const percent = Math.round(finished / total * 100);
             this.barInnerEl.style.width = `${finished / total * 100}%`;
+            this.barOuterEl.setAttribute('aria-valuenow', `${percent}`);
             const message = this.props.isRemote ? messages.downloadingAssets : messages.loadingAssets;
             this.messageEl.textContent = this.props.intl.formatMessage(message, {
                 complete: finished,
@@ -101,6 +106,9 @@ class LoaderComponent extends React.Component {
     }
     barInnerRef (barInner) {
         this.barInnerEl = barInner;
+    }
+    barOuterRef (barOuter) {
+        this.barOuterEl = barOuter;
     }
     messageRef (message) {
         this.messageEl = message;
@@ -140,7 +148,13 @@ class LoaderComponent extends React.Component {
                         ref={this.messageRef}
                     />
 
-                    <div className={styles.barOuter}>
+                    <div
+                        className={styles.barOuter}
+                        ref={this.barOuterRef}
+                        role="progressbar"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                    >
                         <div
                             className={styles.barInner}
                             ref={this.barInnerRef}

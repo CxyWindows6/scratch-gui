@@ -1,5 +1,6 @@
 import defaultsDeep from 'lodash.defaultsdeep';
 import {removeColorScheme, setColorScheme} from 'mdui';
+import {syncThemeColorMeta} from '../mdui-theme';
 import {ACCENT_MAP, ACCENT_SEED_COLORS} from '.';
 import AddonHooks from '../../addons/hooks';
 import './global-styles.css';
@@ -217,17 +218,11 @@ const applyGuiColors = theme => {
 
     // Some browsers will color their interfaces to match theme-color, so if we make it the same color as our
     // menu bar (or current surface-container), it'll look pretty cool.
-    const updateMetaThemeColor = () => {
-        let metaThemeColor = document.head.querySelector('meta[name=theme-color]');
-        if (!metaThemeColor) {
-            metaThemeColor = document.createElement('meta');
-            metaThemeColor.setAttribute('name', 'theme-color');
-            document.head.appendChild(metaThemeColor);
-        }
-        const currentContainer = mduiColor('--mdui-color-surface-container', null, guiColors['menu-bar-background']);
-        metaThemeColor.setAttribute('content', currentContainer);
-    };
-    updateMetaThemeColor();
+    // Delegate to the single writer of <meta name="theme-color"> in
+    // lib/mdui-theme so both call sites cannot fight over the tag. It reads
+    // --mdui-color-surface-container and falls back to --menu-bar-background,
+    // which was just applied to :root above.
+    syncThemeColorMeta();
 
     // a horrible hack for icons...
     // Surge Editor (mdui): recolor icons with the current MD3 primary instead

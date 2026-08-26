@@ -50,7 +50,7 @@ const submitChime = async (resource, event) => {
 
 class TWWindchimeSubmitter extends React.Component {
     componentDidUpdate (prevProps) {
-        if (this.props.projectId === '0' && this.props.projectId !== null) {
+        if (!this.props.projectId || this.props.projectId === '0') {
             // Only projects from an ID are eligible for windchimes.
             return;
         }

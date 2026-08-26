@@ -191,7 +191,7 @@ const PromptComponent = props => (
                     />
                 </MduiButton>
                 <MduiButton
-                    variant="text"
+                    variant="filled"
                     onClick={props.onOk}
                 >
                     <FormattedMessage

@@ -12,7 +12,7 @@
 }
 .body {
     width: 50%;
-    color: white;
+    color: rgb(var(--mdui-color-on-surface, 28,27,31));
     text-align: center;
 }
 

@@ -29,7 +29,7 @@ class ManageFont extends React.Component {
 
     handleExport () {
         const blob = new Blob([this.props.data], {
-            contentType: `font/${this.props.format}`
+            type: `font/${this.props.format}`
         });
         downloadBlob(`${this.props.name}.${this.props.format}`, blob);
     }

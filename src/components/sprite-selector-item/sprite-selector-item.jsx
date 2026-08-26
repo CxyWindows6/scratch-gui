@@ -14,14 +14,23 @@ let contextMenuId = 0;
 const SpriteSelectorItem = props => (
     <ContextMenuTrigger
         attributes={{
+            ...(typeof props.name === 'string' ? {'aria-label': props.name} : {}),
             className: classNames(props.className, styles.spriteSelectorItem, {
                 [styles.isSelected]: props.selected
             }),
             onClick: props.onClick,
+            onKeyDown: event => {
+                if (props.onClick && (event.key === 'Enter' || event.key === ' ')) {
+                    event.preventDefault();
+                    props.onClick(event);
+                }
+            },
             onMouseEnter: props.onMouseEnter,
             onMouseLeave: props.onMouseLeave,
             onMouseDown: props.onMouseDown,
-            onTouchStart: props.onMouseDown
+            onTouchStart: props.onMouseDown,
+            role: 'button',
+            tabIndex: 0
         }}
         disable={props.preventContextMenu}
         id={`${props.name}-${contextMenuId}`}

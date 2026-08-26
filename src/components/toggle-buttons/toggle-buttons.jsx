@@ -15,9 +15,11 @@ const ToggleButtons = ({buttons, className, disabled}) => (
             }
         )}
     >
-        {buttons.map((button, index) => (
+        {buttons.map(button => (
             <button
-                key={`toggle-${index}`}
+                /* Use the stable business field (title) as the list key so
+                   React can match items when the array is reordered */
+                key={button.title}
                 className={styles.button}
                 title={button.title}
                 aria-label={button.title}

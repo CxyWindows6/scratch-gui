@@ -41,6 +41,14 @@ const labelMap = defineMessages({
     }
 });
 
+// Curried keyboard handler for the backpack header "button" (Enter / Space toggles).
+const handleHeaderKeyDown = onToggle => event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        onToggle();
+    }
+};
+
 const Backpack = ({
     blockDragOver,
     containerRef,
@@ -62,6 +70,10 @@ const Backpack = ({
         <div
             className={styles.backpackHeader}
             onClick={onToggle}
+            role={onToggle ? 'button' : null}
+            tabIndex={onToggle ? 0 : null}
+            aria-expanded={onToggle ? expanded : null}
+            onKeyDown={onToggle ? handleHeaderKeyDown(onToggle) : null}
         >
             {onToggle ? (
                 <FormattedMessage
@@ -95,11 +107,10 @@ const Backpack = ({
                 {error !== false ? (
                     <div className={styles.statusMessage}>
                         <FormattedMessage
-                            defaultMessage="Error loading backpack"
-                            description="Error backpack message"
-                            id="gui.backpack.errorBackpack"
+                            defaultMessage="Unable to load backpack"
+                            description="Friendly message shown when the backpack fails to load"
+                            id="gui.backpack.unableToLoad"
                         />
-                        <div className={styles.errorMessage}>{error}</div>
                     </div>
                 ) : (
                     loading ? (

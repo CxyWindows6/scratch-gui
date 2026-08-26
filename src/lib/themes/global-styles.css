@@ -10,7 +10,9 @@
 /* popover is used by gui and paint */
 /* some of these are duplicated over there too; !important makes sure these win */
 :global(.Popover) {
-    color-scheme: light !important;
+    /* light dark = follow the active theme instead of forcing native controls
+       to render light while the app is dark */
+    color-scheme: light dark !important;
 }
 :global(.Popover-body) {
     color: $text-primary !important;

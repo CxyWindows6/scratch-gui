@@ -45,7 +45,12 @@ const getSurgeThemeMode = () => {
 };
 
 /**
- * Synchronize the <meta name="theme-color"> tag with the current MD3 surface container color.
+ * Synchronize the <meta name="theme-color"> tag with the current MD3 surface
+ * container color.
+ *
+ * This is the single writer of the meta tag (guiHelpers.js delegates here).
+ * When the mdui token is unavailable, it falls back to the legacy
+ * --menu-bar-background variable, which applyGuiColors keeps up to date.
  */
 const syncThemeColorMeta = () => {
     try {
@@ -55,11 +60,18 @@ const syncThemeColorMeta = () => {
             meta.setAttribute('name', 'theme-color');
             document.head.appendChild(meta);
         }
-        const parts = getComputedStyle(document.documentElement)
-            .getPropertyValue('--mdui-color-surface-container')
-            .trim();
-        if (parts) {
-            meta.setAttribute('content', `rgb(${parts})`);
+        const rootStyle = getComputedStyle(document.documentElement);
+        let value = rootStyle.getPropertyValue('--mdui-color-surface-container').trim();
+        if (!value) {
+            value = rootStyle.getPropertyValue('--menu-bar-background').trim();
+        }
+        if (value) {
+            // --mdui-color-* tokens hold bare "R, G, B" components; anything
+            // else is already a full CSS color.
+            meta.setAttribute(
+                'content',
+                /^[\d.,\s]+$/.test(value) ? `rgb(${value})` : value
+            );
         }
     } catch (e) {
         // ignore
@@ -127,8 +139,12 @@ const initSurgeTheme = (options = {}) => {
                 attributeFilter: ['class', 'style']
             });
         }
-        if (window.matchMedia) {
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (window.matchMedia && !window.__surgeThemeColorMediaQuery) {
+            // Guard flag mirrors __surgeThemeColorObserver above so repeated
+            // initSurgeTheme() calls do not stack duplicate change listeners.
+            window.__surgeThemeColorMediaQuery =
+                window.matchMedia('(prefers-color-scheme: dark)');
+            window.__surgeThemeColorMediaQuery.addEventListener('change', () => {
                 syncThemeColorMeta();
             });
         }
@@ -155,5 +171,6 @@ export {
     getSurgeThemeMode,
     initSurgeTheme,
     removeSurgeTheme,
-    setSurgeThemeMode
+    setSurgeThemeMode,
+    syncThemeColorMeta
 };

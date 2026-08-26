@@ -2,13 +2,15 @@
 
 .container {
     width: 100%;
+    color: rgb(var(--mdui-color-primary-container, 234, 221, 255));
 }
 .waveform-path {
     /*
-        This color is lighter than sound-primary, but
-        cannot use alpha because of overlapping elements.
+        Uses the primary-container token, which is lighter than primary.
+        Cannot use alpha because of overlapping elements, so the path
+        fills with currentColor instead.
     */
-    fill: hsl(300, 54%, 72%);
+    fill: currentColor;
     stroke: $sound-tertiary;
 }
 .baseline {

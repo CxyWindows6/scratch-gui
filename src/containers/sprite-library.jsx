@@ -7,6 +7,7 @@ import VM from 'scratch-vm';
 import {getSpriteLibrary} from '../lib/libraries/tw-async-libraries';
 import randomizeSpritePosition from '../lib/randomize-sprite-position';
 import spriteTags from '../lib/libraries/sprite-tags';
+import log from '../lib/log';
 
 import LibraryComponent from '../components/library/library.jsx';
 
@@ -29,11 +30,28 @@ class SpriteLibrary extends React.PureComponent {
         };
     }
     componentDidMount () {
+        this.mounted = true;
         if (this.state.data.then) {
-            this.state.data.then(data => this.setState({
-                data
-            }));
+            this.state.data
+                .then(data => {
+                    if (this.mounted) {
+                        this.setState({
+                            data
+                        });
+                    }
+                })
+                .catch(error => {
+                    log.error(error);
+                    if (this.mounted) {
+                        this.setState({
+                            requestFailed: true
+                        });
+                    }
+                });
         }
+    }
+    componentWillUnmount () {
+        this.mounted = false;
     }
     handleItemSelect (item) {
         // Randomize position of library sprite
@@ -45,7 +63,9 @@ class SpriteLibrary extends React.PureComponent {
     render () {
         return (
             <LibraryComponent
-                data={this.state.data.then ? null : this.state.data}
+                data={this.state.requestFailed ?
+                    [] :
+                    (this.state.data.then ? null : this.state.data)}
                 id="spriteLibrary"
                 tags={spriteTags}
                 title={this.props.intl.formatMessage(messages.libraryTitle)}

@@ -11,9 +11,7 @@ class TWFontsModal extends React.Component {
         bindAll(this, [
             'handleClose',
             'handleCustomFontsChanged',
-            'handleCancelAddFont',
             'handleOpenSystemFonts',
-            'handleOpenLibaryFonts',
             'handleOpenCustomFonts'
         ]);
         this.state = {
@@ -46,21 +44,9 @@ class TWFontsModal extends React.Component {
         });
     }
 
-    handleCancelAddFont () {
-        this.setState({
-            screen: ''
-        });
-    }
-
     handleOpenSystemFonts () {
         this.setState({
             screen: 'system'
-        });
-    }
-
-    handleOpenLibaryFonts () {
-        this.setState({
-            screen: 'library'
         });
     }
 
@@ -77,9 +63,7 @@ class TWFontsModal extends React.Component {
                 screen={this.state.screen}
                 fonts={this.state.fonts}
                 fontManager={this.props.vm.runtime.fontManager}
-                onCancelAddFont={this.handleCancelAddFont}
                 onOpenSystemFonts={this.handleOpenSystemFonts}
-                onOpenLibraryFonts={this.handleOpenLibaryFonts}
                 onOpenCustomFonts={this.handleOpenCustomFonts}
             />
         );

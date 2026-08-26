@@ -49,7 +49,7 @@ class UpdatePeripheralStep extends React.Component {
     async handleSendUpdate () {
         this.setState({
             activity: UPDATE_ACTIVITY.sendUpdate,
-            progress: 0,
+            progressPercentage: 0,
             err: null,
             res: null
         });
@@ -89,7 +89,6 @@ class UpdatePeripheralStep extends React.Component {
                         // depending on the peripheral. Should we get this from the extension somehow?
                     }
                     <FormattedMessage
-                        className={styles.helpStepText}
                         defaultMessage="Connect your {extensionName} to this device using a USB cable."
                         description="Instructions to connect the micro:bit to the computer for the update process"
                         id="gui.connection.updatePeripheral.microBitConnect"
@@ -108,7 +107,7 @@ class UpdatePeripheralStep extends React.Component {
                         draggable={false}
                     />
                     <FormattedMessage
-                        defaultMessage="Press &quot;Do Update&quot; and allow the update to complete."
+                        defaultMessage={'Press "Do Update" and allow the update to complete.'}
                         description="Instructions to press the button to begin the update process"
                         id="gui.connection.updatePeripheral.pressUpdate"
                     />

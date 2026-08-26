@@ -9,8 +9,7 @@
     border-radius: 50%;
     border-width: .1875rem;
     border-style: solid;
-    border-color: $ui-white-transparent-default;
-    border-color: rgb(var(--mdui-color-surface-container-high, 240, 234, 244));
+    border-color: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
     box-sizing: content-box;
 }
 
@@ -27,7 +26,6 @@
     top: -.1875rem;
     left: -.1875rem;
     border: .1875rem solid transparent;
-    border-top-color: $ui-white-default;
     border-top-color: rgb(var(--mdui-color-primary, 103, 80, 164));
     animation: spin 1.5s cubic-bezier(0.4, 0.1, 0.4, 1) infinite;
 }
@@ -63,39 +61,31 @@
 }
 
 .spinner.success {
-    border-color: $extensions-transparent;
     border-color: rgb(var(--mdui-color-tertiary-container, 255, 216, 228));
 }
 
 .spinner.success::after {
-    border-top-color: $extensions-primary;
-    border-top-color: rgb(var(--mdui-color-tertiary, 121, 80, 102));
+    border-top-color: rgb(var(--mdui-color-tertiary, 125, 82, 96));
 }
 
 .spinner.warn {
-    border-color: $error-transparent;
-    border-color: rgb(var(--mdui-color-error-container, 255, 218, 214));
+    border-color: rgb(var(--mdui-color-error-container, 249, 222, 220));
 }
 
 .spinner.warn::after {
-    border-top-color: $error-primary;
     border-top-color: rgb(var(--mdui-color-error, 179, 38, 30));
 }
 
 .spinner.info {
-    border-color: $ui-white-transparent-default;
-    border-color: rgb(var(--mdui-color-surface-container-high, 240, 234, 244));
+    border-color: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
 }
 .spinner.info::after {
-    border-top-color: $ui-white-default;
-    border-top-color: rgb(var(--mdui-color-on-surface-variant, 70, 70, 79));
+    border-top-color: rgb(var(--mdui-color-on-surface-variant, 73, 69, 78));
 }
 
 .spinner.primary {
-    border-color: $looks-transparent;
-    border-color: rgb(var(--mdui-color-primary-container, 222, 216, 255));
+    border-color: rgb(var(--mdui-color-primary-container, 234, 221, 255));
 }
 .spinner.primary::after {
-    border-top-color: $looks-secondary;
     border-top-color: rgb(var(--mdui-color-primary, 103, 80, 164));
 }

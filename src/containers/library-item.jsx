@@ -162,7 +162,7 @@ class LibraryItem extends React.PureComponent {
                 docsURI={this.props.docsURI}
                 samples={this.props.samples}
                 favorite={this.props.favorite}
-                onFavorite={this.handleFavorite}
+                onFavorite={this.props.onFavorite ? this.handleFavorite : null}
                 showPlayButton={this.props.showPlayButton}
                 onBlur={this.handleBlur}
                 onClick={this.handleClick}

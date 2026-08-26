@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
+import {prompt as mduiPrompt} from 'mdui';
 import VM from 'scratch-vm';
 
 const messages = defineMessages({
@@ -22,9 +23,14 @@ class FramerateChanger extends React.Component {
     }
     async changeFramerate (e) {
         if (e && (e.ctrlKey || e.shiftKey)) {
-            // prompt() returns Promise in desktop app
-            // eslint-disable-next-line no-alert
-            const newFPS = await prompt(this.props.intl.formatMessage(messages.newFramerate), this.props.framerate);
+            const newFPS = await mduiPrompt({
+                headline: this.props.intl.formatMessage(messages.newFramerate),
+                // mdui 2.1.5 prompt has no defaultValue option; prefill via the text field
+                textFieldOptions: {
+                    value: String(this.props.framerate)
+                }
+                // Resolves to null when the dialog is cancelled
+            }).catch(() => null);
             if (newFPS === null) {
                 return;
             }

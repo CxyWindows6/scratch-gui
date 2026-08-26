@@ -17,7 +17,7 @@ class Alert extends React.Component {
         ]);
     }
     handleOnCloseAlert () {
-        this.props.onCloseAlert(this.props.index);
+        this.props.onCloseAlert(this.props.alertId);
     }
     handleOnReconnect () {
         this.props.onOpenConnectionModal(this.props.extensionId);
@@ -28,7 +28,7 @@ class Alert extends React.Component {
             closeButton,
             content,
             extensionName,
-            index, // eslint-disable-line no-unused-vars
+            alertId, // eslint-disable-line no-unused-vars
             level,
             iconSpinner,
             iconURL,
@@ -74,13 +74,13 @@ const mapDispatchToProps = dispatch => ({
 });
 
 Alert.propTypes = {
+    alertId: PropTypes.string,
     closeButton: PropTypes.bool,
     content: PropTypes.element,
     extensionId: PropTypes.string,
     extensionName: PropTypes.string,
     iconSpinner: PropTypes.bool,
     iconURL: PropTypes.string,
-    index: PropTypes.number,
     level: PropTypes.string.isRequired,
     message: PropTypes.string,
     onCloseAlert: PropTypes.func.isRequired,

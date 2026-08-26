@@ -54,12 +54,7 @@ ConnectionModalComponent.propTypes = {
     onCancel: PropTypes.func.isRequired,
     onHelp: PropTypes.func.isRequired,
     phase: PropTypes.oneOf(Object.keys(PHASES)).isRequired,
-    title: PropTypes.string.isRequired,
     useAutoScan: PropTypes.bool.isRequired
-};
-
-ConnectionModalComponent.defaultProps = {
-    connectingMessage: 'Connecting'
 };
 
 export {

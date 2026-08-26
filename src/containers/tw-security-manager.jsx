@@ -155,9 +155,23 @@ class TWSecurityManagerComponent extends React.Component {
     componentDidMount () {
         const vmSecurityManager = this.props.vm.extensionManager.securityManager;
         const propsSecurityManager = this.props.securityManager;
+        // Keep the original methods so they can be restored on unmount.
+        this.originalSecurityManagerMethods = {};
         for (const method of SECURITY_MANAGER_METHODS) {
+            this.originalSecurityManagerMethods[method] = vmSecurityManager[method];
             vmSecurityManager[method] = propsSecurityManager[method] || this[method];
         }
+    }
+
+    componentWillUnmount () {
+        const vmSecurityManager = this.props.vm.extensionManager.securityManager;
+        if (!this.originalSecurityManagerMethods) {
+            return;
+        }
+        for (const method of SECURITY_MANAGER_METHODS) {
+            vmSecurityManager[method] = this.originalSecurityManagerMethods[method];
+        }
+        this.originalSecurityManagerMethods = null;
     }
 
     // eslint-disable-next-line valid-jsdoc

@@ -39,6 +39,23 @@ const filterInlineAlerts = alertsList => (
     ))
 );
 
+// Auto-incrementing counter used to give alerts without a stable id
+// (currently extension alerts) a unique alertId so they can be closed
+// reliably regardless of their position in the list.
+let uidCounter = 0;
+
+// Pending auto-dismiss timers keyed by alertId, so rescheduling the same
+// alert replaces the old timer instead of stacking up several of them.
+const alertTimeouts = new Map();
+
+const clearTimeoutForAlert = function (alertId) {
+    const timeoutId = alertTimeouts.get(alertId);
+    if (typeof timeoutId !== 'undefined') {
+        clearTimeout(timeoutId);
+        alertTimeouts.delete(alertId);
+    }
+};
+
 const reducer = function (state, action) {
     if (typeof state === 'undefined') state = initialState;
     switch (action.type) {
@@ -82,6 +99,7 @@ const reducer = function (state, action) {
             if (extension) {
                 const newList = state.alertsList.slice();
                 const newAlert = {
+                    alertId: `extension-${++uidCounter}`,
                     alertType: AlertTypes.EXTENSION,
                     closeButton: true,
                     extensionId: extensionId,
@@ -101,17 +119,26 @@ const reducer = function (state, action) {
     }
     case CLOSE_ALERT_WITH_ID:
     case CLOSE_ALERT: {
+        // Close either by stable alertId or, for backwards compatibility,
+        // by index into the full (unfiltered) alertsList.
+        let index = -1;
         if (action.alertId) {
-            action.index = state.alertsList.findIndex(a => a.alertId === action.alertId);
-            if (action.index === -1) return state;
+            index = state.alertsList.findIndex(a => a.alertId === action.alertId);
+        } else if (typeof action.index === 'number') {
+            index = action.index;
+        }
+        if (index < 0 || index >= state.alertsList.length) return state;
+        if (action.alertId) {
+            clearTimeoutForAlert(action.alertId);
         }
         const newList = state.alertsList.slice();
-        newList.splice(action.index, 1);
+        newList.splice(index, 1);
         return Object.assign({}, state, {
             alertsList: newList
         });
     }
     case CLOSE_ALERTS_WITH_ID: {
+        clearTimeoutForAlert(action.alertId);
         return Object.assign({}, state, {
             alertsList: state.alertsList.filter(curAlert => (
                 curAlert.alertId !== action.alertId
@@ -202,9 +229,13 @@ const showAlertWithTimeout = function (dispatch, alertId) {
     if (alertData) {
         dispatch(showStandardAlert(alertId));
         if (alertData.maxDisplaySecs) {
-            setTimeout(() => {
+            // Replace any pending timer for this alert instead of stacking
+            // another one, so repeated shows don't dismiss the alert early.
+            clearTimeoutForAlert(alertId);
+            alertTimeouts.set(alertId, setTimeout(() => {
+                alertTimeouts.delete(alertId);
                 dispatch(closeAlertsWithId(alertId));
-            }, alertData.maxDisplaySecs * 1000);
+            }, alertData.maxDisplaySecs * 1000));
         }
     }
 };

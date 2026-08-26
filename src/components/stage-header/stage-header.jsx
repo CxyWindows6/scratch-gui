@@ -222,7 +222,7 @@ class StageHeaderComponent extends React.Component {
                                     onClick={this.handleSetStageFullScreen}
                                 >
                                     <img
-                                        alt={this.props.intl.formatMessage(messages.fullStageSizeMessage)}
+                                        alt={this.props.intl.formatMessage(messages.fullScreenMessage)}
                                         className={styles.stageButtonIcon}
                                         draggable={false}
                                         src={fullScreenIcon}

@@ -30,7 +30,9 @@
 $fade-out-distance: 100px;
 
 .new-buttons:before {
+    background: linear-gradient(to top, rgb(var(--mdui-color-surface-container-low, 247, 242, 250)), transparent);
     content: "";
+    height: $fade-out-distance;
     position: absolute;
     bottom: 0;
     left: 0;

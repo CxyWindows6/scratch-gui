@@ -51,6 +51,7 @@ class SoundEditor extends React.Component {
             copyBuffer: null,
             chunkLevels: computeChunkedRMS(this.props.samples),
             playhead: null, // null is not playing, [0 -> 1] is playing percent
+            prevSoundId: this.props.soundId,
             trimStart: null,
             trimEnd: null
         };
@@ -60,20 +61,29 @@ class SoundEditor extends React.Component {
 
         this.ref = null;
     }
+    static getDerivedStateFromProps (props, state) {
+        if (props.soundId !== state.prevSoundId) { // A different sound has been selected
+            return {
+                prevSoundId: props.soundId,
+                chunkLevels: computeChunkedRMS(props.samples),
+                playhead: null,
+                trimStart: null,
+                trimEnd: null
+            };
+        }
+        return null;
+    }
     componentDidMount () {
         this.audioBufferPlayer = new AudioBufferPlayer(this.props.samples, this.props.sampleRate);
 
         document.addEventListener('keydown', this.handleKeyPress);
     }
-    componentWillReceiveProps (newProps) {
-        if (newProps.soundId !== this.props.soundId) { // A different sound has been selected
+    componentDidUpdate (prevProps) {
+        if (this.props.soundId !== prevProps.soundId) {
             this.redoStack = [];
             this.undoStack = [];
-            this.resetState(newProps.samples, newProps.sampleRate);
-            this.setState({
-                trimStart: null,
-                trimEnd: null
-            });
+            this.audioBufferPlayer.stop();
+            this.audioBufferPlayer = new AudioBufferPlayer(this.props.samples, this.props.sampleRate);
         }
     }
     componentWillUnmount () {
@@ -191,6 +201,10 @@ class SoundEditor extends React.Component {
         this.props.vm.renameSound(this.props.soundIndex, name);
     }
     handleDelete () {
+        if (this.state.trimStart === null) {
+            // No selection to delete; avoid pushing a no-op onto the undo stack.
+            return;
+        }
         const {samples, sampleRate} = this.copyCurrentBuffer();
         const sampleCount = samples.length;
         const startIndex = Math.floor(this.state.trimStart * sampleCount);

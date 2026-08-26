@@ -18,11 +18,15 @@ class TWUnknownPlatformModal extends React.Component {
 
     componentDidMount () {
         // Make it harder to accidentally dismiss without reading
-        setTimeout(() => {
+        this.closeTimeout = setTimeout(() => {
             this.setState({
                 canClose: true
             });
         }, 1000);
+    }
+
+    componentWillUnmount () {
+        clearTimeout(this.closeTimeout);
     }
 
     handleClose () {

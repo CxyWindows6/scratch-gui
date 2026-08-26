@@ -134,7 +134,7 @@ class SurgeThemeMenu extends React.Component {
                     </span>
                     <span className={styles.submenuLabel}>
                         <FormattedMessage
-                            defaultMessage="界面主题"
+                            defaultMessage="Interface theme"
                             description="Label for menu to choose UI theme mode (light / dark / auto)"
                             id="tw.menuBar.themeMode"
                         />

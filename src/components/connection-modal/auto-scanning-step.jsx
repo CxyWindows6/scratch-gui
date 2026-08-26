@@ -32,7 +32,7 @@ const AutoScanningStep = props => {
         (props.phase === PHASES.pressbutton || props.phase === PHASES.notfound));
     return (<Box className={styles.body}>
         <Box className={styles.activityArea}>
-            <div className={styles.activityAreaInfo}>
+            <div>
                 <div className={styles.centeredRow}>
                     {props.phase === PHASES.prescan && (
                         <React.Fragment>
@@ -70,7 +70,6 @@ const AutoScanningStep = props => {
                                 draggable={false}
                             />
                             <FormattedMessage
-                                className={styles.helpStepText}
                                 defaultMessage="No devices found"
                                 description="Text shown when no devices could be found"
                                 id="gui.connection.auto-scanning.noPeripheralsFound"
@@ -136,16 +135,26 @@ const AutoScanningStep = props => {
                                 id="gui.connection.connecting-searchbutton"
                             />
                         </button>
-                        <button
-                            className={styles.connectionButton}
-                            onClick={props.onRefresh}
+                        <FormattedMessage
+                            defaultMessage="Stop searching"
+                            description="Accessible label for the button that stops searching for devices"
+                            id="gui.connection.auto-scanning-stop-search-label"
                         >
-                            <img
-                                className={styles.abortConnectingIcon}
-                                src={closeIcon}
-                                draggable={false}
-                            />
-                        </button>
+                            {stopLabel => (
+                                <button
+                                    aria-label={stopLabel}
+                                    className={styles.connectionButton}
+                                    onClick={props.onRefresh}
+                                >
+                                    <img
+                                        alt=""
+                                        className={styles.abortConnectingIcon}
+                                        src={closeIcon}
+                                        draggable={false}
+                                    />
+                                </button>
+                            )}
+                        </FormattedMessage>
                     </div>
                 )}
                 {props.phase === PHASES.notfound && (

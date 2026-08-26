@@ -21,7 +21,7 @@
 
 .dragging {
     z-index: $z-index-monitor-dragging;
-    box-shadow: 3px 3px 5px #888888;
+    box-shadow: 3px 3px 5px rgba(var(--mdui-color-on-surface, 28, 27, 31), 0.55);
 }
 
 .default-monitor {

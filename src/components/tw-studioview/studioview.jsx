@@ -58,6 +58,11 @@ class StudioViewComponent extends React.Component {
             this.studioView.loadNextPage();
         }
     }
+    componentWillUnmount () {
+        if (this.studioView) {
+            this.studioView.destroy();
+        }
+    }
     handleSelect (id) {
         this.props.onSelect(id);
     }

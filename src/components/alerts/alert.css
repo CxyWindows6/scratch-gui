@@ -19,19 +19,19 @@
 }
 
 .alert.warn {
-    /* MD3 error container (falls back to the old light orange) */
-    background: rgb(var(--mdui-color-error-container, 255, 240, 223));
+    /* MD3 error container */
+    background: rgb(var(--mdui-color-error-container, 249, 222, 220));
     border: none;
 }
 
 .alert.success {
-    /* MD3 secondary container (falls back to the old light green) */
-    background: rgb(var(--mdui-color-secondary-container, 216, 244, 228));
+    /* MD3 secondary container */
+    background: rgb(var(--mdui-color-secondary-container, 232, 222, 248));
     border: none;
 }
 
 .alert-spinner {
-    self-align: center;
+    align-self: center;
 }
 
 .icon-section {
@@ -46,7 +46,7 @@
 }
 
 .alert-message {
-    color: rgb(var(--mdui-color-on-surface-variant, 85, 85, 85));
+    color: rgb(var(--mdui-color-on-surface-variant, 73, 69, 78));
     font-weight: bold;
     font-size: .8125rem;
     line-height: .875rem;
@@ -60,8 +60,10 @@
     flex-direction: row;
 }
 
-.alert-close-button {
-    outline-style:none;
+.alert-close-button:focus-visible,
+.alert-close-button:focus-within {
+    outline: 2px solid rgb(var(--mdui-color-primary, 103, 80, 164));
+    outline-offset: 2px;
 }
 
 .alert-close-button-container {

@@ -21,7 +21,12 @@ class SliderPrompt extends React.Component {
             // For internal use, convert values to strings based on isDiscrete
             // This is because `<input />` always returns values as strings.
             minValue: isDiscrete ? minValue.toFixed(0) : minValue.toFixed(2),
-            maxValue: isDiscrete ? maxValue.toFixed(0) : maxValue.toFixed(2)
+            maxValue: isDiscrete ? maxValue.toFixed(0) : maxValue.toFixed(2),
+            minError: false,
+            maxError: false,
+            // Bumped on every failed submit attempt so the component re-focuses
+            // the first invalid field even when nothing else changed.
+            errorNonce: 0
         };
     }
     handleKeyPress (event) {
@@ -29,8 +34,18 @@ class SliderPrompt extends React.Component {
     }
     handleOk () {
         const {minValue, maxValue} = this.state;
-        if (!this.validates(minValue, maxValue)) {
-            this.props.onCancel();
+        const minValid = this.validates(minValue);
+        const maxValid = this.validates(maxValue);
+        if (!minValid || !maxValid) {
+            // Validation failed: show the error state and focus the first
+            // invalid field instead of silently cancelling the dialog.
+            // Nothing is passed downstream until both fields parse to a
+            // finite number (no NaN can reach onOk).
+            this.setState(prevState => ({
+                minError: !minValid,
+                maxError: !maxValid,
+                errorNonce: prevState.errorNonce + 1
+            }));
             return;
         }
         this.props.onOk(
@@ -42,21 +57,28 @@ class SliderPrompt extends React.Component {
         this.props.onCancel();
     }
     handleChangeMin (e) {
-        this.setState({minValue: e.target.value});
+        this.setState({minValue: e.target.value, minError: false});
     }
     handleChangeMax (e) {
-        this.setState({maxValue: e.target.value});
+        this.setState({maxValue: e.target.value, maxError: false});
     }
     shouldBeDiscrete (min, max) {
         return min.indexOf('.') + max.indexOf('.') === -2; // Both -1
     }
-    validates (min, max) {
-        return isFinite(min) && isFinite(max);
+    validates (value) {
+        // An empty string would sneak through isFinite() as 0 and parseFloat('')
+        // is NaN, so empty input must be rejected explicitly.
+        return typeof value === 'string' &&
+            value.trim() !== '' &&
+            isFinite(value);
     }
     render () {
         return (
             <SliderPromptComponent
+                errorNonce={this.state.errorNonce}
+                maxError={this.state.maxError}
                 maxValue={this.state.maxValue}
+                minError={this.state.minError}
                 minValue={this.state.minValue}
                 onCancel={this.handleCancel}
                 onChangeMax={this.handleChangeMax}

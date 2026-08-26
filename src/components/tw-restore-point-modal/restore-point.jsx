@@ -18,7 +18,8 @@ class RestorePoint extends React.Component {
         bindAll(this, [
             'handleClickDelete',
             'handleClickExport',
-            'handleClickLoad'
+            'handleClickLoad',
+            'handleKeyDown'
         ]);
         this.state = {
             thumbnail: null,
@@ -80,6 +81,13 @@ class RestorePoint extends React.Component {
         this.props.onClickLoad(this.props.id);
     }
 
+    handleKeyDown (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.handleClickLoad();
+        }
+    }
+
     render () {
         const createdDate = new Date(this.props.created * 1000);
         return (
@@ -88,6 +96,7 @@ class RestorePoint extends React.Component {
                 role="button"
                 className={styles.restorePoint}
                 onClick={this.handleClickLoad}
+                onKeyDown={this.handleKeyDown}
             >
                 <div className={styles.thumbnailContainer}>
                     {this.state.error ? (

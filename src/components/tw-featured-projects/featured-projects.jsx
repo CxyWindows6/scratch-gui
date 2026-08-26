@@ -1,19 +1,28 @@
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
+import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
 import {connect} from 'react-redux';
 import StudioView from '../tw-studioview/studioview.jsx';
 import styles from './featured-projects.css';
 import {setProjectId} from '../../lib/tw-navigation-utils.js';
 import classNames from 'classnames';
 
+const messages = defineMessages({
+    viewFeaturedProjects: {
+        defaultMessage: 'View featured projects',
+        description: 'Accessible label for the button that reveals the featured projects',
+        id: 'tw.featuredProjects.view'
+    }
+});
+
 class FeaturedProjects extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
             'handleSelect',
-            'handleOpenProjects'
+            'handleOpenProjects',
+            'handleOpenerKeyDown'
         ]);
         this.state = {
             opened: false,
@@ -37,6 +46,12 @@ class FeaturedProjects extends React.Component {
             opened: true
         });
     }
+    handleOpenerKeyDown (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.handleOpenProjects();
+        }
+    }
     render () {
         const opened = this.state.opened;
         return (
@@ -58,7 +73,11 @@ class FeaturedProjects extends React.Component {
                     {opened ? null : (
                         <div
                             className={styles.openerContainer}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={this.props.intl.formatMessage(messages.viewFeaturedProjects)}
                             onClick={this.handleOpenProjects}
+                            onKeyDown={this.handleOpenerKeyDown}
                         >
                             <div className={styles.openerContent}>
                                 <FormattedMessage
@@ -89,6 +108,7 @@ class FeaturedProjects extends React.Component {
 }
 
 FeaturedProjects.propTypes = {
+    intl: intlShape,
     setProjectId: PropTypes.func,
     projectId: PropTypes.string,
     studio: PropTypes.string
@@ -102,7 +122,7 @@ const mapDispatchToProps = dispatch => ({
     setProjectId: projectId => setProjectId(dispatch, projectId)
 });
 
-export default connect(
+export default injectIntl(connect(
     mapStateToProps,
     mapDispatchToProps
-)(FeaturedProjects);
+)(FeaturedProjects));

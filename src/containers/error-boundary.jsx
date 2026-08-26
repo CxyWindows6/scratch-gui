@@ -43,10 +43,6 @@ class ErrorBoundary extends React.Component {
         ].join('\n'));
     }
 
-    handleBack () {
-        window.history.back();
-    }
-
     handleReload () {
         window.location.replace(window.location.origin + window.location.pathname);
     }

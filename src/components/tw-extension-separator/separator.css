@@ -2,6 +2,8 @@
 
 .separator {
   width: 100%;
+  height: 1px;
   border: none;
+  background: rgb(var(--mdui-color-outline-variant, 196, 199, 197));
   margin: 0.5rem 0;
 }

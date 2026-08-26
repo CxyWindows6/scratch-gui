@@ -30,11 +30,11 @@
     font-size: 0.85rem;
 }
 .deny-button {
-    background-color: rgb(255, 92, 92);
-    color: white;
+    background-color: rgb(var(--mdui-color-error, 179, 38, 30));
+    color: rgb(var(--mdui-color-on-error, 255, 255, 255));
     margin-right: 8px;
 }
 .allow-button {
-    background-color: #24cd11;
-    color: black;
+    background-color: rgb(var(--mdui-color-primary, 103, 80, 164));
+    color: rgb(var(--mdui-color-on-primary, 255, 255, 255));
 }

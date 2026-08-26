@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import {FormattedMessage} from 'react-intl';
+import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
 import PropTypes from 'prop-types';
 import React from 'react';
 import InlineMessages from '../../containers/inline-messages.jsx';
@@ -8,9 +8,26 @@ import {filterInlineAlerts} from '../../reducers/alerts';
 
 import styles from './save-status.css';
 
+const messages = defineMessages({
+    saveNow: {
+        id: 'tw.menuBar.saveNow',
+        defaultMessage: 'Save now',
+        description: 'Accessible label for the save button in the menu bar shown when the project has unsaved changes'
+    }
+});
+
+// Keyboard support for the div-as-button: activate on Enter or Space.
+const handleButtonKeyDown = onClick => event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        onClick();
+    }
+};
+
 const TWSaveStatus = ({
     alertsList,
     fileHandle,
+    intl,
     projectChanged,
     showSaveFilePicker
 }) => (
@@ -22,8 +39,12 @@ const TWSaveStatus = ({
         >
             {(_className, _downloadProjectCallback, {smartSave}) => (
                 <div
-                    onClick={smartSave}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={intl.formatMessage(messages.saveNow)}
                     className={styles.saveNow}
+                    onClick={smartSave}
+                    onKeyDown={handleButtonKeyDown(smartSave)}
                 >
                     {fileHandle ? (
                         <FormattedMessage
@@ -51,6 +72,7 @@ TWSaveStatus.propTypes = {
     fileHandle: PropTypes.shape({
         name: PropTypes.string
     }),
+    intl: intlShape.isRequired,
     projectChanged: PropTypes.bool,
     showSaveFilePicker: PropTypes.func
 };
@@ -61,7 +83,7 @@ const mapStateToProps = state => ({
     projectChanged: state.scratchGui.projectChanged
 });
 
-export default connect(
+export default injectIntl(connect(
     mapStateToProps,
     () => ({})
-)(TWSaveStatus);
+)(TWSaveStatus));

@@ -20,8 +20,8 @@
 }
 
 .warn {
-    background-color: rgb(var(--mdui-color-error-container, 255, 218, 214));
-    color: rgb(var(--mdui-color-on-error-container, 65, 0, 2));
+    background-color: rgb(var(--mdui-color-error-container, 249, 222, 220));
+    color: rgb(var(--mdui-color-on-error-container, 65, 14, 11));
     border-radius: calc($space / 2);
 }
 

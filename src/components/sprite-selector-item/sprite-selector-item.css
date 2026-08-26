@@ -97,7 +97,6 @@
 .delete-button {
     position: absolute;
     top: -.625rem;
-    z-index: auto;
 }
 
 [dir="ltr"] .delete-button {

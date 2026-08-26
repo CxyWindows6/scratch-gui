@@ -6,12 +6,12 @@
     padding: 1rem;
     margin: 1rem 0;
     text-align: center;
-    border: none;
+    border: 1px solid transparent;
     border-radius: 5px;
     cursor: pointer;
     background: none;
     width: 100%;
 }
 .container:focus-within {
-    border-color: $looks-secondary;
+    border-color: rgb(var(--mdui-color-primary, 103, 80, 164));
 }

@@ -51,7 +51,7 @@ const handleClickAddonSettings = addonId => {
     // addonId might be a string of the addon to focus on, undefined, or an event (treat like undefined)
     const path = process.env.ROUTING_STYLE === 'wildcard' ? 'addons' : 'addons.html';
     const url = `${process.env.ROOT}${path}${typeof addonId === 'string' ? `#${addonId}` : ''}`;
-    window.open(url);
+    window.open(url, '_blank', 'noopener');
 };
 
 const messages = defineMessages({
@@ -246,6 +246,7 @@ class Interface extends React.Component {
                     className={styles.center}
                     style={isPlayerOnly ? ({
                         // + 2 accounts for 1px border on each side of the stage
+                        maxWidth: '100%',
                         width: `${Math.max(480, props.customStageSize.width) + 2}px`
                     }) : null}
                 >
@@ -339,9 +340,6 @@ class Interface extends React.Component {
                                     />
                                 </p>
                             </div>
-                            {/* <div className={styles.section}>
-                                <FeaturedProjects studio="27205657" />
-                            </div> */}
                         </React.Fragment>
                     ) : null}
                 </div>

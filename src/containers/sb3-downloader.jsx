@@ -2,6 +2,7 @@ import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
+import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import {projectTitleInitialState, setProjectTitle} from '../reducers/project-title';
 import downloadBlob from '../lib/download-blob';
 import {setProjectUnchanged} from '../reducers/project-changed';
@@ -9,6 +10,14 @@ import {showStandardAlert, showAlertWithTimeout} from '../reducers/alerts';
 import {setFileHandle} from '../reducers/tw';
 import {getIsShowingProject} from '../reducers/project-state';
 import log from '../lib/log';
+
+const messages = defineMessages({
+    filePickerDescription: {
+        defaultMessage: 'Scratch 3 project',
+        description: 'Description of the Scratch 3 project file type, shown in the browser save-file picker',
+        id: 'tw.sb3downloader.fileTypeDescription'
+    }
+});
 
 // from sb-file-uploader-hoc.jsx
 const getProjectTitleFromFilename = fileInputFilename => {
@@ -100,7 +109,7 @@ class SB3Downloader extends React.Component {
                 suggestedName: this.props.projectFilename,
                 types: [
                     {
-                        description: 'Scratch 3 Project',
+                        description: this.props.intl.formatMessage(messages.filePickerDescription),
                         accept: {
                             'application/octet-stream': '.sb3'
                         }
@@ -280,6 +289,7 @@ SB3Downloader.propTypes = {
     fileHandle: PropTypes.shape({
         name: PropTypes.string
     }),
+    intl: intlShape,
     onSaveFinished: PropTypes.func,
     projectFilename: PropTypes.string,
     saveProjectSb3: PropTypes.func,
@@ -320,4 +330,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(SB3Downloader);
+)(injectIntl(SB3Downloader));

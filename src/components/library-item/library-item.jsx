@@ -22,6 +22,17 @@ const messages = defineMessages({
         defaultMessage: 'Unfavorite',
         description: 'Alt text of icon in costume, sound, and extension libraries to unmark an item as favorite.',
         id: 'tw.unfavorite'
+    },
+    bluetoothRequired: {
+        defaultMessage: 'Requires Bluetooth',
+        description: 'Alt text for the Bluetooth icon shown when an extension requires a Bluetooth connection.',
+        id: 'tw.libraryItem.bluetoothRequired'
+    },
+    internetConnectionRequired: {
+        defaultMessage: 'Requires Internet Connection',
+        // eslint-disable-next-line max-len
+        description: 'Alt text for the internet connection icon shown when an extension requires an internet connection.',
+        id: 'tw.libraryItem.internetConnectionRequired'
     }
 });
 
@@ -45,6 +56,9 @@ class LibraryItemComponent extends React.PureComponent {
                 />
             </button>
         );
+        // Only render the favorite star when the container passed a handler
+        // (i.e. the item has a valid persistable key and is not a link card).
+        const favoriteElement = this.props.onFavorite ? favorite : null;
 
         return this.props.featured ? (
             <div
@@ -57,7 +71,11 @@ class LibraryItemComponent extends React.PureComponent {
                     typeof this.props.extensionId === 'string' ? styles.libraryItemExtension : null,
                     this.props.hidden ? styles.hidden : null
                 )}
+                tabIndex={0}
+                onBlur={this.props.onBlur}
                 onClick={this.props.onClick}
+                onFocus={this.props.onFocus}
+                onKeyPress={this.props.onKeyPress}
             >
                 <div className={styles.featuredImageContainer}>
                     {this.props.disabled ? (
@@ -74,6 +92,7 @@ class LibraryItemComponent extends React.PureComponent {
                         loading="lazy"
                         draggable={false}
                         src={this.props.iconURL}
+                        alt="" /* decorative thumbnail; name is adjacent text */
                     />
                 </div>
                 {this.props.insetIconURL ? (
@@ -82,6 +101,7 @@ class LibraryItemComponent extends React.PureComponent {
                             className={styles.libraryItemInsetImage}
                             src={this.props.insetIconURL}
                             draggable={false}
+                            alt="" /* decorative inset decoration */
                         />
                     </div>
                 ) : null}
@@ -169,12 +189,18 @@ class LibraryItemComponent extends React.PureComponent {
                                             <img
                                                 src={bluetoothIconURL}
                                                 draggable={false}
+                                                alt={this.props.intl.formatMessage(
+                                                    messages.bluetoothRequired
+                                                )}
                                             />
                                         ) : null}
                                         {this.props.internetConnectionRequired ? (
                                             <img
                                                 src={internetConnectionIconURL}
                                                 draggable={false}
+                                                alt={this.props.intl.formatMessage(
+                                                    messages.internetConnectionRequired
+                                                )}
                                             />
                                         ) : null}
                                     </div>
@@ -202,7 +228,7 @@ class LibraryItemComponent extends React.PureComponent {
                     </div>
                 ) : null}
 
-                {favorite}
+                {favoriteElement}
             </div>
         ) : (
             <Box
@@ -232,6 +258,7 @@ class LibraryItemComponent extends React.PureComponent {
                             loading="lazy"
                             src={this.props.iconURL}
                             draggable={false}
+                            alt="" /* decorative thumbnail; name is adjacent text */
                         />
                     </Box>
                 </Box>
@@ -244,7 +271,7 @@ class LibraryItemComponent extends React.PureComponent {
                     />
                 ) : null}
 
-                {favorite}
+                {favoriteElement}
             </Box>
         );
     }

@@ -21,7 +21,7 @@ const ScanningStep = props => {
         <Box className={styles.activityArea}>
             {props.scanning ? (
                 props.peripheralList.length === 0 ? (
-                    <div className={styles.activityAreaInfo}>
+                    <div>
                         <div className={styles.centeredRow}>
                             <img
                                 className={classNames(styles.radarSmall, styles.radarSpin)}
@@ -57,7 +57,6 @@ const ScanningStep = props => {
                         draggable={false}
                     />
                     <FormattedMessage
-                        className={styles.helpStepText}
                         defaultMessage="No devices found"
                         description="Text shown when no devices could be found"
                         id="gui.connection.scanning.noPeripheralsFound"
@@ -67,8 +66,8 @@ const ScanningStep = props => {
         </Box>
         <Box className={styles.bottomArea}>
             <Box className={classNames(styles.bottomAreaItem, styles.instructions)}>
-                {(props.scanning || props.peripheralList.length > 0) && (
-                    // Show this message if we're still scanning OR if we've found devices
+                {props.peripheralList.length > 0 && (
+                    // Show this message only if we've found devices
                     <FormattedMessage
                         defaultMessage="Select your device in the list above."
                         description="Prompt for choosing a device to connect to"

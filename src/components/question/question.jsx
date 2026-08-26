@@ -21,7 +21,10 @@ const QuestionComponent = props => {
                 ) : null}
                 <div className={styles.questionInput}>
                     <Input
-                        autoFocus
+                        /* mdui's attribute is the single word `autofocus`;
+                           the wrapper kebab-cases props, so camelCase
+                           `autoFocus` would become a dead `auto-focus`. */
+                        autofocus
                         value={answer}
                         onChange={onChange}
                         onKeyPress={onKeyPress}

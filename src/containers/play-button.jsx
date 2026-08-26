@@ -9,6 +9,7 @@ class PlayButton extends React.Component {
         super(props);
         bindAll(this, [
             'handleClick',
+            'handleKeyDown',
             'handleMouseDown',
             'handleMouseEnter',
             'handleMouseLeave',
@@ -19,7 +20,7 @@ class PlayButton extends React.Component {
             touchStarted: false
         };
     }
-    getDerivedStateFromProps (props, state) {
+    static getDerivedStateFromProps (props, state) {
         // if touchStarted is true and it's not playing, the sound must have ended.
         // reset the touchStarted state to allow the sound to be replayed
         if (state.touchStarted && !props.isPlaying) {
@@ -40,16 +41,24 @@ class PlayButton extends React.Component {
         //  stop the click from propagating out of the button
         e.stopPropagation();
     }
+    handleKeyDown (e) {
+        // Activate via keyboard; Space is intentionally left to the global
+        // shortcut handler so it does not double-toggle playback.
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.handleMouseDown(e);
+        }
+    }
     handleMouseDown (e) {
         // prevent default (focus) on mouseDown
         e.preventDefault();
         if (this.props.isPlaying) {
             // stop sound and reset touch state
             this.props.onStop();
-            if (this.state.touchstarted) this.setState({touchStarted: false});
+            if (this.state.touchStarted) this.setState({touchStarted: false});
         } else {
             this.props.onPlay();
-            if (this.state.touchstarted) {
+            if (this.state.touchStarted) {
                 // started on touch, but now clicked mouse
                 this.setState({touchStarted: false});
             }
@@ -77,7 +86,7 @@ class PlayButton extends React.Component {
     }
     handleMouseLeave () {
         // stop the sound unless it was started by touch
-        if (this.props.isPlaying && !this.state.touchstarted) {
+        if (this.props.isPlaying && !this.state.touchStarted) {
             this.props.onStop();
         }
     }
@@ -96,6 +105,7 @@ class PlayButton extends React.Component {
                 className={className}
                 isPlaying={isPlaying}
                 onClick={this.handleClick}
+                onKeyDown={this.handleKeyDown}
                 onMouseDown={this.handleMouseDown}
                 onMouseEnter={this.handleMouseEnter}
                 onMouseLeave={this.handleMouseLeave}

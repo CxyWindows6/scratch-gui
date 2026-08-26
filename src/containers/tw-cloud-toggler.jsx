@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import {connect} from 'react-redux';
+import {alert as mduiAlert} from 'mdui';
 import {setCloud} from '../reducers/tw';
 import isScratchDesktop from '../lib/isScratchDesktop';
 
@@ -25,8 +26,10 @@ class CloudVariablesToggler extends React.Component {
     toggleCloudVariables () {
         if (!this.props.canUseCloudVariables) {
             const message = this.props.intl.formatMessage(messages.cloudUnavailableAlert);
-            // eslint-disable-next-line no-alert
-            alert(message);
+            // Catches the rejection when the dialog is closed by other means than OK
+            mduiAlert(message).catch(() => {
+                // ignore
+            });
             return;
         }
         this.props.onCloudChange(!this.props.enabled);

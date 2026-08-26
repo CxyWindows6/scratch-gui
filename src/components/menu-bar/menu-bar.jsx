@@ -4,6 +4,7 @@ import {compose} from 'redux';
 import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
 import PropTypes from 'prop-types';
 import bindAll from 'lodash.bindall';
+import throttle from 'lodash.throttle';
 import bowser from 'bowser';
 import React from 'react';
 
@@ -52,18 +53,12 @@ import {
     openAboutMenu,
     closeAboutMenu,
     aboutMenuOpen,
-    openAccountMenu,
-    closeAccountMenu,
-    accountMenuOpen,
     openFileMenu,
     closeFileMenu,
     fileMenuOpen,
     openEditMenu,
     closeEditMenu,
     editMenuOpen,
-    openLoginMenu,
-    closeLoginMenu,
-    loginMenuOpen,
     openModeMenu,
     closeModeMenu,
     modeMenuOpen,
@@ -97,6 +92,21 @@ const twMessages = defineMessages({
         id: 'tw.menuBar.compileError',
         defaultMessage: '{sprite}: {error}',
         description: 'Error message in error menu'
+    },
+    about: {
+        id: 'tw.menuBar.about',
+        defaultMessage: 'About',
+        description: 'Accessible label for the about button in the menu bar'
+    },
+    help: {
+        id: 'tw.menuBar.help',
+        defaultMessage: 'Help',
+        description: 'Accessible label for the help (about menu) button in the menu bar'
+    },
+    compilerWarnings: {
+        id: 'tw.menuBar.compilerWarnings',
+        defaultMessage: 'Compiler warnings',
+        description: 'Accessible label for the compiler warnings button in the menu bar'
     }
 });
 
@@ -155,13 +165,15 @@ MenuItemTooltip.propTypes = {
 };
 
 const AboutButton = props => (
-    <mdui-icon-button
+    <mdui-button-icon
         icon="help"
+        aria-label={props.ariaLabel}
         onClick={props.onClick}
     />
 );
 
 AboutButton.propTypes = {
+    ariaLabel: PropTypes.string,
     onClick: PropTypes.func.isRequired
 };
 
@@ -171,6 +183,7 @@ const MenuItemLink = props => (
         href={props.href}
         rel="noreferrer"
         target="_blank"
+        onClick={props.onClick}
     >
         {props.children}
     </mdui-menu-item>
@@ -178,7 +191,8 @@ const MenuItemLink = props => (
 
 MenuItemLink.propTypes = {
     children: PropTypes.node.isRequired,
-    href: PropTypes.string.isRequired
+    href: PropTypes.string.isRequired,
+    onClick: PropTypes.func
 };
 
 class MenuBar extends React.Component {
@@ -201,7 +215,10 @@ class MenuBar extends React.Component {
             'handleRestoreOption',
             'getSaveToComputerHandler',
             'restoreOptionMessage',
+            'handleEditMenuOption',
+            'handleErrorsLinkClick',
             'updateAlignment',
+            'handleResize',
             'handleFileMenuOpened',
             'handleFileMenuClosed',
             'handleEditMenuOpened',
@@ -224,6 +241,10 @@ class MenuBar extends React.Component {
     }
     componentDidMount () {
         document.addEventListener('keydown', this.handleKeyPress);
+        // The alignment uses a pixel-based translateX, so recompute it when
+        // the viewport changes size. Throttled because updateAlignment
+        // forces layout reads and writes.
+        window.addEventListener('resize', this.handleThrottledResize);
         this.updateAlignment(this.props.menuBarAlignment, false);
         this.bindMenuDropdowns();
     }
@@ -236,7 +257,12 @@ class MenuBar extends React.Component {
     }
     componentWillUnmount () {
         document.removeEventListener('keydown', this.handleKeyPress);
+        window.removeEventListener('resize', this.handleThrottledResize);
+        this.handleThrottledResize.cancel();
     }
+    // Defined as an instance property so componentDidMount and
+    // componentWillUnmount subscribe and unsubscribe the same instance.
+    handleThrottledResize = throttle(() => this.handleResize(), 200);
     // Attach mdui-dropdown custom event listeners to sync Redux open state.
     // mdui custom events (opened/closed) cannot be bound via React props, so we
     // bind them directly on the custom elements.
@@ -365,6 +391,10 @@ class MenuBar extends React.Component {
             inner.style.transition = '';
         }
     }
+    // Recompute the menu bar alignment for the current viewport width.
+    handleResize () {
+        this.updateAlignment(this.props.menuBarAlignment, false);
+    }
     handleClickNew () {
         // if the project is dirty, and user owns the project, we will autosave.
         // but if they are not logged in and can't save, user should consider
@@ -432,6 +462,7 @@ class MenuBar extends React.Component {
     handleSetMode (mode) {
         return () => {
             // Turn on/off filters for modes.
+            // FIXME: filter on documentElement breaks position:fixed descendants
             if (mode === '1920') {
                 document.documentElement.style.filter = 'brightness(.9)contrast(.8)sepia(1.0)';
                 document.documentElement.style.height = '100%';
@@ -464,6 +495,19 @@ class MenuBar extends React.Component {
             restoreFun();
             this.props.onRequestCloseEdit();
         };
+    }
+    // Same pattern as handleRestoreOption: run the item's action and then
+    // close the edit menu. mdui-dropdown only auto-closes when the click
+    // target is exactly the mdui-menu-item; clicks on slotted light-DOM
+    // content leave the menu open, so close it explicitly.
+    handleEditMenuOption (callback) {
+        return () => {
+            callback();
+            this.props.onRequestCloseEdit();
+        };
+    }
+    handleErrorsLinkClick () {
+        this.props.onRequestCloseErrors();
     }
     handleKeyPress (event) {
         const modifier = bowser.mac ? event.metaKey : event.ctrlKey;
@@ -526,7 +570,12 @@ class MenuBar extends React.Component {
         }
         if (typeof onClickAbout === 'function') {
             // make a button which calls a function
-            return <AboutButton onClick={onClickAbout} />;
+            return (
+                <AboutButton
+                    onClick={onClickAbout}
+                    ariaLabel={this.props.intl.formatMessage(twMessages.about)}
+                />
+            );
         }
         // assume it's an array of objects
         // each item must have a 'title' FormattedMessage and a 'handleClick' function
@@ -536,9 +585,10 @@ class MenuBar extends React.Component {
                 ref={this.setAboutDropdownRef}
                 placement={this.props.isRtl ? 'bottom-start' : 'bottom-end'}
             >
-                <mdui-icon-button
+                <mdui-button-icon
                     slot="trigger"
                     icon="help"
+                    aria-label={this.props.intl.formatMessage(twMessages.help)}
                 />
                 <mdui-menu>
                     {
@@ -624,19 +674,26 @@ class MenuBar extends React.Component {
                                     ref={this.setErrorsDropdownRef}
                                     placement={this.props.isRtl ? 'bottom-end' : 'bottom-start'}
                                 >
-                                    <mdui-icon-button
+                                    <mdui-button-icon
                                         slot="trigger"
                                         icon="warning"
+                                        aria-label={this.props.intl.formatMessage(twMessages.compilerWarnings)}
                                     />
                                     <mdui-menu>
-                                        <MenuItemLink href="https://scratch.mit.edu/users/GarboMuffin/#comments">
+                                        <MenuItemLink
+                                            href="https://scratch.mit.edu/users/GarboMuffin/#comments"
+                                            onClick={this.handleErrorsLinkClick}
+                                        >
                                             <FormattedMessage
                                                 defaultMessage="部分脚本出错了"
                                                 description="Link in error menu"
                                                 id="tw.menuBar.reportError1"
                                             />
                                         </MenuItemLink>
-                                        <MenuItemLink href="https://scratch.mit.edu/users/GarboMuffin/#comments">
+                                        <MenuItemLink
+                                            href="https://scratch.mit.edu/users/GarboMuffin/#comments"
+                                            onClick={this.handleErrorsLinkClick}
+                                        >
                                             <FormattedMessage
                                                 defaultMessage="请报告此问题"
                                                 description="Link in error menu"
@@ -846,7 +903,7 @@ class MenuBar extends React.Component {
                                     )}
                                     <mdui-divider />
                                     <TurboMode>{(toggleTurboMode, {turboMode}) => (
-                                        <mdui-menu-item onClick={toggleTurboMode}>
+                                        <mdui-menu-item onClick={this.handleEditMenuOption(toggleTurboMode)}>
                                             {turboMode ? (
                                                 <FormattedMessage
                                                     defaultMessage="关闭加速模式"
@@ -863,7 +920,7 @@ class MenuBar extends React.Component {
                                         </mdui-menu-item>
                                     )}</TurboMode>
                                     <FramerateChanger>{(changeFramerate, {framerate}) => (
-                                        <mdui-menu-item onClick={changeFramerate}>
+                                        <mdui-menu-item onClick={this.handleEditMenuOption(changeFramerate)}>
                                             {framerate === 60 ? (
                                                 <FormattedMessage
                                                     defaultMessage="关闭60帧模式"
@@ -880,7 +937,7 @@ class MenuBar extends React.Component {
                                         </mdui-menu-item>
                                     )}</FramerateChanger>
                                     <ChangeUsername>{changeUsername => (
-                                        <mdui-menu-item onClick={changeUsername}>
+                                        <mdui-menu-item onClick={this.handleEditMenuOption(changeUsername)}>
                                             <FormattedMessage
                                                 defaultMessage="修改用户名"
                                                 description="Menu bar item for changing the username"
@@ -892,7 +949,7 @@ class MenuBar extends React.Component {
                                     <CloudVariablesToggler>{(toggleCloudVariables, {enabled, canUseCloudVariables}) => (
                                         <mdui-menu-item
                                             className={classNames({[styles.disabled]: !canUseCloudVariables})}
-                                            onClick={toggleCloudVariables}
+                                            onClick={this.handleEditMenuOption(toggleCloudVariables)}
                                         >
                                             {canUseCloudVariables ? (
                                                 enabled ? (
@@ -1222,7 +1279,7 @@ MenuBar.defaultProps = {
     onShare: () => {}
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
     const loadingState = state.scratchGui.projectState.loadingState;
     const user = state.session && state.session.session && state.session.session.user;
     return {
@@ -1230,8 +1287,6 @@ const mapStateToProps = (state, ownProps) => {
         authorThumbnailUrl: state.scratchGui.tw.author.thumbnail,
         projectId: state.scratchGui.projectState.projectId,
         aboutMenuOpen: aboutMenuOpen(state),
-        accountMenuOpen: accountMenuOpen(state),
-        currentLocale: state.locales.locale,
         fileMenuOpen: fileMenuOpen(state),
         editMenuOpen: editMenuOpen(state),
         errors: state.scratchGui.tw.compileErrors,
@@ -1241,14 +1296,10 @@ const mapStateToProps = (state, ownProps) => {
         isUpdating: getIsUpdating(loadingState),
         isShowingProject: getIsShowingProject(loadingState),
         locale: state.locales.locale,
-        loginMenuOpen: loginMenuOpen(state),
         modeMenuOpen: modeMenuOpen(state),
         projectTitle: state.scratchGui.projectTitle,
-        sessionExists: state.session && typeof state.session.session !== 'undefined',
         settingsMenuOpen: settingsMenuOpen(state),
         username: user ? user.username : null,
-        userOwnsProject: ownProps.authorUsername && user &&
-            (ownProps.authorUsername === user.username),
         vm: state.scratchGui.vm,
         menuBarAlignment: state.scratchGui.tw.menuBarAlignment,
         mode220022BC: isTimeTravel220022BC(state),
@@ -1263,16 +1314,12 @@ const mapDispatchToProps = dispatch => ({
     onClickSeeInside: () => dispatch(setPlayer(false)),
     autoUpdateProject: () => dispatch(autoUpdateProject()),
     onOpenTipLibrary: () => dispatch(openTipsLibrary()),
-    onClickAccount: () => dispatch(openAccountMenu()),
-    onRequestCloseAccount: () => dispatch(closeAccountMenu()),
     onClickFile: () => dispatch(openFileMenu()),
     onRequestCloseFile: () => dispatch(closeFileMenu()),
     onClickEdit: () => dispatch(openEditMenu()),
     onRequestCloseEdit: () => dispatch(closeEditMenu()),
     onClickErrors: () => dispatch(openErrorsMenu()),
     onRequestCloseErrors: () => dispatch(closeErrorsMenu()),
-    onClickLogin: () => dispatch(openLoginMenu()),
-    onRequestCloseLogin: () => dispatch(closeLoginMenu()),
     onClickMode: () => dispatch(openModeMenu()),
     onRequestCloseMode: () => dispatch(closeModeMenu()),
     onRequestOpenAbout: () => dispatch(openAboutMenu()),

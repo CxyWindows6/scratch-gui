@@ -23,6 +23,13 @@
     width: 100%;
 }
 
+/* Active state while a search query is entered (see filter.jsx isActive) */
+.filter.isActive {
+    background-color: rgba(var(--mdui-color-primary, 103, 80, 164), 0.08);
+    /* inset ring instead of a border so the layout does not shift */
+    box-shadow: inset 0 0 0 1px rgba(var(--mdui-color-primary, 103, 80, 164), 0.4);
+}
+
 /* Remove the inner field's own container so it blends into the search bar */
 .filter-input::part(container) {
     background: transparent;

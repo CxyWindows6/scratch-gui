@@ -133,7 +133,7 @@ const RestorePointModal = props => (
                             defaultMessage="Restore points are not available due to an error:"
                             // eslint-disable-next-line max-len
                             description="Error message in restore point manager when the list of restore points cannot be loaded. Followed by an error message."
-                            id="tw.restorePoints.error"
+                            id="tw.restorePoints.unavailableError"
                             values={{
                                 error: props.error
                             }}

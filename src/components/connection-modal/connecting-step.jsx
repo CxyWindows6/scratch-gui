@@ -49,16 +49,26 @@ const ConnectingStep = props => (
                         id="gui.connection.connecting-cancelbutton"
                     />
                 </button>
-                <button
-                    className={styles.connectionButton}
-                    onClick={props.onDisconnect}
+                <FormattedMessage
+                    defaultMessage="Disconnect"
+                    description="Accessible label for the button that cancels a device connection attempt"
+                    id="gui.connection.connecting-cancelbutton-label"
                 >
-                    <img
-                        className={styles.abortConnectingIcon}
-                        src={closeIcon}
-                        draggable={false}
-                    />
-                </button>
+                    {cancelLabel => (
+                        <button
+                            aria-label={cancelLabel}
+                            className={styles.connectionButton}
+                            onClick={props.onDisconnect}
+                        >
+                            <img
+                                alt=""
+                                className={styles.abortConnectingIcon}
+                                src={closeIcon}
+                                draggable={false}
+                            />
+                        </button>
+                    )}
+                </FormattedMessage>
             </div>
         </Box>
     </Box>

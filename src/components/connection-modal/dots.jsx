@@ -1,3 +1,4 @@
+import {FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -12,27 +13,41 @@ const Dots = props => (
             styles.dotsRow
         )}
     >
-        <div
-            className={classNames(
-                styles.dotsHolder,
-                {
-                    [styles.dotsHolderError]: props.error,
-                    [styles.dotsHolderSuccess]: props.success
-                }
-            )}
+        <FormattedMessage
+            defaultMessage="Step {current} of {total}"
+            description="Accessible label indicating the current step of the connection process"
+            id="gui.connection.stepCounter"
+            values={{
+                current: typeof props.counter === 'number' ? props.counter + 1 : props.total,
+                total: props.total
+            }}
         >
-            {Array(props.total).fill(0)
-                .map((_, i) => {
-                    let type = 'inactive';
-                    if (props.counter === i) type = 'active';
-                    if (props.success) type = 'success';
-                    if (props.error) type = 'error';
-                    return (<Dot
-                        key={`dot-${i}`}
-                        type={type}
-                    />);
-                })}
-        </div>
+            {stepLabel => (
+                <div
+                    aria-label={stepLabel}
+                    className={classNames(
+                        styles.dotsHolder,
+                        {
+                            [styles.dotsHolderError]: props.error,
+                            [styles.dotsHolderSuccess]: props.success
+                        }
+                    )}
+                    role="group"
+                >
+                    {Array(props.total).fill(0)
+                        .map((_, i) => {
+                            let type = 'inactive';
+                            if (props.counter === i) type = 'active';
+                            if (props.success) type = 'success';
+                            if (props.error) type = 'error';
+                            return (<Dot
+                                key={`dot-${i}`}
+                                type={type}
+                            />);
+                        })}
+                </div>
+            )}
+        </FormattedMessage>
     </Box>
 );
 

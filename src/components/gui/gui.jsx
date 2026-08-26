@@ -68,18 +68,19 @@ const messages = defineMessages({
     }
 });
 
-const getFullscreenBackgroundColor = () => {
+// tw: allow overriding the fullscreen background color via URL parameter.
+// Otherwise the color comes from the themed --fullscreen-background CSS
+// variable (see gui.css and src/lib/themes/guiHelpers.js), which follows the
+// light/dark theme at runtime instead of being fixed at module load.
+const getFullscreenBackgroundOverride = () => {
     const params = new URLSearchParams(location.search);
     if (params.has('fullscreen-background')) {
         return params.get('fullscreen-background');
     }
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return '#111';
-    }
-    return 'white';
+    return null;
 };
 
-const fullscreenBackgroundColor = getFullscreenBackgroundColor();
+const fullscreenBackgroundOverride = getFullscreenBackgroundOverride();
 
 const GUIComponent = props => {
     const {
@@ -217,9 +218,11 @@ const GUIComponent = props => {
                 {isWindowFullScreen ? (
                     <div
                         className={styles.fullscreenBackground}
-                        style={{
-                            backgroundColor: fullscreenBackgroundColor
-                        }}
+                        style={
+                            fullscreenBackgroundOverride ? {
+                                backgroundColor: fullscreenBackgroundOverride
+                            } : null
+                        }
                     />
                 ) : null}
                 <StageWrapper

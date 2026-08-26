@@ -97,29 +97,40 @@ class ExtensionLibrary extends React.PureComponent {
         };
     }
     componentDidMount () {
+        this.mounted = true;
         if (!this.state.gallery) {
-            const timeout = setTimeout(() => {
-                this.setState({
-                    galleryTimedOut: true
-                });
+            this.galleryTimeout = setTimeout(() => {
+                if (this.mounted) {
+                    this.setState({
+                        galleryTimedOut: true
+                    });
+                }
             }, 750);
 
             fetchLibrary()
                 .then(gallery => {
                     cachedGallery = gallery;
-                    this.setState({
-                        gallery
-                    });
-                    clearTimeout(timeout);
+                    if (this.mounted) {
+                        this.setState({
+                            gallery
+                        });
+                        clearTimeout(this.galleryTimeout);
+                    }
                 })
                 .catch(error => {
                     log.error(error);
-                    this.setState({
-                        galleryError: error
-                    });
-                    clearTimeout(timeout);
+                    if (this.mounted) {
+                        this.setState({
+                            galleryError: error
+                        });
+                        clearTimeout(this.galleryTimeout);
+                    }
                 });
         }
+    }
+    componentWillUnmount () {
+        this.mounted = false;
+        clearTimeout(this.galleryTimeout);
     }
     handleItemSelect (item) {
         if (item.href) {

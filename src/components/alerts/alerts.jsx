@@ -14,18 +14,20 @@ const AlertsComponent = ({
     <Box
         bounds="parent"
         className={className}
+        role="status"
+        aria-live="polite"
     >
         <Box className={styles.alertsInnerContainer} >
-            {alertsList.map((a, index) => (
+            {alertsList.map(a => (
                 <Alert
+                    alertId={a.alertId}
                     closeButton={a.closeButton}
                     content={a.content}
                     extensionId={a.extensionId}
                     extensionName={a.extensionName}
                     iconSpinner={a.iconSpinner}
                     iconURL={a.iconURL}
-                    index={index}
-                    key={index}
+                    key={a.alertId}
                     level={a.level}
                     message={a.message}
                     showDownload={a.showDownload}

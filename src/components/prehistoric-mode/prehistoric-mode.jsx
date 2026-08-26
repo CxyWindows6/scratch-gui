@@ -27,6 +27,7 @@ class PrehistoricMode extends React.Component {
     }
 
     handleMouseMove (event) {
+        if (!this.props.show) return;
         this.setState({x: event.clientX, y: event.clientY});
     }
 

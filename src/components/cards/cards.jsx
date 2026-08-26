@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 import React, {Fragment} from 'react';
 import classNames from 'classnames';
+import bindAll from 'lodash.bindall';
 import {FormattedMessage} from 'react-intl';
 import Draggable from 'react-draggable';
 
 import styles from './card.css';
+
+import {activateByKeyboard} from '../box/keyboard';
 
 import shrinkIcon from './icon--shrink.svg';
 import expandIcon from './icon--expand.svg';
@@ -18,11 +21,22 @@ import closeIcon from './icon--close.svg';
 import {translateVideo} from '../../lib/libraries/decks/translate-video.js';
 import {translateImage} from '../../lib/libraries/decks/translate-image.js';
 
+// Positioning constants for the tutorial cards and their draggable bounds.
+// Kept in one place so the overlay and initial placement agree with each other.
+const CARD_HORIZONTAL_DRAG_OFFSET = 400; // ~80% of card width
+const CARD_VERTICAL_DRAG_OFFSET_EXPANDED = 257; // ~80% of card height, if expanded
+const MENU_BAR_HEIGHT = 48; // TODO: get pre-calculated from elsewhere?
+const WIDE_CARD_WIDTH = 500;
+const TALL_CARD_HEIGHT = 320;
+const BOTTOM_MARGIN = 60; // To avoid overlapping the backpack region
+
 const CardHeader = ({onCloseCards, onShrinkExpandCards, onShowAll, totalSteps, step, expanded}) => (
     <div className={expanded ? styles.headerButtons : classNames(styles.headerButtons, styles.headerButtonsHidden)}>
         <div
             className={styles.allButton}
             onClick={onShowAll}
+            onKeyDown={activateByKeyboard(onShowAll)}
+            tabIndex="0"
         >
             <img
                 className={styles.helpIcon}
@@ -49,6 +63,8 @@ const CardHeader = ({onCloseCards, onShrinkExpandCards, onShowAll, totalSteps, s
             <div
                 className={styles.shrinkExpandButton}
                 onClick={onShrinkExpandCards}
+                onKeyDown={activateByKeyboard(onShrinkExpandCards)}
+                tabIndex="0"
             >
                 <img
                     draggable={false}
@@ -70,6 +86,8 @@ const CardHeader = ({onCloseCards, onShrinkExpandCards, onShowAll, totalSteps, s
             <div
                 className={styles.removeButton}
                 onClick={onCloseCards}
+                onKeyDown={activateByKeyboard(onCloseCards)}
+                tabIndex="0"
             >
                 <img
                     className={styles.closeIcon}
@@ -88,17 +106,20 @@ const CardHeader = ({onCloseCards, onShrinkExpandCards, onShowAll, totalSteps, s
 class VideoStep extends React.Component {
 
     componentDidMount () {
-        const script = document.createElement('script');
-        script.src = `https://fast.wistia.com/embed/medias/${this.props.video}.jsonp`;
-        script.async = true;
-        script.setAttribute('id', 'wistia-video-content');
-        document.body.appendChild(script);
+        // Save the script elements on the instance so unmount can remove
+        // exactly the ones this step added, instead of relying on
+        // getElementById (which could match another step's script).
+        this.wistiaContentScript = document.createElement('script');
+        this.wistiaContentScript.src = `https://fast.wistia.com/embed/medias/${this.props.video}.jsonp`;
+        this.wistiaContentScript.async = true;
+        this.wistiaContentScript.setAttribute('id', 'wistia-video-content');
+        document.body.appendChild(this.wistiaContentScript);
 
-        const script2 = document.createElement('script');
-        script2.src = 'https://fast.wistia.com/assets/external/E-v1.js';
-        script2.async = true;
-        script2.setAttribute('id', 'wistia-video-api');
-        document.body.appendChild(script2);
+        this.wistiaApiScript = document.createElement('script');
+        this.wistiaApiScript.src = 'https://fast.wistia.com/assets/external/E-v1.js';
+        this.wistiaApiScript.async = true;
+        this.wistiaApiScript.setAttribute('id', 'wistia-video-api');
+        document.body.appendChild(this.wistiaApiScript);
     }
 
     // We use the Wistia API here to update or pause the video dynamically:
@@ -122,11 +143,12 @@ class VideoStep extends React.Component {
     }
 
     componentWillUnmount () {
-        const script = document.getElementById('wistia-video-content');
-        script.parentNode.removeChild(script);
-
-        const script2 = document.getElementById('wistia-video-api');
-        script2.parentNode.removeChild(script2);
+        if (this.wistiaContentScript && this.wistiaContentScript.parentNode) {
+            this.wistiaContentScript.parentNode.removeChild(this.wistiaContentScript);
+        }
+        if (this.wistiaApiScript && this.wistiaApiScript.parentNode) {
+            this.wistiaApiScript.parentNode.removeChild(this.wistiaApiScript);
+        }
     }
 
     render () {
@@ -178,6 +200,8 @@ const NextPrevButtons = ({isRtl, onNextStep, onPrevStep, expanded}) => (
                 <div
                     className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
                     onClick={onNextStep}
+                    onKeyDown={activateByKeyboard(onNextStep)}
+                    tabIndex="0"
                 >
                     <img
                         draggable={false}
@@ -192,6 +216,8 @@ const NextPrevButtons = ({isRtl, onNextStep, onPrevStep, expanded}) => (
                 <div
                     className={expanded ? (isRtl ? styles.rightButton : styles.leftButton) : styles.hidden}
                     onClick={onPrevStep}
+                    onKeyDown={activateByKeyboard(onPrevStep)}
+                    tabIndex="0"
                 >
                     <img
                         draggable={false}
@@ -276,6 +302,60 @@ PreviewsStep.propTypes = {
     onShowAll: PropTypes.func.isRequired
 };
 
+/**
+ * Fixed-position overlay that acts as the bounding parent for the draggable
+ * card. Tracks the window size (with a resize listener) so drag bounds stay
+ * correct after the window is resized.
+ */
+// Needs state/lifecycle for the resize listener; kept beside Cards by design.
+// eslint-disable-next-line react/no-multi-comp
+class CardsOverlay extends React.Component {
+    constructor (props) {
+        super(props);
+        bindAll(this, [
+            'handleResize'
+        ]);
+        this.state = {
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight
+        };
+    }
+    componentDidMount () {
+        window.addEventListener('resize', this.handleResize);
+    }
+    componentWillUnmount () {
+        window.removeEventListener('resize', this.handleResize);
+    }
+    handleResize () {
+        this.setState({
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight
+        });
+    }
+    render () {
+        const verticalDragOffset =
+            this.props.expanded ? CARD_VERTICAL_DRAG_OFFSET_EXPANDED : 0;
+        return (
+            <div
+                className={styles.cardContainerOverlay}
+                style={{
+                    width: `${this.state.windowWidth + (2 * CARD_HORIZONTAL_DRAG_OFFSET)}px`,
+                    height: `${this.state.windowHeight - MENU_BAR_HEIGHT + verticalDragOffset}px`,
+                    top: `${MENU_BAR_HEIGHT}px`,
+                    left: `${-CARD_HORIZONTAL_DRAG_OFFSET}px`
+                }}
+            >
+                {this.props.children}
+            </div>
+        );
+    }
+}
+
+CardsOverlay.propTypes = {
+    children: PropTypes.node,
+    expanded: PropTypes.bool.isRequired
+};
+
 const Cards = props => {
     const {
         activeDeckId,
@@ -303,36 +383,20 @@ const Cards = props => {
 
     // Tutorial cards need to calculate their own dragging bounds
     // to allow for dragging the cards off the left, right and bottom
-    // edges of the workspace.
-    const cardHorizontalDragOffset = 400; // ~80% of card width
-    const cardVerticalDragOffset = expanded ? 257 : 0; // ~80% of card height, if expanded
-    const menuBarHeight = 48; // TODO: get pre-calculated from elsewhere?
-    const wideCardWidth = 500;
-
+    // edges of the workspace. Bounds come from the shared constants above.
     if (x === 0 && y === 0) {
         // initialize positions
-        x = isRtl ? (-190 - wideCardWidth - cardHorizontalDragOffset) : 292;
-        x += cardHorizontalDragOffset;
-        // The tallest cards are about 320px high, and the default position is pinned
-        // to near the bottom of the blocks palette to allow room to work above.
-        const tallCardHeight = 320;
-        const bottomMargin = 60; // To avoid overlapping the backpack region
-        y = window.innerHeight - tallCardHeight - bottomMargin - menuBarHeight;
+        x = isRtl ? (-190 - WIDE_CARD_WIDTH - CARD_HORIZONTAL_DRAG_OFFSET) : 292;
+        x += CARD_HORIZONTAL_DRAG_OFFSET;
+        // The default position is pinned to near the bottom of the blocks
+        // palette to allow room to work above.
+        y = window.innerHeight - TALL_CARD_HEIGHT - BOTTOM_MARGIN - MENU_BAR_HEIGHT;
     }
 
     const steps = content[activeDeckId].steps;
 
     return (
-        // Custom overlay to act as the bounding parent for the draggable, using values from above
-        <div
-            className={styles.cardContainerOverlay}
-            style={{
-                width: `${window.innerWidth + (2 * cardHorizontalDragOffset)}px`,
-                height: `${window.innerHeight - menuBarHeight + cardVerticalDragOffset}px`,
-                top: `${menuBarHeight}px`,
-                left: `${-cardHorizontalDragOffset}px`
-            }}
-        >
+        <CardsOverlay expanded={expanded}>
             <Draggable
                 bounds="parent"
                 cancel="#video-div" // disable dragging on video div
@@ -391,7 +455,7 @@ const Cards = props => {
                     </div>
                 </div>
             </Draggable>
-        </div>
+        </CardsOverlay>
     );
 };
 

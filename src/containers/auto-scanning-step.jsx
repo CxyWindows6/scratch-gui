@@ -11,15 +11,28 @@ class AutoScanningStep extends React.Component {
             'handlePeripheralListUpdate',
             'handlePeripheralScanTimeout',
             'handleStartScan',
-            'handleRefresh'
+            'handleRefresh',
+            'stopPeripheralScan'
         ]);
+        // Set once a connect attempt is started, so unmounting this step won't cancel it.
+        this.connectInitiated = false;
         this.state = {
             phase: PHASES.prescan
         };
     }
     componentWillUnmount () {
-        // @todo: stop the peripheral scan here
+        this.stopPeripheralScan();
         this.unbindPeripheralUpdates();
+    }
+    stopPeripheralScan () {
+        // The VM has no dedicated scan-stop API; disconnecting the peripheral
+        // closes the scratch-link socket and clears the discover timeout,
+        // which stops an in-progress scan. Skip it if we just started
+        // connecting, since that uses the same socket.
+        if (this.connectInitiated) return;
+        if (!this.props.vm.getPeripheralIsConnected(this.props.extensionId)) {
+            this.props.vm.disconnectPeripheral(this.props.extensionId);
+        }
     }
     handlePeripheralScanTimeout () {
         this.setState({
@@ -33,6 +46,7 @@ class AutoScanningStep extends React.Component {
             newList[id]
         );
         if (peripheralArray.length > 0) {
+            this.connectInitiated = true;
             this.props.onConnecting(peripheralArray[0].peripheralId);
         }
     }
@@ -49,8 +63,8 @@ class AutoScanningStep extends React.Component {
             'PERIPHERAL_SCAN_TIMEOUT', this.handlePeripheralScanTimeout);
     }
     handleRefresh () {
-        // @todo: stop the peripheral scan here, it is more important for auto scan
-        // due to timeout and cancellation
+        // Stop any in-progress scan before resetting (abort button / try again).
+        this.stopPeripheralScan();
         this.setState({
             phase: PHASES.prescan
         });
@@ -69,7 +83,6 @@ class AutoScanningStep extends React.Component {
             <ScanningStepComponent
                 connectionTipIconURL={this.props.connectionTipIconURL}
                 phase={this.state.phase}
-                title={this.props.extensionId}
                 onRefresh={this.handleRefresh}
                 onStartScan={this.handleStartScan}
                 onUpdatePeripheral={this.props.onUpdatePeripheral}

@@ -63,9 +63,11 @@
     flex-wrap: wrap;
     flex-direction: row;
 
-    padding-top: calc($space / 2);
-    padding-left: calc($space / 2);
-    padding-right: calc($space / 2);
+    /* Extra top/side padding keeps the selected item's protruding
+       delete button (-.625rem offset) inside the clip region */
+    padding-top: calc($space / 2 + 0.25rem);
+    padding-left: calc($space / 2 + 0.25rem);
+    padding-right: calc($space / 2 + 0.25rem);
     padding-bottom: $space;
 
     overflow: hidden;
@@ -92,14 +94,10 @@
 .raised:hover {
     background-color: $drop-highlight;
     transform: scale(1.05);
-}
-
-.raised:hover {
     animation-name: wiggle;
     animation-duration: 500ms;
     animation-iteration-count: 1;
     animation-timing-function: var(--ease-counter);
-    background-color: $drop-highlight;
 }
 
 @keyframes wiggle {
@@ -115,12 +113,12 @@
 }
 
 @keyframes glowing {
-    10% { box-shadow: 0 0 10px #7fff1e; }
-    90% { box-shadow: 0 0 10px #7fff1e; }
+    10% { box-shadow: 0 0 10px rgba(var(--mdui-color-primary, 103, 80, 164), 0.5); }
+    90% { box-shadow: 0 0 10px rgba(var(--mdui-color-primary, 103, 80, 164), 0.5); }
     100% { box-shadow: none; }
 }
 
 .placeholder > .sprite {
-    background: black;
-    filter: opacity(15%) brightness(0%);
+    /* MD3 on-surface at low opacity stays visible on both light and dark themes */
+    background: rgba(var(--mdui-color-on-surface, 28, 27, 31), 0.15);
 }

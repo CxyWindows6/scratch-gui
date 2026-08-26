@@ -28,12 +28,8 @@ $more-button-size: 2.25rem;
 }
 
 .button:hover {
-    /* MD3 hover state */
-    background-color: rgba(var(--mdui-color-on-surface, 255, 255, 255), 0.08);
-}
-
-.button:active {
-    padding: inherit;
+    /* MD3 hover state; on-surface fallback per mdui.css light scheme (28,27,31) */
+    background-color: rgba(var(--mdui-color-on-surface, 28, 27, 31), 0.08);
 }
 
 .button.coming-soon:hover {
@@ -44,7 +40,7 @@ $more-button-size: 2.25rem;
     border-radius: 100%;
     width: $main-button-size;
     height: $main-button-size;
-    box-shadow: 0 0 0 4px rgba(var(--mdui-color-on-surface, 255, 255, 255), 0.2);
+    box-shadow: 0 0 0 4px rgba(var(--mdui-color-on-surface, 28, 27, 31), 0.2);
     z-index: $z-index-add-button;
     transition: transform, box-shadow 0.5s;
 }
@@ -56,7 +52,7 @@ $more-button-size: 2.25rem;
 
 .main-button:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 0 6px rgba(var(--mdui-color-on-surface, 255, 255, 255), 0.2);
+  box-shadow: 0 0 0 6px rgba(var(--mdui-color-on-surface, 28, 27, 31), 0.2);
 }
 
 .main-icon {
@@ -97,6 +93,9 @@ $more-button-size: 2.25rem;
     overflow-x: visible;
     display: flex;
     flex-direction: column;
+    /* Always the first (only) child of its parent: round off top button */
+    border-top-left-radius: $more-button-size;
+    border-top-right-radius: $more-button-size;
     z-index: 10; /* @todo justify */
 }
 
@@ -110,11 +109,6 @@ $more-button-size: 2.25rem;
 
 .force-hidden .more-buttons {
     display: none; /* This property does not animate */
-}
-
-.more-buttons:first-child { /* Round off top button */
-    border-top-right-radius: $more-button-size;
-    border-top-left-radius: $more-button-size;
 }
 
 .more-button {
@@ -137,7 +131,6 @@ $more-button-size: 2.25rem;
     is not very easy to style.
 */
 .tooltip {
-    background-color: $extensions-primary !important;
     background-color: rgb(var(--mdui-color-inverse-surface, 49, 48, 51)) !important;
     color: rgb(var(--mdui-color-inverse-on-surface, 244, 239, 244)) !important;
     opacity: 1 !important;
@@ -148,19 +141,12 @@ $more-button-size: 2.25rem;
     z-index: $z-index-tooltip !important;
 }
 
-.tooltip:after {
-    background-color: $extensions-primary;
-    background-color: rgb(var(--mdui-color-inverse-surface, 49, 48, 51));
-}
-
 .coming-soon-tooltip {
-    background-color: $data-primary !important;
     background-color: rgb(var(--mdui-color-inverse-surface, 49, 48, 51)) !important;
     color: rgb(var(--mdui-color-inverse-on-surface, 244, 239, 244)) !important;
 }
 
 .coming-soon-tooltip:after {
-    background-color: $data-primary !important;
     background-color: rgb(var(--mdui-color-inverse-surface, 49, 48, 51)) !important;
 }
 
@@ -170,6 +156,7 @@ $arrow-rounding: 0.125rem;
 
 .tooltip:after {
     content: "";
+    background-color: rgb(var(--mdui-color-inverse-surface, 49, 48, 51));
     border-top: 1px solid hsla(0, 0%, 0%, .1) !important;
     border-left: 0 !important;
     border-bottom: 0 !important;

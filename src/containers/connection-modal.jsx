@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import bindAll from 'lodash.bindall';
+import {FormattedMessage, injectIntl, intlShape} from 'react-intl';
 import ConnectionModalComponent, {PHASES} from '../components/connection-modal/connection-modal.jsx';
 import VM from 'scratch-vm';
 import analytics from '../lib/analytics';
@@ -9,6 +10,24 @@ import {connect} from 'react-redux';
 
 import {closeConnectionModal} from '../reducers/modals';
 import {isMicroBitUpdateSupported, selectAndUpdateMicroBit} from '../lib/microbit-update';
+
+/**
+ * Normalize an extension name into a plain string so it can be used as the
+ * dialog headline (mdui element attributes accept strings only).
+ * Plain strings pass through unchanged; FormattedMessage elements are
+ * formatted with the current intl context.
+ * @param {object} intl the react-intl intl object
+ * @param {string|React.Element} name extension name as defined in the extension library
+ * @returns {string|*} the formatted name, or the original value if it is neither
+ */
+const formatExtensionName = (intl, name) => {
+    if (!name || typeof name === 'string') return name;
+    if (React.isValidElement(name) && name.type === FormattedMessage) {
+        const {defaultMessage, description, id, values} = name.props;
+        return intl.formatMessage({defaultMessage, description, id}, values);
+    }
+    return name;
+};
 
 class ConnectionModal extends React.Component {
     constructor (props) {
@@ -142,9 +161,8 @@ class ConnectionModal extends React.Component {
                 connectionSmallIconURL={this.state.extension && this.state.extension.connectionSmallIconURL}
                 connectionTipIconURL={this.state.extension && this.state.extension.connectionTipIconURL}
                 extensionId={this.props.extensionId}
-                name={this.state.extension && this.state.extension.name}
+                name={formatExtensionName(this.props.intl, this.state.extension && this.state.extension.name)}
                 phase={this.state.phase}
-                title={this.props.extensionId}
                 useAutoScan={this.state.extension && this.state.extension.useAutoScan}
                 vm={this.props.vm}
                 onCancel={this.handleCancel}
@@ -162,6 +180,7 @@ class ConnectionModal extends React.Component {
 
 ConnectionModal.propTypes = {
     extensionId: PropTypes.string.isRequired,
+    intl: intlShape.isRequired,
     onCancel: PropTypes.func.isRequired,
     vm: PropTypes.instanceOf(VM).isRequired
 };
@@ -179,4 +198,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ConnectionModal);
+)(injectIntl(ConnectionModal));

@@ -1,18 +1,18 @@
 @import "../../css/colors.css";
 
 .green {
-    fill: rgb(171, 220, 170);
-    stroke: rgb(174, 211, 168);
+    fill: rgb(var(--mdui-color-primary-container, 234, 221, 255));
+    stroke: rgb(var(--mdui-color-primary, 103, 80, 164));
 }
 
 .yellow {
-    fill: rgb(251, 219, 130);
-    stroke: rgb(239, 212, 134);
+    fill: rgb(var(--mdui-color-tertiary-container, 255, 216, 228));
+    stroke: rgb(var(--mdui-color-tertiary, 125, 82, 96));
 }
 
 .red {
-    fill: rgb(251, 194, 142);
-    stroke: rgb(235, 189, 142);
+    fill: rgb(var(--mdui-color-error-container, 249, 222, 220));
+    stroke: rgb(var(--mdui-color-error, 179, 38, 30));
 }
 
 .mask-container {

@@ -113,7 +113,7 @@
 .accent-icon-outer {
     width: 24px;
     height: 24px;
-    border: 1px solid rgb(var(--mdui-color-outline-variant));
+    border: 1px solid rgb(var(--mdui-color-outline-variant, 196, 199, 197));
     border-radius: 100%;
     box-sizing: border-box;
     transform-origin: center;

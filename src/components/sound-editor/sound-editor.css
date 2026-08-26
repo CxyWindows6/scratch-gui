@@ -94,7 +94,7 @@ $border-radius: 0.25rem;
     right: -1px;
     bottom: -1px;
     left: -1px;
-    border: none;
+    border: 1px solid rgb(var(--mdui-color-primary, 103, 80, 164));
     z-index: 1;
 }
 
@@ -132,27 +132,6 @@ $border-radius: 0.25rem;
 
 [dir="rtl"] .undo-icon, [dir="rtl"] .redo-icon {
     transform: scaleX(-1);
-}
-
-.trim-button {
-    display: flex;
-    align-items: center;
-    color: $text-primary;
-    font-size: 0.625rem;
-    user-select: none;
-
-}
-
-[dir="ltr"] .trim-button {
-    margin-left: 1rem;
-}
-
-[dir="rtl"] .trim-button {
-    margin-right: 1rem;
-}
-
-.trim-button > img {
-    width: 1.25rem;
 }
 
 .effects {
@@ -250,9 +229,6 @@ $border-radius: 0.25rem;
 }
 .duration {
     font-weight: bold;
-}
-.advanced-info {
-
 }
 
 .alert {

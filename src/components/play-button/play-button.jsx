@@ -27,6 +27,7 @@ const PlayButtonComponent = ({
     intl,
     isPlaying,
     onClick,
+    onKeyDown,
     onMouseDown,
     onMouseEnter,
     onMouseLeave,
@@ -44,10 +45,13 @@ const PlayButtonComponent = ({
                 [styles.playing]: isPlaying
             })}
             onClick={onClick}
+            onKeyDown={onKeyDown}
             onMouseDown={onMouseDown}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
             ref={setButtonRef}
+            role="button"
+            tabIndex={0}
             {...props}
         >
             <img
@@ -64,6 +68,7 @@ PlayButtonComponent.propTypes = {
     intl: intlShape,
     isPlaying: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired,
+    onKeyDown: PropTypes.func,
     onMouseDown: PropTypes.func.isRequired,
     onMouseEnter: PropTypes.func.isRequired,
     onMouseLeave: PropTypes.func.isRequired,
