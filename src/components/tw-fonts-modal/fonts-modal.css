@@ -2,17 +2,11 @@
 @import "../../css/z-index.css";
 @import "../../css/filters.css";
 
-.modal-content {
-    max-width: 550px;
-    margin-top: 50px;
+.modal-content::part(panel) {
+    max-width: min(550px, calc(100vw - 2rem));
 }
 
 .body {
-    background: $ui-modal-background;
-    background: rgb(var(--mdui-color-surface-container, 243, 237, 247));
-    padding: 1.5rem 2.25rem;
-    max-height: calc(100vh - 150px);
-    overflow: auto;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;

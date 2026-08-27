@@ -27,9 +27,9 @@ const ProjectTitleInput = ({
 }) => (
     <BufferedInput
         className={classNames(styles.titleField, className)}
-        maxLength="100"
+        maxlength="100"
         placeholder={intl.formatMessage(messages.projectTitlePlaceholder)}
-        tabIndex="0"
+        tabindex="0"
         type="text"
         value={projectTitle}
         onSubmit={onSubmit}

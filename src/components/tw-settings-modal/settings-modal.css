@@ -2,25 +2,21 @@
 @import "../../css/filters.css";
 @import "../../css/default-colors.css";
 
-.modal-content {
-    max-width: 750px;
+.modal-content::part(panel) {
+    width: min(750px, calc(100vw - 2rem));
+    max-width: min(750px, calc(100vw - 2rem));
 }
 
 .body {
-    background: $ui-modal-background;
-    padding: 1.5rem 2.25rem;
+    padding: 0;
     min-height: 150px;
-    max-height: calc(100vh - 250px);
-    overflow-y: auto;
 }
 
 /* For small screens, such as in the embed */
 @media (max-height: 600px) {
-    .modal-content {
-        margin: 50px auto;
-    }
-    .body {
-        max-height: calc(100vh - 150px);
+    .modal-content::part(panel) {
+        width: calc(100vw - 1rem);
+        max-width: calc(100vw - 1rem);
     }
 }
 

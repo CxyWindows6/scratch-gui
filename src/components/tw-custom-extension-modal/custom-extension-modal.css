@@ -1,14 +1,10 @@
 @import "../../css/colors.css";
 
-.modal-content {
-    max-width: 550px;
-    margin-top: 50px;
+.modal-content::part(panel) {
+    max-width: min(550px, calc(100vw - 2rem));
 }
 
-.body {
-    background: $ui-white;
-    padding: 1.5rem 2.25rem;
-}
+.body {}
 
 .body p,
 .unsandboxed-container,

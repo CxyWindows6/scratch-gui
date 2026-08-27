@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-intl';
 
-import Box from '../box/box.jsx';
 import {MduiDialog, MduiButton, MduiIconButton} from '../../lib/mdui';
 
 import styles from './modal.css';
@@ -23,15 +22,29 @@ const ModalComponent = props => {
     // dialog back open in the middle of its close animation when an unrelated
     // Redux update re-renders this component. The ref resets naturally when
     // the modal is unmounted and later recreated.
+    // Start closed so mdui performs its entrance animation once the dialog
+    // is mounted and then opened via state (rather than mounting already-open,
+    // which mdui treats as a first render with a zero-duration animation).
+    const [open, setOpen] = React.useState(false);
     const closingRef = React.useRef(false);
-    // Marks this dialog instance as closing so the wrapper stops forcing
-    // `open` back to true during the close animation.
-    const handleCloseBegin = React.useCallback(() => {
+
+    React.useEffect(() => {
+        const raf = requestAnimationFrame(() => setOpen(true));
+        return () => cancelAnimationFrame(raf);
+    }, []);
+
+    // Once closing starts, keep `open` from being forced back open by an
+    // unrelated re-render, and let mdui play the close animation. `onClosed`
+    // (fired after the animation) is what finally notifies the caller.
+    const beginClose = React.useCallback(() => {
+        if (closingRef.current) return;
         closingRef.current = true;
+        setOpen(false);
     }, []);
     return (
         <MduiDialog
-            open={!closingRef.current}
+            dir={props.isRtl ? 'rtl' : 'ltr'}
+            open={open}
             fullscreen={props.fullScreen}
             /* Only string labels can become an attribute; node labels are the
                caller's responsibility (they must provide their own label). */
@@ -42,81 +55,63 @@ const ModalComponent = props => {
             }
             closeOnEsc
             closeOnOverlayClick
-            onClose={handleCloseBegin}
+            onClose={beginClose}
             onClosed={props.onRequestClose}
             className={classNames(styles.modalContent, props.className, {
                 [styles.fullScreen]: props.fullScreen
             })}
         >
-            <Box
-                dir={props.isRtl ? 'rtl' : 'ltr'}
-                direction="column"
-                grow={1}
+            <div
+                slot="header"
+                className={classNames(styles.header, props.headerClassName)}
             >
-                <div className={classNames(styles.header, props.headerClassName)}>
-                    {props.onHelp ? (
-                        <div
-                            className={classNames(
-                                styles.headerItem,
-                                styles.headerItemHelp
-                            )}
+                {props.onHelp ? (
+                    <div className={styles.headerItemHelp}>
+                        <MduiButton
+                            variant="text"
+                            icon="help"
+                            onClick={props.onHelp}
                         >
-                            <MduiButton
-                                variant="text"
-                                icon="help"
-                                onClick={props.onHelp}
-                            >
-                                <FormattedMessage
-                                    defaultMessage="Help"
-                                    description="Help button in modal"
-                                    id="gui.modal.help"
-                                />
-                            </MduiButton>
-                        </div>
-                    ) : null}
-                    {props.headerImage ? (
-                        <div
-                            className={classNames(
-                                styles.headerItem,
-                                styles.headerItemTitle
-                            )}
-                        >
-                            <img
-                                className={styles.headerImage}
-                                src={props.headerImage}
-                                draggable={false}
+                            <FormattedMessage
+                                defaultMessage="Help"
+                                description="Help button in modal"
+                                id="gui.modal.help"
                             />
-                        </div>
-                    ) : null}
-                    <div
-                        className={classNames(
-                            styles.headerItem,
-                            styles.headerItemClose
-                        )}
-                    >
-                        {props.fullScreen ? (
-                            <MduiButton
-                                variant="text"
-                                icon="arrow_back"
-                                onClick={props.onRequestClose}
-                            >
-                                <FormattedMessage
-                                    defaultMessage="Back"
-                                    description="Back button in modal"
-                                    id="gui.modal.back"
-                                />
-                            </MduiButton>
-                        ) : (
-                            <MduiIconButton
-                                icon="close"
-                                aria-label={props.intl.formatMessage(messages.close)}
-                                onClick={props.onRequestClose}
-                            />
-                        )}
+                        </MduiButton>
                     </div>
+                ) : null}
+                {props.headerImage ? (
+                    <div className={styles.headerItemTitle}>
+                        <img
+                            className={styles.headerImage}
+                            src={props.headerImage}
+                            draggable={false}
+                        />
+                    </div>
+                ) : null}
+                <div className={styles.headerItemClose}>
+                    {props.fullScreen ? (
+                        <MduiButton
+                            variant="text"
+                            icon="arrow_back"
+                            onClick={beginClose}
+                        >
+                            <FormattedMessage
+                                defaultMessage="Back"
+                                description="Back button in modal"
+                                id="gui.modal.back"
+                            />
+                        </MduiButton>
+                    ) : (
+                        <MduiIconButton
+                            icon="close"
+                            aria-label={props.intl.formatMessage(messages.close)}
+                            onClick={beginClose}
+                        />
+                    )}
                 </div>
-                {props.children}
-            </Box>
+            </div>
+            {props.children}
         </MduiDialog>
     );
 };

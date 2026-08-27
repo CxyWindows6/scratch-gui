@@ -14,16 +14,12 @@
 }
 
 .modal-content {
-    margin: 100px auto;
-    outline: none;
-    border: none;
-    padding: 0;
-    border-radius: $space;
-    user-select: none;
-    width: 500px;
-
     color: $text-primary;
-    overflow: hidden;
+}
+
+.modal-content::part(panel) {
+    width: min(500px, calc(100vw - 2rem));
+    max-width: min(500px, calc(100vw - 2rem));
 }
 
 .illustration {
@@ -45,8 +41,6 @@
 }
 
 .body {
-    background: $ui-modal-background;
-    padding: 1.5rem 2.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;

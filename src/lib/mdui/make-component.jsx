@@ -16,14 +16,15 @@ import PropTypes from 'prop-types';
 //  - Props named in config.events / STANDARD_EVENTS are bound natively via stable event proxies,
 //    but only while a handler for that event is actually present in props.
 //
-// Note: focusin/focusout were dropped from STANDARD_EVENTS — they duplicated the
-// focus/blur mapping and no consumer ever passed onFocusIn/onFocusOut.
+// Note: focus/blur are mapped to focusin/focusout because native focus/blur
+// do not bubble and never cross a Shadow DOM boundary, so onFocus/onBlur
+// would never fire for mdui custom elements otherwise.
 
 const STANDARD_EVENTS = {
     onClick: 'click',
     onDoubleClick: 'dblclick',
-    onFocus: 'focus',
-    onBlur: 'blur',
+    onFocus: 'focusin',
+    onBlur: 'focusout',
     onKeyPress: 'keypress',
     onKeyDown: 'keydown',
     onKeyUp: 'keyup',

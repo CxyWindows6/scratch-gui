@@ -1,13 +1,11 @@
 @import "../../css/colors.css";
 
-.modal-content {
-    width: 400px;
+.modal-content::part(panel) {
+    width: min(400px, calc(100vw - 2rem));
+    max-width: min(400px, calc(100vw - 2rem));
 }
 
-.body {
-    background: $ui-modal-background;
-    padding: 1.5rem 2.25rem;
-}
+.body {}
 
 .body input[type="checkbox"],
 .body input[type="radio"] {

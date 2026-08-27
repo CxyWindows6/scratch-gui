@@ -208,7 +208,7 @@
     padding: .5rem 1rem;
     font-size: .875rem;
     font-weight: bold;
-    color: $ui-white;
+    color: #ffffff;
 }
 
 [dir="ltr"] .coming-soon-text {

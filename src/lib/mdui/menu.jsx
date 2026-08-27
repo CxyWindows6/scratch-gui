@@ -11,8 +11,12 @@ const MduiMenu = makeMduiComponent('mdui-menu', {
     },
     propTypes: {
         open: PropTypes.bool,
-        selectable: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+        selects: PropTypes.oneOf(['single', 'multiple']),
         value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+        dense: PropTypes.bool,
+        submenuTrigger: PropTypes.string,
+        submenuOpenDelay: PropTypes.number,
+        submenuCloseDelay: PropTypes.number,
         disabled: PropTypes.bool
     }
 });
@@ -29,10 +33,17 @@ const MduiMenuItem = makeMduiComponent('mdui-menu-item', {
     propTypes: {
         icon: PropTypes.string,
         endIcon: PropTypes.string,
+        endText: PropTypes.string,
+        selectedIcon: PropTypes.string,
+        submenuOpen: PropTypes.bool,
         value: PropTypes.string,
         disabled: PropTypes.bool,
-        selected: PropTypes.bool,
-        href: PropTypes.string
+        href: PropTypes.string,
+        download: PropTypes.string,
+        target: PropTypes.string,
+        rel: PropTypes.string,
+        autofocus: PropTypes.bool,
+        tabIndex: PropTypes.number
     }
 });
 

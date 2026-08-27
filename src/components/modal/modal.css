@@ -7,69 +7,48 @@
 }
 
 .modal-content {
-    margin: 100px auto;
-    outline: none;
-    /* No padding here on purpose: the mdui-dialog host provides a 3rem
-       padding that keeps the panel away from small-screen edges. */
-    border-radius: 0; /* mdui-dialog panel owns the MD3 shape */
-    user-select: none;
-
     font-family: Roboto, system-ui, sans-serif;
-    overflow: hidden;
 }
 
-.modal-content.full-screen {
-    position: absolute;
-
-    display: flex;
-    height: 100%;
+/* mdui-dialog 已经负责定位居中（host = fixed/flex/inset:0/3rem 留白），
+   面板尺寸交给 ::part(panel)；不要再在 host 上写 margin/定位。 */
+.modal-content.full-screen::part(panel) {
     width: 100%;
-
-    overflow-y: auto;
-    user-select: none;
-
-    background-color: $ui-secondary;
-
-    /* Default modal resets */
-    margin: 0;
-    border: none;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     border-radius: 0;
 }
 
 /*
-    Modal header has 3 items:
-    |filter     title       x|
-
-    Use the same width for both side item containers,
-    so that title remains centered
+    header 现在通过 slot="header" 进入 mdui-dialog 的 header 区域，
+    这里只做横向排版，不重复设置背景/高度/内边距。
 */
-$sides: 20rem;
-
 .header {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
     flex-wrap: nowrap;
-    justify-content: flex-start;
-    height: $library-header-height;
-
-    box-sizing: border-box;
-    width: 100%;
-    background-color: $ui-modal-header-background;
-    background-color: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
-    color: $ui-modal-header-foreground;
-    color: rgb(var(--mdui-color-on-surface, 0, 0, 0));
-
-    font-family: Roboto, system-ui, sans-serif;
-    font-size: 1rem;
-    font-weight: normal;
 }
 
-.header-item {
+.header-item-help {
     display: flex;
     align-items: center;
-    padding: 1rem;
-    text-decoration: none;
-    user-select: none;
+}
+
+.header-item-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.header-item-close {
+    display: flex;
+    align-items: center;
+    margin-inline-start: auto;
 }
 
 [dir="ltr"] .header-image {
@@ -80,51 +59,7 @@ $sides: 20rem;
     margin-left: 0.5rem;
 }
 
-.header-item-title {
-    flex-grow: 1;
-    flex-shrink: 0;
-    justify-content: center;
-    user-select: none;
-    letter-spacing: 0.4px;
-    cursor: default;
-}
-
-[dir="ltr"] .header-item-title {
-    margin: 0 -$sides 0 0;
-}
-
-[dir="rtl"] .header-item-title {
-    margin: 0 0 0 -$sides;
-}
-
-.full-screen [dir="ltr"] .header-item-title {
-    margin: 0 0 0 -$sides;
-}
-
-.full-screen [dir="rtl"] .header-item-title {
-    margin: 0 -$sides 0 0;
-}
-
-.header-item-close {
-    flex-basis: $sides;
-    justify-content: flex-end;
-    z-index: 1;
-}
-
 .full-screen .header-item-close {
     order: -1;
-    justify-content: flex-start;
-}
-
-.header-item-help {
-    padding: 0;
-    z-index: 1;
-}
-
-[dir="ltr"] .header-item-help {
-    margin-right: -4.75rem;
-}
-
-[dir="rtl"] .header-item-help {
-    margin-left: -4.75rem;
+    margin-inline-start: 0;
 }

@@ -2,17 +2,15 @@
 @import "../../css/units.css";
 
 .modal-content {
-    width: 480px;
     line-height: 1.75;
 }
 
-.header {
-    background-color: rgb(var(--mdui-color-surface-container-high, 236, 230, 240));
+.modal-content::part(panel) {
+    width: min(480px, calc(100vw - 2rem));
+    max-width: min(480px, calc(100vw - 2rem));
 }
 
-.body {
-    background: $ui-modal-background;
-}
+.body {}
 
 .centered-row {
     display: flex;

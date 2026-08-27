@@ -1,13 +1,13 @@
 @import "../../css/colors.css";
 @import "../../css/units.css";
 
-.modal-content {
-    width: 360px;
+.modal-content::part(panel) {
+    width: min(360px, calc(100vw - 2rem));
+    max-width: 100%;
 }
 
 .body {
-    background: $ui-modal-background;
-    padding: 1.5rem 2.25rem;
+    padding: 0;
 }
 
 .label {

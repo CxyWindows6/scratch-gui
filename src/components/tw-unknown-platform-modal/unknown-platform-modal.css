@@ -1,15 +1,10 @@
 @import "../../css/colors.css";
 
-.modal-content {
-    max-width: 480px;
-    margin-top: 50px;
+.modal-content::part(panel) {
+    max-width: min(480px, calc(100vw - 2rem));
 }
 
 .body {
-    background: $ui-modal-background;
-    padding: 1.5rem 2.25rem;
-    max-height: calc(100vh - 150px);
-    overflow: auto;
     display: flex;
     flex-direction: column;
     gap: 1rem;

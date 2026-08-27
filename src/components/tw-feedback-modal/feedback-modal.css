@@ -2,24 +2,17 @@
 @import "../../css/filters.css";
 @import "../../css/default-colors.css";
 
-.modal-content {
-    max-width: 720px;
+.modal-content::part(panel) {
+    max-width: min(720px, calc(100vw - 2rem));
 }
 
 .body {
-    background: $ui-modal-background;
-    padding: 1.5rem 2rem;
     min-height: 200px;
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
 }
 
 @media (max-height: 600px) {
-    .modal-content {
-        margin: 40px auto;
-    }
-    .body {
-        max-height: calc(100vh - 120px);
+    .modal-content::part(panel) {
+        max-width: calc(100vw - 1rem);
     }
 }
 

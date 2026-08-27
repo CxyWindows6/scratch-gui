@@ -20,16 +20,12 @@ $ui-gray: hsla(0, 0%, 95%, 1);
 }
 
 .modal-content {
-    margin: 100px auto;
-    outline: none;
-    border: none;
-    padding: 0;
-    border-radius: $space;
-    user-select: none;
-    width: 640px;
-
     color: $text-primary;
-    overflow: hidden;
+}
+
+.modal-content::part(panel) {
+    width: min(640px, calc(100vw - 2rem));
+    max-width: min(640px, calc(100vw - 2rem));
 }
 
 .illustration {
@@ -40,10 +36,7 @@ $ui-gray: hsla(0, 0%, 95%, 1);
     background-size: cover;
 }
 
-.body {
-    background: $ui-white;
-    padding: 1.5rem 2.25rem;
-}
+.body {}
 
 .privacy-policy-link {
     color: $looks-secondary;
@@ -150,9 +143,9 @@ $ui-gray: hsla(0, 0%, 95%, 1);
 }
 
 @media screen and (max-height: 660px) {
-    .modal-content {
-        margin: 5vh auto;
-        width: 90%;
+    .modal-content::part(panel) {
+        width: min(90%, calc(100vw - 2rem));
+        max-width: min(90%, calc(100vw - 2rem));
     }
 }
 

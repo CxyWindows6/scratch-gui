@@ -73,14 +73,12 @@ const PromptComponent = props => (
                     onInput={props.onChange}
                     onFocus={props.onFocus}
                     onKeyPress={props.onKeyPress}
-                    ref={instance => {
-                        if (instance && instance.elementRef && instance.elementRef.current) {
-                            const el = instance.elementRef.current;
-                            // defaultValue is a JS-only property on mdui-text-field;
-                            // the wrapper can only set attributes, so set it via the element.
-                            if (props.defaultValue && !el.value) {
-                                el.value = props.defaultValue;
-                            }
+                    ref={el => {
+                        // The wrapper forwards the mdui-text-field host element.
+                        // defaultValue is a JS-only property on mdui-text-field,
+                        // so set it directly on the element.
+                        if (el && props.defaultValue && !el.value) {
+                            el.value = props.defaultValue;
                         }
                     }}
                 />
