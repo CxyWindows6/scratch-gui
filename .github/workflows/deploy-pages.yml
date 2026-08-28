@@ -45,6 +45,20 @@ jobs:
       - name: Build Surge Editor
         run: npm run build
 
+      # 记录本次构建实际使用的 scratch-vm 版本到部署产物里，
+      # 部署后可通过 https://surge-editor.pages.dev/vm-version.txt 直接验证
+      # CI 装配的是哪个 commit，避免“部署成功但 VM 是旧的”再次发生。
+      - name: Record scratch-vm version
+        run: |
+          mkdir -p build
+          {
+            echo "lock-resolved:"
+            node -e "console.log(require('./package-lock.json').packages['node_modules/scratch-vm'].resolved)"
+            echo "installed-source-fix-marker:"
+            grep -c "stepsSinceRender" node_modules/scratch-vm/src/engine/tw-frame-loop.js || true
+          } > build/vm-version.txt
+          cat build/vm-version.txt
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
