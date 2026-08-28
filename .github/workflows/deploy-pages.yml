@@ -26,6 +26,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Always build with the newest commit on scratch-vm's surge-editor branch
+      # instead of the commit pinned in package-lock.json.
+      - name: Refresh scratch-vm to latest surge-editor commit
+        run: npm install github:CxyWindows6/scratch-vm#surge-editor --no-audit --no-fund
+
       - name: Build Surge Editor
         run: npm run build
 
