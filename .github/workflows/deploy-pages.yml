@@ -12,6 +12,12 @@ jobs:
     permissions:
       contents: read
       deployments: write
+    env:
+      # scratch-render 等 git 依赖的 devDeps 含 playwright-chromium，
+      # npm 安装 git 依赖时会连带安装其 devDeps，postinstall 会尝试下载
+      # Chromium/ffmpeg（几百 MB，经常超时导致 CI 失败）。
+      # 构建/部署不需要浏览器，跳过下载即可。
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
 
     steps:
       - name: Checkout repository
