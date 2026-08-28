@@ -41,10 +41,10 @@ jobs:
           npm install github:CxyWindows6/scratch-vm#surge-editor --no-audit --no-fund --force
           echo "Installed scratch-vm commit:"
           node -e "console.log(require('./node_modules/scratch-vm/package.json').gitHead || 'unknown')"
-          if grep -q "stepsSinceRender" node_modules/scratch-vm/src/engine/tw-frame-loop.js; then
-            echo "OK: scratch-vm contains render-gate fix (stepsSinceRender)"
+          if grep -q "_drawAfterStep" node_modules/scratch-vm/src/engine/tw-frame-loop.js; then
+            echo "OK: scratch-vm contains step-synchronized render fix (_drawAfterStep)"
           else
-            echo "ERROR: scratch-vm is missing render-gate fix!" >&2
+            echo "ERROR: scratch-vm is missing render fix!" >&2
             exit 1
           fi
 
@@ -65,7 +65,7 @@ jobs:
             echo "lock-resolved:"
             node -e "console.log(require('./package-lock.json').packages['node_modules/scratch-vm'].resolved)"
             echo "installed-source-fix-marker:"
-            grep -c "stepsSinceRender" node_modules/scratch-vm/src/engine/tw-frame-loop.js || true
+            grep -c "_drawAfterStep" node_modules/scratch-vm/src/engine/tw-frame-loop.js || true
           } > build/vm-version.txt
           cat build/vm-version.txt
 
