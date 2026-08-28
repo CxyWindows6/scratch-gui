@@ -327,16 +327,29 @@ const WarpTimer = props => (
             />
         }
         help={
-            <FormattedMessage
-                // eslint-disable-next-line max-len
-                defaultMessage="Makes scripts check if they are stuck in a long or infinite loop and run at a low framerate instead of getting stuck until the loop finishes. This fixes most crashes but has a significant performance impact, so it's only enabled by default in the editor."
-                description="Warp Timer help"
-                id="tw.settingsModal.warpTimerHelp"
-            />
+            props.value ? (
+                <FormattedMessage
+                    // eslint-disable-next-line max-len
+                    defaultMessage="Makes scripts check if they are stuck in a long or infinite loop and run at a low framerate instead of getting stuck until the loop finishes. This fixes most crashes but has a significant performance impact, so it's only enabled by default in the editor."
+                    description="Warp Timer help (when enabled)"
+                    id="tw.settingsModal.warpTimerHelp"
+                />
+            ) : (
+                <FormattedMessage
+                    // eslint-disable-next-line max-len
+                    defaultMessage="⚠️ The Warp Timer is off: scripts run at full speed and are never paused. An infinite or very long loop will freeze the entire page and unsaved work may be lost."
+                    description="Warp Timer warning (when disabled)"
+                    id="tw.settingsModal.warpTimerOffWarning"
+                />
+            )
         }
         slug="warp-timer"
     />
 );
+
+WarpTimer.propTypes = {
+    value: PropTypes.bool
+};
 
 const DisableCompiler = props => (
     <BooleanSetting
