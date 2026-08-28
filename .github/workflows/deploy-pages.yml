@@ -28,8 +28,19 @@ jobs:
 
       # Always build with the newest commit on scratch-vm's surge-editor branch
       # instead of the commit pinned in package-lock.json.
+      # --force 强制重新解析 git 分支依赖（否则 npm 可能静默复用 lock 里的旧 commit）
+      # 刷新后自检修复标记；缺失则直接失败，防止旧 VM 被部署上线。
       - name: Refresh scratch-vm to latest surge-editor commit
-        run: npm install github:CxyWindows6/scratch-vm#surge-editor --no-audit --no-fund
+        run: |
+          npm install github:CxyWindows6/scratch-vm#surge-editor --no-audit --no-fund --force
+          echo "Installed scratch-vm commit:"
+          node -e "console.log(require('./node_modules/scratch-vm/package.json').gitHead || 'unknown')"
+          if grep -q "stepsSinceRender" node_modules/scratch-vm/src/engine/tw-frame-loop.js; then
+            echo "OK: scratch-vm contains render-gate fix (stepsSinceRender)"
+          else
+            echo "ERROR: scratch-vm is missing render-gate fix!" >&2
+            exit 1
+          fi
 
       - name: Build Surge Editor
         run: npm run build
