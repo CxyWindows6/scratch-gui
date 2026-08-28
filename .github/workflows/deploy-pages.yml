@@ -49,7 +49,11 @@ jobs:
           fi
 
       - name: Build Surge Editor
-        run: npm run build
+        # 必须显式设 NODE_ENV=production：webpack 以 NODE_ENV 决定 mode 和输出
+        # 文件名（production = js/pentapod/[name].[contenthash].js；否则 dev 构建
+        # 输出 js/[name].js 且 React 用 development 版，性能极差、文件名永远不变
+        # 导致 CF 边缘缓存钉住旧构建——这就是“部署成功但修复没上线/跑酷卡顿”的根因。
+        run: NODE_ENV=production npm run build
 
       # 记录本次构建实际使用的 scratch-vm 版本到部署产物里，
       # 部署后可通过 https://surge-editor.pages.dev/vm-version.txt 直接验证
