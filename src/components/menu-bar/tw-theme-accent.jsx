@@ -1,11 +1,10 @@
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage, defineMessages} from 'react-intl';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 
-import {MduiIcon, MduiMenu, MduiMenuItem} from '../../lib/mdui';
+import {MduiMenu, MduiMenuItem} from '../../lib/mdui';
 
 import {ACCENT_BLUE, ACCENT_GRAY, ACCENT_MAP, ACCENT_ORANGE, ACCENT_PURPLE,
     ACCENT_RED, ACCENT_RAINBOW, Theme} from '../../lib/themes/index.js';
@@ -52,9 +51,12 @@ const icons = {
     [ACCENT_RAINBOW]: rainbowIcon
 };
 
+// A 24px color swatch. Rendered into a menu item's `icon` slot (the `slot`
+// prop is forwarded to the DOM element so mdui assigns it).
 const ColorIcon = props => (
     icons[props.id] ? (
         <img
+            slot={props.slot}
             className={styles.accentIconOuter}
             src={icons[props.id]}
             draggable={false}
@@ -63,6 +65,7 @@ const ColorIcon = props => (
         />
     ) : (
         <div
+            slot={props.slot}
             className={styles.accentIconOuter}
             style={{
                 // menu-bar-background is var(...), don't want to evaluate with the current values
@@ -74,29 +77,26 @@ const ColorIcon = props => (
 );
 
 ColorIcon.propTypes = {
-    id: PropTypes.string
+    id: PropTypes.string,
+    slot: PropTypes.string
 };
 
 const AccentMenuItem = props => (
     <MduiMenuItem
+        value={props.id}
+        selectedIcon="check"
         onClick={props.onClick}
-        selected={props.isSelected}
     >
-        <div className={styles.option}>
-            <span
-                className={classNames(styles.check, {[styles.selected]: props.isSelected})}
-            >
-                <MduiIcon name="check" />
-            </span>
-            <ColorIcon id={props.id} />
-            <FormattedMessage {...options[props.id]} />
-        </div>
+        <ColorIcon
+            id={props.id}
+            slot="icon"
+        />
+        <FormattedMessage {...options[props.id]} />
     </MduiMenuItem>
 );
 
 AccentMenuItem.propTypes = {
     id: PropTypes.string,
-    isSelected: PropTypes.bool,
     onClick: PropTypes.func
 };
 
@@ -104,23 +104,9 @@ class AccentThemeMenu extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleToggleSubmenu',
             'handleSubmenuOpened',
             'handleSubmenuClosed'
         ]);
-        this.itemRef = React.createRef();
-    }
-    componentDidUpdate (prevProps) {
-        if (this.itemRef.current && prevProps.isOpen !== this.props.isOpen) {
-            this.itemRef.current.submenuOpen = this.props.isOpen;
-        }
-    }
-    // mdui only toggles a submenu when the click target is the menu-item host
-    // itself; clicks on the option content land on inner elements, so toggle
-    // the submenu state manually (mdui still emits submenu-opened/closed).
-    handleToggleSubmenu () {
-        const element = this.itemRef.current;
-        if (element) element.submenuOpen = !element.submenuOpen;
     }
     handleSubmenuOpened () {
         if (!this.props.isOpen) this.props.onOpenMenu();
@@ -135,33 +121,28 @@ class AccentThemeMenu extends React.Component {
         } = this.props;
         return (
             <MduiMenuItem
-                ref={this.itemRef}
                 onSubmenuOpened={this.handleSubmenuOpened}
                 onSubmenuClosed={this.handleSubmenuClosed}
             >
-                <div
-                    className={styles.option}
-                    slot="custom"
-                    onClick={this.handleToggleSubmenu}
+                <ColorIcon
+                    id={theme.accent}
+                    slot="icon"
+                />
+                <FormattedMessage
+                    defaultMessage="Accent"
+                    description="Label for menu to choose accent color (eg. TurboWarp's red, Scratch's purple)"
+                    id="tw.menuBar.accent"
+                />
+                <MduiMenu
+                    slot="submenu"
+                    submenuTrigger="click"
+                    selects="single"
+                    value={theme.accent}
                 >
-                    <ColorIcon id={theme.accent} />
-                    <span className={styles.submenuLabel}>
-                        <FormattedMessage
-                            defaultMessage="Accent"
-                            description="Label for menu to choose accent color (eg. TurboWarp's red, Scratch's purple)"
-                            id="tw.menuBar.accent"
-                        />
-                    </span>
-                    <span className={styles.expandCaret}>
-                        <MduiIcon name="chevron_right" />
-                    </span>
-                </div>
-                <MduiMenu slot="submenu">
                     {Object.keys(options).map(item => (
                         <AccentMenuItem
                             key={item}
                             id={item}
-                            isSelected={theme.accent === item}
                             // eslint-disable-next-line react/jsx-no-bind
                             onClick={() => onChangeTheme(theme.set('accent', item))}
                         />

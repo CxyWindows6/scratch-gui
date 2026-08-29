@@ -37,6 +37,27 @@ class SettingsMenu extends React.Component {
     }
     handleOpened () {
         if (!this.props.settingsMenuOpen) this.props.onRequestOpen();
+        this.focusFirstTopLevelItem();
+    }
+    // mdui's `menu.items` getter flattens nested submenu leaves into the
+    // parent menu's item list, so its initial `updateFocusable()` marks a
+    // *hidden* submenu leaf as the focusable item and none of the top-level
+    // submenu headers ever become focusable (menu-item.focus() is gated by
+    // focusDisabled = disabled || !focusable). That makes a menu that
+    // contains submenus keyboard-unreachable on open. Nudge focus onto the
+    // first enabled top-level item so ArrowDown/Enter work from the trigger.
+    focusFirstTopLevelItem () {
+        const dropdown = this.dropdownRef;
+        if (!dropdown) return;
+        const menu = dropdown.querySelector('mdui-menu');
+        if (!menu || typeof menu.updateFocusable !== 'function') return;
+        const first = [...menu.children].find(
+            child => child.tagName === 'MDUI-MENU-ITEM' && !child.disabled
+        );
+        if (!first) return;
+        menu.lastActiveItem = first;
+        menu.updateFocusable();
+        first.focus();
     }
     handleClosed () {
         if (this.props.settingsMenuOpen) this.props.onRequestClose();

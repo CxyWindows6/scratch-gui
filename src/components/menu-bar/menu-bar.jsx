@@ -223,7 +223,6 @@ class MenuBar extends React.Component {
             'handleRestoreOption',
             'getSaveToComputerHandler',
             'restoreOptionMessage',
-            'handleEditMenuOption',
             'handleErrorsLinkClick',
             'updateAlignment',
             'handleResize',
@@ -476,16 +475,6 @@ class MenuBar extends React.Component {
     handleRestoreOption (restoreFun) {
         return () => {
             restoreFun();
-            this.props.onRequestCloseEdit();
-        };
-    }
-    // Same pattern as handleRestoreOption: run the item's action and then
-    // close the edit menu. mdui-dropdown only auto-closes when the click
-    // target is exactly the mdui-menu-item; clicks on slotted light-DOM
-    // content leave the menu open, so close it explicitly.
-    handleEditMenuOption (callback) {
-        return () => {
-            callback();
             this.props.onRequestCloseEdit();
         };
     }
@@ -894,7 +883,7 @@ class MenuBar extends React.Component {
                                     )}
                                     <MduiDivider />
                                     <TurboMode>{(toggleTurboMode, {turboMode}) => (
-                                        <MduiMenuItem onClick={this.handleEditMenuOption(toggleTurboMode)}>
+                                        <MduiMenuItem onClick={toggleTurboMode}>
                                             {turboMode ? (
                                                 <FormattedMessage
                                                     defaultMessage="关闭加速模式"
@@ -911,7 +900,7 @@ class MenuBar extends React.Component {
                                         </MduiMenuItem>
                                     )}</TurboMode>
                                     <FramerateChanger>{(changeFramerate, {framerate}) => (
-                                        <MduiMenuItem onClick={this.handleEditMenuOption(changeFramerate)}>
+                                        <MduiMenuItem onClick={changeFramerate}>
                                             {framerate === 60 ? (
                                                 <FormattedMessage
                                                     defaultMessage="关闭60帧模式"
@@ -928,7 +917,7 @@ class MenuBar extends React.Component {
                                         </MduiMenuItem>
                                     )}</FramerateChanger>
                                     <ChangeUsername>{changeUsername => (
-                                        <MduiMenuItem onClick={this.handleEditMenuOption(changeUsername)}>
+                                        <MduiMenuItem onClick={changeUsername}>
                                             <FormattedMessage
                                                 defaultMessage="修改用户名"
                                                 description="Menu bar item for changing the username"
@@ -940,7 +929,7 @@ class MenuBar extends React.Component {
                                     <CloudVariablesToggler>{(toggleCloudVariables, {enabled, canUseCloudVariables}) => (
                                         <MduiMenuItem
                                             className={classNames({[styles.disabled]: !canUseCloudVariables})}
-                                            onClick={this.handleEditMenuOption(toggleCloudVariables)}
+                                            onClick={toggleCloudVariables}
                                         >
                                             {canUseCloudVariables ? (
                                                 enabled ? (

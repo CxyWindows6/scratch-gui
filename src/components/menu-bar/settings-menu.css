@@ -4,94 +4,12 @@
     flex: 1;
 }
 
-.option {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-}
-
-/* Surge Editor (mdui): header rows use slot="custom", which makes mdui skip
-   its .preset container styling (menu-item.js: preset: !hasCustomSlot), so
-   the row loses the MD3 menu-item geometry. Restore it here: 12px padding,
-   48px min-height, label-large (14px) text. */
-.option[slot="custom"] {
-    box-sizing: border-box;
-    width: 100%;
-    min-height: 3rem;
-    padding: 0 .75rem;
-    font-size: var(--mdui-typescale-label-large-size, 0.875rem);
-}
-
-/* Surge Editor (mdui): inline row icon for submenu headers (e.g. theme mode
-   palette icon). Sized like the Material Symbols header icons. */
-.option-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    flex-shrink: 0;
-}
-
-.option .option-icon mdui-icon {
-    font-size: 1.5rem;
-}
-
-/* Surge Editor (mdui): header icons are Material Symbols font icons — keep
-   them at the standard 24px menu icon size so all labels share one
-   left-alignment line. */
-.option mdui-icon {
-    font-size: 1.5rem;
-    flex-shrink: 0;
-}
-
-.check {
-    display: inline-flex;
-    margin: 0 .25rem 0 0;
-    visibility: hidden;
-    width: 1rem;
-    height: 1rem;
-    flex-shrink: 0;
-}
-
-[dir="rtl"] .check {
-    margin: 0 0 0 .25rem;
-}
-
-/* The check icon is a Material Symbols glyph; keep it at 16px instead of
-   the 24px header-icon size from `.option mdui-icon`. */
-.option .check mdui-icon {
-    font-size: 1rem;
-}
-
-.selected {
-    visibility: visible;
-}
-
-.submenu-label {
-    flex: 1;
-}
-
 .dropdown-label {
     margin: 0 0.5rem 0 0.25rem;
 }
 
 [dir="rtl"] .dropdown-label {
     margin: 0 0.25rem 0 0.5rem;
-}
-
-.expand-caret {
-    display: inline-flex;
-    /* Material Symbols chevron_right already points at the submenu, so no
-       rotation is needed. The header row itself carries 12px padding
-       (`.option[slot="custom"]`), so an 8px margin leaves ~20px breathing
-       room between the caret and the menu edge. */
-    margin-inline-end: .5rem;
-    flex-shrink: 0;
-}
-
-[dir="rtl"] .expand-caret {
-    transform: rotate(180deg);
 }
 
 /* Extra padding to deal with scrollbar overlapping options in Firefox */
@@ -118,19 +36,4 @@
     box-sizing: border-box;
     transform-origin: center;
     transform: scale(90%);
-}
-
-/* mdui already dims disabled menu items (:host([disabled]) .container
-   opacity: .38); an extra opacity would double-dim the row. */
-.disabled img {
-    filter: grayscale(100%);
-}
-
-.option .open-link {
-    margin-inline-start: 0.5rem;
-}
-
-/* slightly smaller than the 24px row icons (was a 20px SVG) */
-.option .open-link mdui-icon {
-    font-size: 1.25rem;
 }

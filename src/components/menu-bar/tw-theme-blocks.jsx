@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage, defineMessages} from 'react-intl';
@@ -12,7 +11,6 @@ import {openBlocksThemeMenu, closeBlocksThemeMenu, blocksThemeMenuOpen,
     closeSettingsMenu} from '../../reducers/menus.js';
 import {setTheme} from '../../reducers/theme.js';
 import {persistTheme} from '../../lib/themes/themePersistance.js';
-import styles from './settings-menu.css';
 import threeIcon from './tw-blocks-three.svg';
 import highContrastIcon from './tw-blocks-high-contrast.svg';
 import darkIcon from './tw-blocks-dark.svg';
@@ -46,11 +44,16 @@ const icons = {
     [BLOCKS_DARK]: darkIcon
 };
 
-const ThemeIcon = ({id}) => (
+// 24px block-theme preview. Rendered into a menu item's `icon` slot.
+const ThemeIcon = ({id, slot}) => (
     id === BLOCKS_CUSTOM ? (
-        <MduiIcon name="edit" />
+        <MduiIcon
+            name="edit"
+            slot={slot}
+        />
     ) : (
         <img
+            slot={slot}
             src={icons[id]}
             alt=""
             draggable={false}
@@ -60,61 +63,39 @@ const ThemeIcon = ({id}) => (
 );
 
 ThemeIcon.propTypes = {
-    id: PropTypes.string
+    id: PropTypes.string,
+    slot: PropTypes.string
 };
 
-const ThemeMenuItem = ({id, disabled, isSelected, onClick}) => (
+const ThemeMenuItem = ({id, disabled, onClick}) => (
     <MduiMenuItem
-        onClick={disabled ? null : onClick}
+        value={id}
+        selectedIcon="check"
         disabled={disabled}
-        selected={isSelected}
+        endIcon={id === BLOCKS_CUSTOM ? 'open_in_new' : ''}
+        onClick={disabled ? null : onClick}
     >
-        <div className={classNames(styles.option, {[styles.disabled]: disabled})}>
-            <span
-                className={classNames(styles.check, {[styles.selected]: isSelected})}
-            >
-                <MduiIcon name="check" />
-            </span>
-            <ThemeIcon id={id} />
-            <FormattedMessage {...options[id]} />
-            {id === BLOCKS_CUSTOM && (
-                <span className={styles.openLink}>
-                    <MduiIcon name="open_in_new" />
-                </span>
-            )}
-        </div>
+        <ThemeIcon
+            id={id}
+            slot="icon"
+        />
+        <FormattedMessage {...options[id]} />
     </MduiMenuItem>
 );
 
 ThemeMenuItem.propTypes = {
+    disabled: PropTypes.bool,
     id: PropTypes.string,
-    isSelected: PropTypes.bool,
-    onClick: PropTypes.func,
-    disabled: PropTypes.bool
+    onClick: PropTypes.func
 };
 
 class BlocksThemeMenu extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleToggleSubmenu',
             'handleSubmenuOpened',
             'handleSubmenuClosed'
         ]);
-        this.itemRef = React.createRef();
-    }
-    componentDidUpdate (prevProps) {
-        if (this.itemRef.current && prevProps.isOpen !== this.props.isOpen) {
-            // Push Redux open state into the mdui-menu-item's submenu state
-            this.itemRef.current.submenuOpen = this.props.isOpen;
-        }
-    }
-    // mdui only toggles a submenu when the click target is the menu-item host
-    // itself; clicks on the option content land on inner elements, so toggle
-    // the submenu state manually (mdui still emits submenu-opened/closed).
-    handleToggleSubmenu () {
-        const element = this.itemRef.current;
-        if (element) element.submenuOpen = !element.submenuOpen;
     }
     handleSubmenuOpened () {
         if (!this.props.isOpen) this.props.onOpenMenu();
@@ -130,28 +111,21 @@ class BlocksThemeMenu extends React.Component {
         } = this.props;
         return (
             <MduiMenuItem
-                ref={this.itemRef}
+                icon="palette"
                 onSubmenuOpened={this.handleSubmenuOpened}
                 onSubmenuClosed={this.handleSubmenuClosed}
             >
-                <div
-                    className={styles.option}
-                    slot="custom"
-                    onClick={this.handleToggleSubmenu}
+                <FormattedMessage
+                    defaultMessage="Block Colors"
+                    description="Label for to choose what color blocks should be, eg. original or high contrast"
+                    id="tw.menuBar.blockColors"
+                />
+                <MduiMenu
+                    slot="submenu"
+                    submenuTrigger="click"
+                    selects="single"
+                    value={theme.blocks}
                 >
-                    <MduiIcon name="palette" />
-                    <span className={styles.submenuLabel}>
-                        <FormattedMessage
-                            defaultMessage="Block Colors"
-                            description="Label for to choose what color blocks should be, eg. original or high contrast"
-                            id="tw.menuBar.blockColors"
-                        />
-                    </span>
-                    <span className={styles.expandCaret}>
-                        <MduiIcon name="chevron_right" />
-                    </span>
-                </div>
-                <MduiMenu slot="submenu">
                     {[
                         BLOCKS_THREE,
                         BLOCKS_HIGH_CONTRAST,
@@ -161,7 +135,6 @@ class BlocksThemeMenu extends React.Component {
                         <ThemeMenuItem
                             key={i}
                             id={i}
-                            isSelected={theme.blocks === i}
                             // eslint-disable-next-line react/jsx-no-bind
                             onClick={
                                 i === BLOCKS_CUSTOM ?

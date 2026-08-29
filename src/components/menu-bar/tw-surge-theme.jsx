@@ -3,13 +3,12 @@ import React from 'react';
 import {FormattedMessage, defineMessages} from 'react-intl';
 import bindAll from 'lodash.bindall';
 
-import {MduiIcon, MduiMenu, MduiMenuItem} from '../../lib/mdui';
+import {MduiMenu, MduiMenuItem} from '../../lib/mdui';
 
 import {
     getSurgeThemeMode,
     setSurgeThemeMode
 } from '../../lib/mdui-theme/index.js';
-import styles from './settings-menu.css';
 
 const messages = defineMessages({
     light: {
@@ -35,35 +34,22 @@ const MODE_ICONS = {
     auto: 'brightness_auto'
 };
 
-const ThemeModeMenuItem = props => {
-    const handleClick = React.useCallback(() => {
-        props.onSelect(props.mode);
-    }, [props.onSelect, props.mode]);
+const MODES = ['light', 'dark', 'auto'];
 
-    return (
-        <MduiMenuItem
-            onClick={handleClick}
-            selected={props.isSelected}
-        >
-            <div className={styles.option}>
-                <span
-                    className={styles.check}
-                    style={{visibility: props.isSelected ? 'visible' : 'hidden'}}
-                >
-                    <MduiIcon name="check" />
-                </span>
-                <span className={styles.optionIcon}>
-                    <MduiIcon name={MODE_ICONS[props.mode]} />
-                </span>
-                <FormattedMessage {...messages[props.mode]} />
-            </div>
-        </MduiMenuItem>
-    );
-};
+const ThemeModeMenuItem = props => (
+    <MduiMenuItem
+        icon={MODE_ICONS[props.mode]}
+        value={props.mode}
+        selectedIcon="check"
+        // eslint-disable-next-line react/jsx-no-bind
+        onClick={() => props.onSelect(props.mode)}
+    >
+        <FormattedMessage {...messages[props.mode]} />
+    </MduiMenuItem>
+);
 
 ThemeModeMenuItem.propTypes = {
-    isSelected: PropTypes.bool,
-    mode: PropTypes.oneOf(['light', 'dark', 'auto']).isRequired,
+    mode: PropTypes.oneOf(MODES).isRequired,
     onSelect: PropTypes.func.isRequired
 };
 
@@ -71,32 +57,11 @@ class SurgeThemeMenu extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleSelectMode',
-            'handleToggleSubmenu',
-            'handleSubmenuOpened',
-            'handleSubmenuClosed'
+            'handleSelectMode'
         ]);
-        this.itemRef = React.createRef();
         this.state = {
             current: getSurgeThemeMode()
         };
-    }
-    componentDidUpdate (prevProps) {
-        if (this.itemRef.current && prevProps.isOpen !== this.props.isOpen) {
-            this.itemRef.current.submenuOpen = this.props.isOpen;
-        }
-    }
-    // mdui only toggles a submenu when the click target is the menu-item host;
-    // clicks on custom slot content need a manual toggle.
-    handleToggleSubmenu () {
-        const element = this.itemRef.current;
-        if (element) element.submenuOpen = !element.submenuOpen;
-    }
-    handleSubmenuOpened () {
-        if (!this.props.isOpen && this.props.onOpenMenu) this.props.onOpenMenu();
-    }
-    handleSubmenuClosed () {
-        if (this.props.isOpen && this.props.onCloseMenu) this.props.onCloseMenu();
     }
     handleSelectMode (mode) {
         setSurgeThemeMode(mode);
@@ -105,40 +70,22 @@ class SurgeThemeMenu extends React.Component {
     }
     render () {
         return (
-            <MduiMenuItem
-                ref={this.itemRef}
-                onSubmenuOpened={this.handleSubmenuOpened}
-                onSubmenuClosed={this.handleSubmenuClosed}
-            >
-                <div
-                    className={styles.option}
-                    slot="custom"
-                    onClick={this.handleToggleSubmenu}
+            <MduiMenuItem icon="palette">
+                <FormattedMessage
+                    defaultMessage="Interface theme"
+                    description="Label for menu to choose UI theme mode (light / dark / auto)"
+                    id="tw.menuBar.themeMode"
+                />
+                <MduiMenu
+                    slot="submenu"
+                    submenuTrigger="click"
+                    selects="single"
+                    value={this.state.current}
                 >
-                    <span className={styles.optionIcon}>
-                        <MduiIcon name="palette" />
-                    </span>
-                    <span className={styles.submenuLabel}>
-                        <FormattedMessage
-                            defaultMessage="Interface theme"
-                            description="Label for menu to choose UI theme mode (light / dark / auto)"
-                            id="tw.menuBar.themeMode"
-                        />
-                        {' '}
-                        {'('}
-                        <FormattedMessage {...messages[this.state.current]} />
-                        {')'}
-                    </span>
-                    <span className={styles.expandCaret}>
-                        <MduiIcon name="chevron_right" />
-                    </span>
-                </div>
-                <MduiMenu slot="submenu">
-                    {['light', 'dark', 'auto'].map(mode => (
+                    {MODES.map(mode => (
                         <ThemeModeMenuItem
                             key={mode}
                             mode={mode}
-                            isSelected={this.state.current === mode}
                             onSelect={this.handleSelectMode}
                         />
                     ))}
@@ -149,9 +96,6 @@ class SurgeThemeMenu extends React.Component {
 }
 
 SurgeThemeMenu.propTypes = {
-    isOpen: PropTypes.bool,
-    onCloseMenu: PropTypes.func,
-    onOpenMenu: PropTypes.func,
     onRequestCloseSettings: PropTypes.func
 };
 

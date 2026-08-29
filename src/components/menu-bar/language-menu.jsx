@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
@@ -6,7 +5,7 @@ import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 import locales from '@turbowarp/scratch-l10n';
 
-import {MduiIcon, MduiMenu, MduiMenuItem} from '../../lib/mdui';
+import {MduiMenu, MduiMenuItem} from '../../lib/mdui';
 
 import {openLanguageMenu, closeLanguageMenu, languageMenuOpen} from '../../reducers/menus.js';
 import {selectLocale} from '../../reducers/locales.js';
@@ -18,27 +17,13 @@ class LanguageMenu extends React.Component {
         super(props);
         bindAll(this, [
             'handleChangeLanguage',
-            'handleToggleSubmenu',
             'handleSubmenuOpened',
             'handleSubmenuClosed'
         ]);
-        this.itemRef = React.createRef();
-    }
-    componentDidUpdate (prevProps) {
-        if (this.itemRef.current && prevProps.menuOpen !== this.props.menuOpen) {
-            this.itemRef.current.submenuOpen = this.props.menuOpen;
-        }
     }
     handleChangeLanguage (locale) {
         this.props.onChangeLanguage(locale);
         this.props.onRequestCloseSettings();
-    }
-    // mdui only toggles a submenu when the click target is the menu-item host
-    // itself; clicks on the option content land on inner elements, so toggle
-    // the submenu state manually (mdui still emits submenu-opened/closed).
-    handleToggleSubmenu () {
-        const element = this.itemRef.current;
-        if (element) element.submenuOpen = !element.submenuOpen;
     }
     handleSubmenuOpened () {
         if (!this.props.menuOpen) this.props.onRequestOpen();
@@ -52,28 +37,21 @@ class LanguageMenu extends React.Component {
         } = this.props;
         return (
             <MduiMenuItem
-                ref={this.itemRef}
+                icon="language"
                 onSubmenuOpened={this.handleSubmenuOpened}
                 onSubmenuClosed={this.handleSubmenuClosed}
             >
-                <div
-                    className={styles.option}
-                    slot="custom"
-                    onClick={this.handleToggleSubmenu}
+                <FormattedMessage
+                    defaultMessage="Language"
+                    description="Language sub-menu"
+                    id="gui.menuBar.language"
+                />
+                <MduiMenu
+                    slot="submenu"
+                    submenuTrigger="click"
+                    selects="single"
+                    value={currentLocale}
                 >
-                    <MduiIcon name="language" />
-                    <span className={styles.submenuLabel}>
-                        <FormattedMessage
-                            defaultMessage="Language"
-                            description="Language sub-menu"
-                            id="gui.menuBar.language"
-                        />
-                    </span>
-                    <span className={styles.expandCaret}>
-                        <MduiIcon name="chevron_right" />
-                    </span>
-                </div>
-                <MduiMenu slot="submenu">
                     {
                         Object.keys(locales)
                             .filter(l => ['en', 'zh-cn', 'zh-tw'].includes(l))
@@ -81,21 +59,12 @@ class LanguageMenu extends React.Component {
                                 <MduiMenuItem
                                     key={locale}
                                     value={locale}
+                                    selectedIcon="check"
                                     className={styles.languageMenuItem}
-                                    selected={currentLocale === locale}
                                     // eslint-disable-next-line react/jsx-no-bind
                                     onClick={() => this.handleChangeLanguage(locale)}
                                 >
-                                    <div className={styles.option}>
-                                        <span
-                                            className={classNames(styles.check, {
-                                                [styles.selected]: currentLocale === locale
-                                            })}
-                                        >
-                                            <MduiIcon name="check" />
-                                        </span>
-                                        {locales[locale].name}
-                                    </div>
+                                    {locales[locale].name}
                                 </MduiMenuItem>
                             ))
                     }

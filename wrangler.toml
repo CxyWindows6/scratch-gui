@@ -1,0 +1,12 @@
+# Surge Editor GUI 双端部署（Workers 端）配置。
+# build/ 由 CI 的 webpack 构建生成（含 vm-version.txt）；Pages 端仍走 `pages deploy build`。
+# 资产-only：无 main 字段，Workers 直接托管静态文件，静态请求免费且不计 Worker 调用额度。
+# （用 TOML 而非 jsonc：wrangler.jsonc 需要 wrangler >= 3.91，TOML 所有 v3 版本都支持）
+name = "surge-editor"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "./build"
+# 多入口静态站（editor.html / index.html / addons.html ...），不需要 SPA 回退；
+# 未命中默认 404。需要 SPA 行为时再加：
+# not_found_handling = "single-page-application"
