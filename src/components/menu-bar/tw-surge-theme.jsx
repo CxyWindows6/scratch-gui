@@ -3,6 +3,8 @@ import React from 'react';
 import {FormattedMessage, defineMessages} from 'react-intl';
 import bindAll from 'lodash.bindall';
 
+import {MduiIcon, MduiMenu, MduiMenuItem} from '../../lib/mdui';
+
 import {
     getSurgeThemeMode,
     setSurgeThemeMode
@@ -39,7 +41,7 @@ const ThemeModeMenuItem = props => {
     }, [props.onSelect, props.mode]);
 
     return (
-        <mdui-menu-item
+        <MduiMenuItem
             onClick={handleClick}
             selected={props.isSelected}
         >
@@ -48,14 +50,14 @@ const ThemeModeMenuItem = props => {
                     className={styles.check}
                     style={{visibility: props.isSelected ? 'visible' : 'hidden'}}
                 >
-                    <mdui-icon name="check" />
+                    <MduiIcon name="check" />
                 </span>
                 <span className={styles.optionIcon}>
-                    <mdui-icon name={MODE_ICONS[props.mode]} />
+                    <MduiIcon name={MODE_ICONS[props.mode]} />
                 </span>
                 <FormattedMessage {...messages[props.mode]} />
             </div>
-        </mdui-menu-item>
+        </MduiMenuItem>
     );
 };
 
@@ -79,29 +81,9 @@ class SurgeThemeMenu extends React.Component {
             current: getSurgeThemeMode()
         };
     }
-    componentDidMount () {
-        this.bindSubmenuEvents();
-    }
     componentDidUpdate (prevProps) {
         if (this.itemRef.current && prevProps.isOpen !== this.props.isOpen) {
             this.itemRef.current.submenuOpen = this.props.isOpen;
-        }
-        this.bindSubmenuEvents();
-    }
-    componentWillUnmount () {
-        const element = this.itemRef.current;
-        if (element && element.dataset.mduiSubmenuBound) {
-            delete element.dataset.mduiSubmenuBound;
-            element.removeEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.removeEventListener('submenu-closed', this.handleSubmenuClosed);
-        }
-    }
-    bindSubmenuEvents () {
-        const element = this.itemRef.current;
-        if (element && !element.dataset.mduiSubmenuBound) {
-            element.dataset.mduiSubmenuBound = 'true';
-            element.addEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.addEventListener('submenu-closed', this.handleSubmenuClosed);
         }
     }
     // mdui only toggles a submenu when the click target is the menu-item host;
@@ -123,14 +105,18 @@ class SurgeThemeMenu extends React.Component {
     }
     render () {
         return (
-            <mdui-menu-item ref={this.itemRef}>
+            <MduiMenuItem
+                ref={this.itemRef}
+                onSubmenuOpened={this.handleSubmenuOpened}
+                onSubmenuClosed={this.handleSubmenuClosed}
+            >
                 <div
                     className={styles.option}
                     slot="custom"
                     onClick={this.handleToggleSubmenu}
                 >
                     <span className={styles.optionIcon}>
-                        <mdui-icon name="palette" />
+                        <MduiIcon name="palette" />
                     </span>
                     <span className={styles.submenuLabel}>
                         <FormattedMessage
@@ -144,10 +130,10 @@ class SurgeThemeMenu extends React.Component {
                         {')'}
                     </span>
                     <span className={styles.expandCaret}>
-                        <mdui-icon name="chevron_right" />
+                        <MduiIcon name="chevron_right" />
                     </span>
                 </div>
-                <mdui-menu slot="submenu">
+                <MduiMenu slot="submenu">
                     {['light', 'dark', 'auto'].map(mode => (
                         <ThemeModeMenuItem
                             key={mode}
@@ -156,8 +142,8 @@ class SurgeThemeMenu extends React.Component {
                             onSelect={this.handleSelectMode}
                         />
                     ))}
-                </mdui-menu>
-            </mdui-menu-item>
+                </MduiMenu>
+            </MduiMenuItem>
         );
     }
 }

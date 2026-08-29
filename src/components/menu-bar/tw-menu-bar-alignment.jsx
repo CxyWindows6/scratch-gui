@@ -5,6 +5,8 @@ import {FormattedMessage, defineMessages} from 'react-intl';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 
+import {MduiIcon, MduiMenu, MduiMenuItem} from '../../lib/mdui';
+
 import {openAlignmentMenu, closeAlignmentMenu, alignmentMenuOpen, closeSettingsMenu} from '../../reducers/menus.js';
 import {setMenuBarAlignment} from '../../reducers/tw.js';
 
@@ -31,7 +33,7 @@ const messages = defineMessages({
 const OPTIONS = ['left', 'center', 'right'];
 
 const AlignmentOption = ({value, isSelected, onClick}) => (
-    <mdui-menu-item
+    <MduiMenuItem
         onClick={onClick}
         selected={isSelected}
     >
@@ -39,13 +41,13 @@ const AlignmentOption = ({value, isSelected, onClick}) => (
             <span
                 className={classNames(styles.check, {[styles.selected]: isSelected})}
             >
-                <mdui-icon name="check" />
+                <MduiIcon name="check" />
             </span>
             <span className={styles.label}>
                 <FormattedMessage {...messages[value]} />
             </span>
         </div>
-    </mdui-menu-item>
+    </MduiMenuItem>
 );
 
 AlignmentOption.propTypes = {
@@ -64,32 +66,9 @@ class MenuBarAlignmentMenu extends React.Component {
         ]);
         this.itemRef = React.createRef();
     }
-    componentDidMount () {
-        this.bindSubmenuEvents();
-    }
     componentDidUpdate (prevProps) {
         if (this.itemRef.current && prevProps.isOpen !== this.props.isOpen) {
             this.itemRef.current.submenuOpen = this.props.isOpen;
-        }
-        this.bindSubmenuEvents();
-    }
-    componentWillUnmount () {
-        this.unbindSubmenuEvents();
-    }
-    bindSubmenuEvents () {
-        const element = this.itemRef.current;
-        if (element && !element.dataset.mduiSubmenuBound) {
-            element.dataset.mduiSubmenuBound = 'true';
-            element.addEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.addEventListener('submenu-closed', this.handleSubmenuClosed);
-        }
-    }
-    unbindSubmenuEvents () {
-        const element = this.itemRef.current;
-        if (element && element.dataset.mduiSubmenuBound) {
-            delete element.dataset.mduiSubmenuBound;
-            element.removeEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.removeEventListener('submenu-closed', this.handleSubmenuClosed);
         }
     }
     // mdui only toggles a submenu when the click target is the menu-item host
@@ -111,13 +90,17 @@ class MenuBarAlignmentMenu extends React.Component {
             onChangeAlignment
         } = this.props;
         return (
-            <mdui-menu-item ref={this.itemRef}>
+            <MduiMenuItem
+                ref={this.itemRef}
+                onSubmenuOpened={this.handleSubmenuOpened}
+                onSubmenuClosed={this.handleSubmenuClosed}
+            >
                 <div
                     className={styles.option}
                     slot="custom"
                     onClick={this.handleToggleSubmenu}
                 >
-                    <mdui-icon name="format_align_left" />
+                    <MduiIcon name="format_align_left" />
                     <span className={styles.submenuLabel}>
                         <FormattedMessage
                             defaultMessage="Menu bar alignment"
@@ -126,10 +109,10 @@ class MenuBarAlignmentMenu extends React.Component {
                         />
                     </span>
                     <span className={styles.expandCaret}>
-                        <mdui-icon name="chevron_right" />
+                        <MduiIcon name="chevron_right" />
                     </span>
                 </div>
-                <mdui-menu slot="submenu">
+                <MduiMenu slot="submenu">
                     {OPTIONS.map(i => (
                         <AlignmentOption
                             key={i}
@@ -139,8 +122,8 @@ class MenuBarAlignmentMenu extends React.Component {
                             onClick={() => onChangeAlignment(i)}
                         />
                     ))}
-                </mdui-menu>
-            </mdui-menu-item>
+                </MduiMenu>
+            </MduiMenuItem>
         );
     }
 }

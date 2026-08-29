@@ -3,6 +3,8 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 import bindAll from 'lodash.bindall';
 
+import {MduiButton, MduiDropdown, MduiMenu} from '../../lib/mdui';
+
 import LanguageMenu from './language-menu.jsx';
 import TWAccentThemeMenu from './tw-theme-accent.jsx';
 import TWBlocksThemeMenu from './tw-theme-blocks.jsx';
@@ -23,23 +25,14 @@ class SettingsMenu extends React.Component {
         ]);
         this.dropdownRef = null;
     }
-    componentDidMount () {
-        this.bindDropdown();
-    }
+    // Push Redux open-state transitions into the dropdown imperatively.
+    // (We deliberately do not bind `open` as a controlled prop: mdui flips
+    // its own `open` on user interaction and only emits `opened`/`closed`
+    // after the animation, so a controlled prop would race with unrelated
+    // re-renders and could snap the menu shut mid-animation.)
     componentDidUpdate (prevProps) {
         if (this.dropdownRef && prevProps.settingsMenuOpen !== this.props.settingsMenuOpen) {
             this.dropdownRef.open = this.props.settingsMenuOpen;
-        }
-        this.bindDropdown();
-    }
-    // mdui custom events (opened/closed) cannot be bound via React props, so we
-    // bind them directly on the custom element to sync the Redux open state.
-    bindDropdown () {
-        const element = this.dropdownRef;
-        if (element && !element.dataset.mduiMenuBarBound) {
-            element.dataset.mduiMenuBarBound = 'true';
-            element.addEventListener('opened', this.handleOpened);
-            element.addEventListener('closed', this.handleClosed);
         }
     }
     handleOpened () {
@@ -60,11 +53,13 @@ class SettingsMenu extends React.Component {
             onOpenCustomSettings
         } = this.props;
         return (
-            <mdui-dropdown
+            <MduiDropdown
                 ref={this.setDropdownRef}
                 placement={isRtl ? 'bottom-end' : 'bottom-start'}
+                onOpened={this.handleOpened}
+                onClosed={this.handleClosed}
             >
-                <mdui-button
+                <MduiButton
                     slot="trigger"
                     variant="text"
                     icon="settings"
@@ -77,8 +72,8 @@ class SettingsMenu extends React.Component {
                             id="gui.menuBar.settings"
                         />
                     </span>
-                </mdui-button>
-                <mdui-menu submenu-trigger="click">
+                </MduiButton>
+                <MduiMenu submenuTrigger="click">
                     {canChangeLanguage && <LanguageMenu onRequestCloseSettings={this.props.onRequestClose} />}
                     {canChangeTheme && (
                         <React.Fragment>
@@ -93,8 +88,8 @@ class SettingsMenu extends React.Component {
                         </React.Fragment>
                     )}
                     {onClickDesktopSettings && <TWDesktopSettings onClick={onClickDesktopSettings} />}
-                </mdui-menu>
-            </mdui-dropdown>
+                </MduiMenu>
+            </MduiDropdown>
         );
     }
 }

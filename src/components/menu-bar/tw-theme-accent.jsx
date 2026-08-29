@@ -5,6 +5,8 @@ import {FormattedMessage, defineMessages} from 'react-intl';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 
+import {MduiIcon, MduiMenu, MduiMenuItem} from '../../lib/mdui';
+
 import {ACCENT_BLUE, ACCENT_GRAY, ACCENT_MAP, ACCENT_ORANGE, ACCENT_PURPLE,
     ACCENT_RED, ACCENT_RAINBOW, Theme} from '../../lib/themes/index.js';
 import {openAccentMenu, closeAccentMenu, accentMenuOpen, closeSettingsMenu} from '../../reducers/menus.js';
@@ -76,7 +78,7 @@ ColorIcon.propTypes = {
 };
 
 const AccentMenuItem = props => (
-    <mdui-menu-item
+    <MduiMenuItem
         onClick={props.onClick}
         selected={props.isSelected}
     >
@@ -84,12 +86,12 @@ const AccentMenuItem = props => (
             <span
                 className={classNames(styles.check, {[styles.selected]: props.isSelected})}
             >
-                <mdui-icon name="check" />
+                <MduiIcon name="check" />
             </span>
             <ColorIcon id={props.id} />
             <FormattedMessage {...options[props.id]} />
         </div>
-    </mdui-menu-item>
+    </MduiMenuItem>
 );
 
 AccentMenuItem.propTypes = {
@@ -108,32 +110,9 @@ class AccentThemeMenu extends React.Component {
         ]);
         this.itemRef = React.createRef();
     }
-    componentDidMount () {
-        this.bindSubmenuEvents();
-    }
     componentDidUpdate (prevProps) {
         if (this.itemRef.current && prevProps.isOpen !== this.props.isOpen) {
             this.itemRef.current.submenuOpen = this.props.isOpen;
-        }
-        this.bindSubmenuEvents();
-    }
-    componentWillUnmount () {
-        this.unbindSubmenuEvents();
-    }
-    bindSubmenuEvents () {
-        const element = this.itemRef.current;
-        if (element && !element.dataset.mduiSubmenuBound) {
-            element.dataset.mduiSubmenuBound = 'true';
-            element.addEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.addEventListener('submenu-closed', this.handleSubmenuClosed);
-        }
-    }
-    unbindSubmenuEvents () {
-        const element = this.itemRef.current;
-        if (element && element.dataset.mduiSubmenuBound) {
-            delete element.dataset.mduiSubmenuBound;
-            element.removeEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.removeEventListener('submenu-closed', this.handleSubmenuClosed);
         }
     }
     // mdui only toggles a submenu when the click target is the menu-item host
@@ -155,7 +134,11 @@ class AccentThemeMenu extends React.Component {
             theme
         } = this.props;
         return (
-            <mdui-menu-item ref={this.itemRef}>
+            <MduiMenuItem
+                ref={this.itemRef}
+                onSubmenuOpened={this.handleSubmenuOpened}
+                onSubmenuClosed={this.handleSubmenuClosed}
+            >
                 <div
                     className={styles.option}
                     slot="custom"
@@ -170,10 +153,10 @@ class AccentThemeMenu extends React.Component {
                         />
                     </span>
                     <span className={styles.expandCaret}>
-                        <mdui-icon name="chevron_right" />
+                        <MduiIcon name="chevron_right" />
                     </span>
                 </div>
-                <mdui-menu slot="submenu">
+                <MduiMenu slot="submenu">
                     {Object.keys(options).map(item => (
                         <AccentMenuItem
                             key={item}
@@ -183,8 +166,8 @@ class AccentThemeMenu extends React.Component {
                             onClick={() => onChangeTheme(theme.set('accent', item))}
                         />
                     ))}
-                </mdui-menu>
-            </mdui-menu-item>
+                </MduiMenu>
+            </MduiMenuItem>
         );
     }
 }

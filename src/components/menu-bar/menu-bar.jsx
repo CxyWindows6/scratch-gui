@@ -85,6 +85,15 @@ import SeeInsideButton from './tw-see-inside.jsx';
 import {notScratchDesktop} from '../../lib/isScratchDesktop.js';
 import {APP_NAME} from '../../lib/brand.js';
 
+import {
+    MduiButton,
+    MduiDivider,
+    MduiDropdown,
+    MduiIconButton,
+    MduiMenu,
+    MduiMenuItem
+} from '../../lib/mdui';
+
 
 const twMessages = defineMessages({
     compileError: {
@@ -164,7 +173,7 @@ MenuItemTooltip.propTypes = {
 };
 
 const AboutButton = props => (
-    <mdui-button-icon
+    <MduiIconButton
         icon="help"
         aria-label={props.ariaLabel}
         onClick={props.onClick}
@@ -178,14 +187,14 @@ AboutButton.propTypes = {
 
 // Unlike <MenuItem href="">, this uses an actual <a> (rendered by mdui-menu-item's href support)
 const MenuItemLink = props => (
-    <mdui-menu-item
+    <MduiMenuItem
         href={props.href}
         rel="noreferrer"
         target="_blank"
         onClick={props.onClick}
     >
         {props.children}
-    </mdui-menu-item>
+    </MduiMenuItem>
 );
 
 MenuItemLink.propTypes = {
@@ -245,14 +254,12 @@ class MenuBar extends React.Component {
         // forces layout reads and writes.
         window.addEventListener('resize', this.handleThrottledResize);
         this.updateAlignment(this.props.menuBarAlignment, false);
-        this.bindMenuDropdowns();
     }
     componentDidUpdate (prevProps) {
         if (prevProps.menuBarAlignment !== this.props.menuBarAlignment) {
             this.updateAlignment(this.props.menuBarAlignment, true);
         }
         this.syncMenuDropdowns(prevProps);
-        this.bindMenuDropdowns();
     }
     componentWillUnmount () {
         document.removeEventListener('keydown', this.handleKeyPress);
@@ -262,34 +269,11 @@ class MenuBar extends React.Component {
     // Defined as an instance property so componentDidMount and
     // componentWillUnmount subscribe and unsubscribe the same instance.
     handleThrottledResize = throttle(() => this.handleResize(), 200);
-    // Attach mdui-dropdown custom event listeners to sync Redux open state.
-    // mdui custom events (opened/closed) cannot be bound via React props, so we
-    // bind them directly on the custom elements.
-    bindMenuDropdowns () {
-        this.bindDropdown(this.fileDropdownRef, this.handleFileMenuOpened, this.handleFileMenuClosed);
-        this.bindDropdown(this.editDropdownRef, this.handleEditMenuOpened, this.handleEditMenuClosed);
-        this.bindDropdown(this.modeDropdownRef, this.handleModeMenuOpened, this.handleModeMenuClosed);
-        if (this.errorsDropdownRef) {
-            this.bindDropdownElement(this.errorsDropdownRef, this.handleErrorsMenuOpened, this.handleErrorsMenuClosed);
-        }
-        if (this.aboutDropdownRef) {
-            this.bindDropdownElement(this.aboutDropdownRef, this.handleAboutMenuOpened, this.handleAboutMenuClosed);
-        }
-    }
-    bindDropdown (ref, onOpened, onClosed) {
-        if (ref && ref.current) {
-            this.bindDropdownElement(ref.current, onOpened, onClosed);
-        }
-    }
-    bindDropdownElement (element, onOpened, onClosed) {
-        if (!element || element.dataset.mduiMenuBarBound) return;
-        element.dataset.mduiMenuBarBound = 'true';
-        element.addEventListener('opened', onOpened);
-        element.addEventListener('closed', onClosed);
-    }
     // Push Redux open state changes into the mdui-dropdown elements
     // (the dropdowns manage their own visual state, so this only fires on
-    // programmatic changes such as sibling menu collapsing).
+    // programmatic changes such as sibling menu collapsing). The opened/closed
+    // events are bound declaratively via the MduiDropdown wrapper's
+    // onOpened/onClosed props, so no manual addEventListener glue is needed.
     syncMenuDropdowns (prevProps) {
         const sync = (ref, wasOpen, isOpen) => {
             const element = ref && ref.current;
@@ -580,28 +564,30 @@ class MenuBar extends React.Component {
         // each item must have a 'title' FormattedMessage and a 'handleClick' function
         // generate a menu with items for each object in the array
         return (
-            <mdui-dropdown
+            <MduiDropdown
                 ref={this.setAboutDropdownRef}
                 placement={this.props.isRtl ? 'bottom-start' : 'bottom-end'}
+                onOpened={this.handleAboutMenuOpened}
+                onClosed={this.handleAboutMenuClosed}
             >
-                <mdui-button-icon
+                <MduiIconButton
                     slot="trigger"
                     icon="help"
                     aria-label={this.props.intl.formatMessage(twMessages.help)}
                 />
-                <mdui-menu>
+                <MduiMenu>
                     {
                         onClickAbout.map(itemProps => (
-                            <mdui-menu-item
+                            <MduiMenuItem
                                 key={itemProps.title}
                                 onClick={this.wrapAboutMenuCallback(itemProps.onClick)}
                             >
                                 {itemProps.title}
-                            </mdui-menu-item>
+                            </MduiMenuItem>
                         ))
                     }
-                </mdui-menu>
-            </mdui-dropdown>
+                </MduiMenu>
+            </MduiDropdown>
         );
     }
     wrapAboutMenuCallback (callback) {
@@ -640,7 +626,7 @@ class MenuBar extends React.Component {
             />
         );
         const remixButton = (
-            <mdui-button
+            <MduiButton
                 variant="filled"
                 icon="sync"
                 className={classNames(
@@ -650,7 +636,7 @@ class MenuBar extends React.Component {
                 onClick={this.handleClickRemix}
             >
                 {remixMessage}
-            </mdui-button>
+            </MduiButton>
         );
         // Show the About button only if we have a handler for it (like in the desktop app)
         const aboutButton = this.buildAboutMenu(this.props.onClickAbout);
@@ -669,16 +655,18 @@ class MenuBar extends React.Component {
                     <div className={styles.mainMenu}>
                         <div className={styles.fileGroup}>
                             {this.props.errors.length > 0 && <div>
-                                <mdui-dropdown
+                                <MduiDropdown
                                     ref={this.setErrorsDropdownRef}
                                     placement={this.props.isRtl ? 'bottom-end' : 'bottom-start'}
+                                    onOpened={this.handleErrorsMenuOpened}
+                                    onClosed={this.handleErrorsMenuClosed}
                                 >
-                                    <mdui-button-icon
+                                    <MduiIconButton
                                         slot="trigger"
                                         icon="warning"
                                         aria-label={this.props.intl.formatMessage(twMessages.compilerWarnings)}
                                     />
-                                    <mdui-menu>
+                                    <MduiMenu>
                                         <MenuItemLink
                                             href="https://scratch.mit.edu/users/GarboMuffin/#comments"
                                             onClick={this.handleErrorsLinkClick}
@@ -699,17 +687,17 @@ class MenuBar extends React.Component {
                                                 id="tw.menuBar.reportError2"
                                             />
                                         </MenuItemLink>
-                                        <mdui-divider />
+                                        <MduiDivider />
                                         {this.props.errors.map(({id, sprite, error}) => (
-                                            <mdui-menu-item key={id}>
+                                            <MduiMenuItem key={id}>
                                                 {this.props.intl.formatMessage(twMessages.compileError, {
                                                     sprite,
                                                     error
                                                 })}
-                                            </mdui-menu-item>
+                                            </MduiMenuItem>
                                         ))}
-                                    </mdui-menu>
-                                </mdui-dropdown>
+                                    </MduiMenu>
+                                </MduiDropdown>
                             </div>}
                             {(this.props.canChangeTheme || this.props.canChangeLanguage) && (<SettingsMenu
                                 canChangeLanguage={this.props.canChangeLanguage}
@@ -729,11 +717,13 @@ class MenuBar extends React.Component {
                                 settingsMenuOpen={this.props.settingsMenuOpen}
                             />)}
                             {(this.props.canManageFiles) && (
-                                <mdui-dropdown
+                                <MduiDropdown
                                     ref={this.fileDropdownRef}
                                     placement={this.props.isRtl ? 'bottom-end' : 'bottom-start'}
+                                    onOpened={this.handleFileMenuOpened}
+                                    onClosed={this.handleFileMenuClosed}
                                 >
-                                    <mdui-button
+                                    <MduiButton
                                         slot="trigger"
                                         variant="text"
                                         icon="folder_open"
@@ -746,15 +736,15 @@ class MenuBar extends React.Component {
                                                 id="gui.menuBar.file"
                                             />
                                         </span>
-                                    </mdui-button>
-                                    <mdui-menu>
-                                        <mdui-menu-item
+                                    </MduiButton>
+                                    <MduiMenu>
+                                        <MduiMenuItem
                                             onClick={this.handleClickNew}
                                         >
                                             {newProjectMessage}
-                                        </mdui-menu-item>
+                                        </MduiMenuItem>
                                         {this.props.onClickNewWindow && (
-                                            <mdui-menu-item
+                                            <MduiMenuItem
                                                 onClick={this.handleClickNewWindow}
                                             >
                                                 <FormattedMessage
@@ -763,33 +753,33 @@ class MenuBar extends React.Component {
                                                     description="Part of desktop app. Menu bar item that creates a new window."
                                                     id="tw.menuBar.newWindow"
                                                 />
-                                            </mdui-menu-item>
+                                            </MduiMenuItem>
                                         )}
                                         {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && (
                                             <React.Fragment>
                                                 {this.props.canSave && (
-                                                    <mdui-menu-item onClick={this.handleClickSave}>
+                                                    <MduiMenuItem onClick={this.handleClickSave}>
                                                         {saveNowMessage}
-                                                    </mdui-menu-item>
+                                                    </MduiMenuItem>
                                                 )}
                                                 {this.props.canCreateCopy && (
-                                                    <mdui-menu-item onClick={this.handleClickSaveAsCopy}>
+                                                    <MduiMenuItem onClick={this.handleClickSaveAsCopy}>
                                                         {createCopyMessage}
-                                                    </mdui-menu-item>
+                                                    </MduiMenuItem>
                                                 )}
                                                 {this.props.canRemix && (
-                                                    <mdui-menu-item onClick={this.handleClickRemix}>
+                                                    <MduiMenuItem onClick={this.handleClickRemix}>
                                                         {remixMessage}
-                                                    </mdui-menu-item>
+                                                    </MduiMenuItem>
                                                 )}
-                                                <mdui-divider />
+                                                <MduiDivider />
                                             </React.Fragment>
                                         )}
-                                        <mdui-menu-item
+                                        <MduiMenuItem
                                             onClick={this.props.onStartSelectingFileUpload}
                                         >
                                             {this.props.intl.formatMessage(sharedMessages.loadFromComputerTitle)}
-                                        </mdui-menu-item>
+                                        </MduiMenuItem>
                                         <SB3Downloader
                                             showSaveFilePicker={this.props.showSaveFilePicker}
                                         >
@@ -799,7 +789,7 @@ class MenuBar extends React.Component {
                                                         <React.Fragment>
                                                             {extended.name !== null && (
                                                             // eslint-disable-next-line max-len
-                                                                <mdui-menu-item onClick={this.getSaveToComputerHandler(extended.saveToLastFile)}>
+                                                                <MduiMenuItem onClick={this.getSaveToComputerHandler(extended.saveToLastFile)}>
                                                                     <FormattedMessage
                                                                         defaultMessage="保存到 {file}"
                                                                         // eslint-disable-next-line max-len
@@ -809,21 +799,21 @@ class MenuBar extends React.Component {
                                                                             file: extended.name
                                                                         }}
                                                                     />
-                                                                </mdui-menu-item>
+                                                                </MduiMenuItem>
                                                             )}
                                                             {/* eslint-disable-next-line max-len */}
-                                                            <mdui-menu-item onClick={this.getSaveToComputerHandler(extended.saveAsNew)}>
+                                                            <MduiMenuItem onClick={this.getSaveToComputerHandler(extended.saveAsNew)}>
                                                                 <FormattedMessage
                                                                     defaultMessage="另存为..."
                                                                     // eslint-disable-next-line max-len
                                                                     description="Menu bar item to select a new file to save the project as"
                                                                     id="tw.saveAs"
                                                                 />
-                                                            </mdui-menu-item>
+                                                            </MduiMenuItem>
                                                         </React.Fragment>
                                                     )}
                                                     {notScratchDesktop() && (
-                                                        <mdui-menu-item
+                                                        <MduiMenuItem
                                                             onClick={this.getSaveToComputerHandler(downloadProject)}
                                                         >
                                                             {extended.available ? (
@@ -840,15 +830,15 @@ class MenuBar extends React.Component {
                                                                     id="gui.menuBar.downloadToComputer"
                                                                 />
                                                             )}
-                                                        </mdui-menu-item>
+                                                        </MduiMenuItem>
                                                     )}
                                                 </React.Fragment>
                                             )}
                                         </SB3Downloader>
                                         {this.props.onClickPackager && (
                                             <React.Fragment>
-                                                <mdui-divider />
-                                                <mdui-menu-item
+                                                <MduiDivider />
+                                                <MduiMenuItem
                                                     onClick={this.handleClickPackager}
                                                 >
                                                     <FormattedMessage
@@ -857,25 +847,27 @@ class MenuBar extends React.Component {
                                                         description="Menu bar item to open the current project in the packager"
                                                         id="tw.menuBar.package"
                                                     />
-                                                </mdui-menu-item>
+                                                </MduiMenuItem>
                                             </React.Fragment>
                                         )}
-                                        <mdui-divider />
-                                        <mdui-menu-item onClick={this.handleClickRestorePoints}>
+                                        <MduiDivider />
+                                        <MduiMenuItem onClick={this.handleClickRestorePoints}>
                                             <FormattedMessage
                                                 defaultMessage="恢复点"
                                                 description="Menu bar item to manage restore points"
                                                 id="tw.menuBar.restorePoints"
                                             />
-                                        </mdui-menu-item>
-                                    </mdui-menu>
-                                </mdui-dropdown>
+                                        </MduiMenuItem>
+                                    </MduiMenu>
+                                </MduiDropdown>
                             )}
-                            <mdui-dropdown
+                            <MduiDropdown
                                 ref={this.editDropdownRef}
                                 placement={this.props.isRtl ? 'bottom-end' : 'bottom-start'}
+                                onOpened={this.handleEditMenuOpened}
+                                onClosed={this.handleEditMenuClosed}
                             >
-                                <mdui-button
+                                <MduiButton
                                     slot="trigger"
                                     variant="text"
                                     icon="edit"
@@ -888,21 +880,21 @@ class MenuBar extends React.Component {
                                             id="gui.menuBar.edit"
                                         />
                                     </span>
-                                </mdui-button>
-                                <mdui-menu>
+                                </MduiButton>
+                                <MduiMenu>
                                     {this.props.isPlayerOnly ? null : (
                                         <DeletionRestorer>{(handleRestore, {restorable, deletedItem}) => (
-                                            <mdui-menu-item
+                                            <MduiMenuItem
                                                 className={classNames({[styles.disabled]: !restorable})}
                                                 onClick={this.handleRestoreOption(handleRestore)}
                                             >
                                                 {this.restoreOptionMessage(deletedItem)}
-                                            </mdui-menu-item>
+                                            </MduiMenuItem>
                                         )}</DeletionRestorer>
                                     )}
-                                    <mdui-divider />
+                                    <MduiDivider />
                                     <TurboMode>{(toggleTurboMode, {turboMode}) => (
-                                        <mdui-menu-item onClick={this.handleEditMenuOption(toggleTurboMode)}>
+                                        <MduiMenuItem onClick={this.handleEditMenuOption(toggleTurboMode)}>
                                             {turboMode ? (
                                                 <FormattedMessage
                                                     defaultMessage="关闭加速模式"
@@ -916,10 +908,10 @@ class MenuBar extends React.Component {
                                                     id="gui.menuBar.turboModeOn"
                                                 />
                                             )}
-                                        </mdui-menu-item>
+                                        </MduiMenuItem>
                                     )}</TurboMode>
                                     <FramerateChanger>{(changeFramerate, {framerate}) => (
-                                        <mdui-menu-item onClick={this.handleEditMenuOption(changeFramerate)}>
+                                        <MduiMenuItem onClick={this.handleEditMenuOption(changeFramerate)}>
                                             {framerate === 60 ? (
                                                 <FormattedMessage
                                                     defaultMessage="关闭60帧模式"
@@ -933,20 +925,20 @@ class MenuBar extends React.Component {
                                                     id="tw.menuBar.60on"
                                                 />
                                             )}
-                                        </mdui-menu-item>
+                                        </MduiMenuItem>
                                     )}</FramerateChanger>
                                     <ChangeUsername>{changeUsername => (
-                                        <mdui-menu-item onClick={this.handleEditMenuOption(changeUsername)}>
+                                        <MduiMenuItem onClick={this.handleEditMenuOption(changeUsername)}>
                                             <FormattedMessage
                                                 defaultMessage="修改用户名"
                                                 description="Menu bar item for changing the username"
                                                 id="tw.menuBar.changeUsername"
                                             />
-                                        </mdui-menu-item>
+                                        </MduiMenuItem>
                                     )}</ChangeUsername>
                                     {/* eslint-disable-next-line max-len */}
                                     <CloudVariablesToggler>{(toggleCloudVariables, {enabled, canUseCloudVariables}) => (
-                                        <mdui-menu-item
+                                        <MduiMenuItem
                                             className={classNames({[styles.disabled]: !canUseCloudVariables})}
                                             onClick={this.handleEditMenuOption(toggleCloudVariables)}
                                         >
@@ -972,24 +964,26 @@ class MenuBar extends React.Component {
                                                     id="tw.menuBar.cloudUnavailable"
                                                 />
                                             )}
-                                        </mdui-menu-item>
+                                        </MduiMenuItem>
                                     )}</CloudVariablesToggler>
-                                    <mdui-divider />
-                                    <mdui-menu-item onClick={this.props.onClickSettingsModal}>
+                                    <MduiDivider />
+                                    <MduiMenuItem onClick={this.props.onClickSettingsModal}>
                                         <FormattedMessage
                                             defaultMessage="高级设置"
                                             description="Menu bar item for advanced settings"
                                             id="tw.menuBar.moreSettings"
                                         />
-                                    </mdui-menu-item>
-                                </mdui-menu>
-                            </mdui-dropdown>
+                                    </MduiMenuItem>
+                                </MduiMenu>
+                            </MduiDropdown>
                             {this.props.isTotallyNormal && (
-                                <mdui-dropdown
+                                <MduiDropdown
                                     ref={this.modeDropdownRef}
                                     placement={this.props.isRtl ? 'bottom-end' : 'bottom-start'}
+                                    onOpened={this.handleModeMenuOpened}
+                                    onClosed={this.handleModeMenuClosed}
                                 >
-                                    <mdui-button
+                                    <MduiButton
                                         slot="trigger"
                                         variant="text"
                                         className={styles.menuBarItem}
@@ -999,9 +993,9 @@ class MenuBar extends React.Component {
                                             description="Mode menu item in the menu bar"
                                             id="gui.menuBar.modeMenu"
                                         />
-                                    </mdui-button>
-                                    <mdui-menu>
-                                        <mdui-menu-item onClick={this.handleSetMode('NOW')}>
+                                    </MduiButton>
+                                    <MduiMenu>
+                                        <MduiMenuItem onClick={this.handleSetMode('NOW')}>
                                             <span className={classNames({[styles.inactive]: !this.props.modeNow})}>
                                                 {'✓'}
                                             </span>
@@ -1011,8 +1005,8 @@ class MenuBar extends React.Component {
                                                 description="April fools: resets editor to not have any pranks"
                                                 id="gui.menuBar.normalMode"
                                             />
-                                        </mdui-menu-item>
-                                        <mdui-menu-item onClick={this.handleSetMode('2020')}>
+                                        </MduiMenuItem>
+                                        <MduiMenuItem onClick={this.handleSetMode('2020')}>
                                             <span className={classNames({[styles.inactive]: !this.props.mode2020})}>
                                                 {'✓'}
                                             </span>
@@ -1022,13 +1016,13 @@ class MenuBar extends React.Component {
                                                 description="April fools: Cat blocks mode"
                                                 id="gui.menuBar.caturdayMode"
                                             />
-                                        </mdui-menu-item>
-                                    </mdui-menu>
-                                </mdui-dropdown>
+                                        </MduiMenuItem>
+                                    </MduiMenu>
+                                </MduiDropdown>
                             )}
 
                             {this.props.onClickAddonSettings && (
-                                <mdui-button
+                                <MduiButton
                                     variant="text"
                                     icon="extension"
                                     className={styles.menuBarItem}
@@ -1041,10 +1035,10 @@ class MenuBar extends React.Component {
                                             id="tw.menuBar.addons"
                                         />
                                     </span>
-                                </mdui-button>
+                                </MduiButton>
                             )}
                             {this.props.onClickSettingsModal && (
-                                <mdui-button
+                                <MduiButton
                                     variant="text"
                                     icon="tune"
                                     className={styles.menuBarItem}
@@ -1057,7 +1051,7 @@ class MenuBar extends React.Component {
                                             id="tw.menuBar.advanced"
                                         />
                                     </span>
-                                </mdui-button>
+                                </MduiButton>
                             )}
                         </div>
 
@@ -1147,7 +1141,7 @@ class MenuBar extends React.Component {
                         </div>
                         {/* tw: add a feedback button */}
                         <div className={styles.menuBarItem}>
-                            <mdui-button
+                            <MduiButton
                                 className={styles.feedbackButton}
                                 onClick={this.props.onClickFeedback}
                             >
@@ -1159,7 +1153,7 @@ class MenuBar extends React.Component {
                                         APP_NAME
                                     }}
                                 />
-                            </mdui-button>
+                            </MduiButton>
                         </div>
 
                     </div>

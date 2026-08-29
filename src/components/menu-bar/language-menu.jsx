@@ -6,6 +6,8 @@ import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 import locales from '@turbowarp/scratch-l10n';
 
+import {MduiIcon, MduiMenu, MduiMenuItem} from '../../lib/mdui';
+
 import {openLanguageMenu, closeLanguageMenu, languageMenuOpen} from '../../reducers/menus.js';
 import {selectLocale} from '../../reducers/locales.js';
 
@@ -22,32 +24,9 @@ class LanguageMenu extends React.Component {
         ]);
         this.itemRef = React.createRef();
     }
-    componentDidMount () {
-        this.bindSubmenuEvents();
-    }
     componentDidUpdate (prevProps) {
         if (this.itemRef.current && prevProps.menuOpen !== this.props.menuOpen) {
             this.itemRef.current.submenuOpen = this.props.menuOpen;
-        }
-        this.bindSubmenuEvents();
-    }
-    componentWillUnmount () {
-        this.unbindSubmenuEvents();
-    }
-    bindSubmenuEvents () {
-        const element = this.itemRef.current;
-        if (element && !element.dataset.mduiSubmenuBound) {
-            element.dataset.mduiSubmenuBound = 'true';
-            element.addEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.addEventListener('submenu-closed', this.handleSubmenuClosed);
-        }
-    }
-    unbindSubmenuEvents () {
-        const element = this.itemRef.current;
-        if (element && element.dataset.mduiSubmenuBound) {
-            delete element.dataset.mduiSubmenuBound;
-            element.removeEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.removeEventListener('submenu-closed', this.handleSubmenuClosed);
         }
     }
     handleChangeLanguage (locale) {
@@ -72,13 +51,17 @@ class LanguageMenu extends React.Component {
             currentLocale
         } = this.props;
         return (
-            <mdui-menu-item ref={this.itemRef}>
+            <MduiMenuItem
+                ref={this.itemRef}
+                onSubmenuOpened={this.handleSubmenuOpened}
+                onSubmenuClosed={this.handleSubmenuClosed}
+            >
                 <div
                     className={styles.option}
                     slot="custom"
                     onClick={this.handleToggleSubmenu}
                 >
-                    <mdui-icon name="language" />
+                    <MduiIcon name="language" />
                     <span className={styles.submenuLabel}>
                         <FormattedMessage
                             defaultMessage="Language"
@@ -87,15 +70,15 @@ class LanguageMenu extends React.Component {
                         />
                     </span>
                     <span className={styles.expandCaret}>
-                        <mdui-icon name="chevron_right" />
+                        <MduiIcon name="chevron_right" />
                     </span>
                 </div>
-                <mdui-menu slot="submenu">
+                <MduiMenu slot="submenu">
                     {
                         Object.keys(locales)
                             .filter(l => ['en', 'zh-cn', 'zh-tw'].includes(l))
                             .map(locale => (
-                                <mdui-menu-item
+                                <MduiMenuItem
                                     key={locale}
                                     value={locale}
                                     className={styles.languageMenuItem}
@@ -109,15 +92,15 @@ class LanguageMenu extends React.Component {
                                                 [styles.selected]: currentLocale === locale
                                             })}
                                         >
-                                            <mdui-icon name="check" />
+                                            <MduiIcon name="check" />
                                         </span>
                                         {locales[locale].name}
                                     </div>
-                                </mdui-menu-item>
+                                </MduiMenuItem>
                             ))
                     }
-                </mdui-menu>
-            </mdui-menu-item>
+                </MduiMenu>
+            </MduiMenuItem>
         );
     }
 }

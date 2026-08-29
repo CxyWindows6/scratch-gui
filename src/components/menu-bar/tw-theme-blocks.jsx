@@ -5,6 +5,8 @@ import {FormattedMessage, defineMessages} from 'react-intl';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 
+import {MduiIcon, MduiMenu, MduiMenuItem} from '../../lib/mdui';
+
 import {BLOCKS_CUSTOM, BLOCKS_DARK, BLOCKS_HIGH_CONTRAST, BLOCKS_THREE, Theme} from '../../lib/themes/index.js';
 import {openBlocksThemeMenu, closeBlocksThemeMenu, blocksThemeMenuOpen,
     closeSettingsMenu} from '../../reducers/menus.js';
@@ -46,7 +48,7 @@ const icons = {
 
 const ThemeIcon = ({id}) => (
     id === BLOCKS_CUSTOM ? (
-        <mdui-icon name="edit" />
+        <MduiIcon name="edit" />
     ) : (
         <img
             src={icons[id]}
@@ -62,7 +64,7 @@ ThemeIcon.propTypes = {
 };
 
 const ThemeMenuItem = ({id, disabled, isSelected, onClick}) => (
-    <mdui-menu-item
+    <MduiMenuItem
         onClick={disabled ? null : onClick}
         disabled={disabled}
         selected={isSelected}
@@ -71,17 +73,17 @@ const ThemeMenuItem = ({id, disabled, isSelected, onClick}) => (
             <span
                 className={classNames(styles.check, {[styles.selected]: isSelected})}
             >
-                <mdui-icon name="check" />
+                <MduiIcon name="check" />
             </span>
             <ThemeIcon id={id} />
             <FormattedMessage {...options[id]} />
             {id === BLOCKS_CUSTOM && (
                 <span className={styles.openLink}>
-                    <mdui-icon name="open_in_new" />
+                    <MduiIcon name="open_in_new" />
                 </span>
             )}
         </div>
-    </mdui-menu-item>
+    </MduiMenuItem>
 );
 
 ThemeMenuItem.propTypes = {
@@ -101,35 +103,10 @@ class BlocksThemeMenu extends React.Component {
         ]);
         this.itemRef = React.createRef();
     }
-    componentDidMount () {
-        this.bindSubmenuEvents();
-    }
     componentDidUpdate (prevProps) {
         if (this.itemRef.current && prevProps.isOpen !== this.props.isOpen) {
             // Push Redux open state into the mdui-menu-item's submenu state
             this.itemRef.current.submenuOpen = this.props.isOpen;
-        }
-        this.bindSubmenuEvents();
-    }
-    componentWillUnmount () {
-        this.unbindSubmenuEvents();
-    }
-    // mdui custom events cannot be bound via React props, so we bind them
-    // directly on the custom element to sync the Redux submenu open state.
-    bindSubmenuEvents () {
-        const element = this.itemRef.current;
-        if (element && !element.dataset.mduiSubmenuBound) {
-            element.dataset.mduiSubmenuBound = 'true';
-            element.addEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.addEventListener('submenu-closed', this.handleSubmenuClosed);
-        }
-    }
-    unbindSubmenuEvents () {
-        const element = this.itemRef.current;
-        if (element && element.dataset.mduiSubmenuBound) {
-            delete element.dataset.mduiSubmenuBound;
-            element.removeEventListener('submenu-opened', this.handleSubmenuOpened);
-            element.removeEventListener('submenu-closed', this.handleSubmenuClosed);
         }
     }
     // mdui only toggles a submenu when the click target is the menu-item host
@@ -152,13 +129,17 @@ class BlocksThemeMenu extends React.Component {
             theme
         } = this.props;
         return (
-            <mdui-menu-item ref={this.itemRef}>
+            <MduiMenuItem
+                ref={this.itemRef}
+                onSubmenuOpened={this.handleSubmenuOpened}
+                onSubmenuClosed={this.handleSubmenuClosed}
+            >
                 <div
                     className={styles.option}
                     slot="custom"
                     onClick={this.handleToggleSubmenu}
                 >
-                    <mdui-icon name="palette" />
+                    <MduiIcon name="palette" />
                     <span className={styles.submenuLabel}>
                         <FormattedMessage
                             defaultMessage="Block Colors"
@@ -167,10 +148,10 @@ class BlocksThemeMenu extends React.Component {
                         />
                     </span>
                     <span className={styles.expandCaret}>
-                        <mdui-icon name="chevron_right" />
+                        <MduiIcon name="chevron_right" />
                     </span>
                 </div>
-                <mdui-menu slot="submenu">
+                <MduiMenu slot="submenu">
                     {[
                         BLOCKS_THREE,
                         BLOCKS_HIGH_CONTRAST,
@@ -190,8 +171,8 @@ class BlocksThemeMenu extends React.Component {
                             disabled={i !== BLOCKS_CUSTOM && theme.blocks === BLOCKS_CUSTOM}
                         />
                     ))}
-                </mdui-menu>
-            </mdui-menu-item>
+                </MduiMenu>
+            </MduiMenuItem>
         );
     }
 }
