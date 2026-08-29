@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Pages
+name: Deploy to Cloudflare Pages + Workers
 
 on:
   push:
@@ -75,3 +75,15 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy build --project-name=surge-editor --commit-dirty=true
+
+      # Pages + Workers 并行双部署：同一份 build/ 同时上 surge-editor.pages.dev
+      # 与 surge-editor.workers.dev。静态资产请求两边都免费。
+      # 读取仓库根 wrangler.jsonc（assets.directory = ./build，资产-only，无 Worker 脚本）。
+      # 注意：CLOUDFLARE_API_TOKEN 需包含 Workers Scripts:Edit 权限（仅 Pages 权限的 token 会 403）。
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "3.90.0"
+          command: deploy
