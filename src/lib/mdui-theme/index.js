@@ -15,8 +15,8 @@ import {
     setTheme
 } from 'mdui';
 
-// Follows the existing `surge:` localStorage prefix convention
-// (see src/lib/feedback-config.js) and does not collide with any other key.
+// Follows the existing `surge:` localStorage prefix convention and does not
+// collide with any other key.
 const STORAGE_KEY = 'surge:mdui-theme';
 
 // Brand seed color (Surge Editor orange) — kept as an *option*; the default
@@ -24,8 +24,6 @@ const STORAGE_KEY = 'surge:mdui-theme';
 // Evidence for the brand color:
 // - src/css/typography.css:5  --ui-hover: rgba(255, 107, 53, 0.12)
 // - src/lib/themes/accent/orange.js (full accent theme built on #ff6b35)
-// - src/components/tw-feedback-modal/feedback-modal.css (color: #ff6b35)
-// - src/components/tw-community-feedback/community-feedback.css (color: #ff6b35)
 const DEFAULT_SEED_COLOR = null; // null -> mdui default theme
 const DEFAULT_MODE = 'auto';
 const MODES = ['light', 'dark', 'auto'];

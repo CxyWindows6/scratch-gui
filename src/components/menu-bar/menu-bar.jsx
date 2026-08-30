@@ -29,7 +29,7 @@ import ChangeUsername from '../../containers/tw-change-username.jsx';
 import CloudVariablesToggler from '../../containers/tw-cloud-toggler.jsx';
 import TWSaveStatus from './tw-save-status.jsx';
 
-import {openTipsLibrary, openSettingsModal, openRestorePointModal, openFeedbackModal} from '../../reducers/modals';
+import {openTipsLibrary, openSettingsModal, openRestorePointModal} from '../../reducers/modals';
 import {setPlayer} from '../../reducers/mode';
 import {
     isTimeTravel220022BC,
@@ -1307,7 +1307,9 @@ const mapDispatchToProps = dispatch => ({
     onRequestOpenAbout: () => dispatch(openAboutMenu()),
     onRequestCloseAbout: () => dispatch(closeAboutMenu()),
     onClickRestorePoints: () => dispatch(openRestorePointModal()),
-    onClickFeedback: () => dispatch(openFeedbackModal()),
+    onClickFeedback: () => {
+        window.open('https://github.com/CxyWindows6/scratch-gui/issues', '_blank', 'noopener');
+    },
     onClickSettings: () => dispatch(openSettingsMenu()),
     onClickSettingsModal: () => {
         dispatch(closeEditMenu());
