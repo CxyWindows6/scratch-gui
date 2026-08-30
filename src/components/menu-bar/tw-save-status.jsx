@@ -1,33 +1,22 @@
 import {connect} from 'react-redux';
-import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
+import {FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 import React from 'react';
 import InlineMessages from '../../containers/inline-messages.jsx';
 import SB3Downloader from '../../containers/sb3-downloader.jsx';
 import {filterInlineAlerts} from '../../reducers/alerts';
 
+import {MduiButton} from '../../lib/mdui';
+
 import styles from './save-status.css';
 
-const messages = defineMessages({
-    saveNow: {
-        id: 'tw.menuBar.saveNow',
-        defaultMessage: 'Save now',
-        description: 'Accessible label for the save button in the menu bar shown when the project has unsaved changes'
-    }
-});
-
-// Keyboard support for the div-as-button: activate on Enter or Space.
-const handleButtonKeyDown = onClick => event => {
-    if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        onClick();
-    }
-};
-
+// D5: the dirty-project "save now" control used to be a bare <div role="button">
+// with hand-rolled Enter/Space handling. It is now a real mdui button, which
+// provides button semantics, state layer, press feedback and focus-visible
+// for free; the visible text is its accessible name.
 const TWSaveStatus = ({
     alertsList,
     fileHandle,
-    intl,
     projectChanged,
     showSaveFilePicker
 }) => (
@@ -38,13 +27,10 @@ const TWSaveStatus = ({
             showSaveFilePicker={showSaveFilePicker}
         >
             {(_className, _downloadProjectCallback, {smartSave}) => (
-                <div
-                    role="button"
-                    tabIndex={0}
-                    aria-label={intl.formatMessage(messages.saveNow)}
+                <MduiButton
+                    variant="filled"
                     className={styles.saveNow}
                     onClick={smartSave}
-                    onKeyDown={handleButtonKeyDown(smartSave)}
                 >
                     {fileHandle ? (
                         <FormattedMessage
@@ -62,7 +48,7 @@ const TWSaveStatus = ({
                             id="tw.menuBar.saveToComputer"
                         />
                     )}
-                </div>
+                </MduiButton>
             )}
         </SB3Downloader>
     ));
@@ -72,7 +58,6 @@ TWSaveStatus.propTypes = {
     fileHandle: PropTypes.shape({
         name: PropTypes.string
     }),
-    intl: intlShape.isRequired,
     projectChanged: PropTypes.bool,
     showSaveFilePicker: PropTypes.func
 };
@@ -83,7 +68,7 @@ const mapStateToProps = state => ({
     projectChanged: state.scratchGui.projectChanged
 });
 
-export default injectIntl(connect(
+export default connect(
     mapStateToProps,
     () => ({})
-)(TWSaveStatus));
+)(TWSaveStatus);

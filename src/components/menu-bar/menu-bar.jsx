@@ -89,6 +89,7 @@ import {
     MduiButton,
     MduiDivider,
     MduiDropdown,
+    MduiIcon,
     MduiIconButton,
     MduiMenu,
     MduiMenuItem
@@ -718,6 +719,14 @@ class MenuBar extends React.Component {
                                         icon="folder_open"
                                         className={styles.menuBarItem}
                                     >
+                                        {/* The slotted icon shadows the `icon` fallback so it can be
+                                            aria-hidden: the ligature codename (e.g. "folder_open")
+                                            must not leak into the button's accessible name. */}
+                                        <MduiIcon
+                                            slot="icon"
+                                            name="folder_open"
+                                            ariaHidden="true"
+                                        />
                                         <span className={styles.collapsibleLabel}>
                                             <FormattedMessage
                                                 defaultMessage="文件"
@@ -862,6 +871,11 @@ class MenuBar extends React.Component {
                                     icon="edit"
                                     className={styles.menuBarItem}
                                 >
+                                    <MduiIcon
+                                        slot="icon"
+                                        name="edit"
+                                        ariaHidden="true"
+                                    />
                                     <span className={styles.collapsibleLabel}>
                                         <FormattedMessage
                                             defaultMessage="编辑"
@@ -874,7 +888,7 @@ class MenuBar extends React.Component {
                                     {this.props.isPlayerOnly ? null : (
                                         <DeletionRestorer>{(handleRestore, {restorable, deletedItem}) => (
                                             <MduiMenuItem
-                                                className={classNames({[styles.disabled]: !restorable})}
+                                                disabled={!restorable}
                                                 onClick={this.handleRestoreOption(handleRestore)}
                                             >
                                                 {this.restoreOptionMessage(deletedItem)}
@@ -928,7 +942,7 @@ class MenuBar extends React.Component {
                                     {/* eslint-disable-next-line max-len */}
                                     <CloudVariablesToggler>{(toggleCloudVariables, {enabled, canUseCloudVariables}) => (
                                         <MduiMenuItem
-                                            className={classNames({[styles.disabled]: !canUseCloudVariables})}
+                                            disabled={!canUseCloudVariables}
                                             onClick={toggleCloudVariables}
                                         >
                                             {canUseCloudVariables ? (
@@ -1017,6 +1031,11 @@ class MenuBar extends React.Component {
                                     className={styles.menuBarItem}
                                     onClick={this.props.onClickAddonSettings}
                                 >
+                                    <MduiIcon
+                                        slot="icon"
+                                        name="extension"
+                                        ariaHidden="true"
+                                    />
                                     <span className={styles.collapsibleLabel}>
                                         <FormattedMessage
                                             defaultMessage="插件"
@@ -1033,6 +1052,11 @@ class MenuBar extends React.Component {
                                     className={styles.menuBarItem}
                                     onClick={this.props.onClickSettingsModal}
                                 >
+                                    <MduiIcon
+                                        slot="icon"
+                                        name="tune"
+                                        ariaHidden="true"
+                                    />
                                     <span className={styles.collapsibleLabel}>
                                         <FormattedMessage
                                             defaultMessage="高级"

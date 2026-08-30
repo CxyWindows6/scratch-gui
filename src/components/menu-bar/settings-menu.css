@@ -23,8 +23,19 @@
 }
 
 @media only screen and (max-width: 1124px) {
+    /* Visually hide the label but keep it in the accessibility tree: the
+       slotted text is the trigger button's accessible name (display:none
+       would remove it and leave the icon-only button unnamed, see A5). */
     .dropdown-label {
-        display: none;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        border: 0;
+        clip: rect(0 0 0 0);
+        overflow: hidden;
+        white-space: nowrap;
     }
 }
 

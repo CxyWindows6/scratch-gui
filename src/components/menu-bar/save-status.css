@@ -1,13 +1,14 @@
-@import "../../css/colors.css";
-
+/* D5: the dirty-project "save now" control is an mdui-button now; give it the
+   same 2.25rem pill geometry as the other menu bar buttons. mdui provides the
+   filled variant background, state layer and focus ring itself. */
 .save-now {
-    cursor: pointer;
-    padding: 0 0.5rem;
-    height: 100%;
-    display: flex;
-    align-items: center;
+    height: 2.25rem;
 }
 
-.save-now:hover {
-    background-color: $ui-black-transparent;
+.save-now::part(button) {
+    height: 2.25rem;
+    border-radius: 1.125rem;
+    font-size: 0.8125rem;
+    font-family: Roboto, system-ui, "Noto Sans", sans-serif;
+    padding: 0 0.875rem;
 }

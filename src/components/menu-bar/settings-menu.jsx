@@ -3,7 +3,7 @@ import React from 'react';
 import {FormattedMessage} from 'react-intl';
 import bindAll from 'lodash.bindall';
 
-import {MduiButton, MduiDropdown, MduiMenu} from '../../lib/mdui';
+import {MduiButton, MduiDropdown, MduiIcon, MduiMenu} from '../../lib/mdui';
 
 import LanguageMenu from './language-menu.jsx';
 import TWAccentThemeMenu from './tw-theme-accent.jsx';
@@ -86,6 +86,14 @@ class SettingsMenu extends React.Component {
                     icon="settings"
                     className={menuBarStyles.menuBarItem}
                 >
+                    {/* Slotted aria-hidden icon shadows the `icon` fallback so the
+                        ligature codename "settings" does not leak into the
+                        button's accessible name (see A5). */}
+                    <MduiIcon
+                        slot="icon"
+                        name="settings"
+                        ariaHidden="true"
+                    />
                     <span className={styles.dropdownLabel}>
                         <FormattedMessage
                             defaultMessage="设置"
