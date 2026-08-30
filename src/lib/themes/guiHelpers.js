@@ -187,8 +187,6 @@ const applyGuiColors = theme => {
     const guiColors = defaultsDeep({}, ACCENT_MAP[theme.accent].guiColors, mduiGuiColors());
     for (const [name, value] of Object.entries(guiColors)) {
         doc.style.setProperty(`--${name}-default`, value);
-    }
-    for (const [name, value] of Object.entries(guiColors)) {
         doc.style.setProperty(`--${name}`, value);
     }
 

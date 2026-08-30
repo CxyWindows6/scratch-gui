@@ -84,7 +84,6 @@ const Backpack = ({
             ) : (
                 <ComingSoonTooltip
                     place="top"
-                    tooltipId="backpack-tooltip"
                 >
                     <FormattedMessage
                         defaultMessage="Backpack"

@@ -4,7 +4,8 @@
     background: $data-primary;
 }
 
+/* B4: shared state is a real disabled button now (mdui handles cursor and
+   interaction), only the neutral background remains. */
 .share-button-is-shared {
     background: $ui-black-transparent;
-    cursor: default;
 }

@@ -1,5 +1,7 @@
 {
     "zh-cn": {
+        "gui.menuBar.language": "语言",
+        "gui.menuBar.settings": "设置",
         "tw.accent.blue": "蓝色",
         "tw.accent.purple": "紫色",
         "tw.accent.rainbow": "彩虹色",

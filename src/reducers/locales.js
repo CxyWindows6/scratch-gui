@@ -3,11 +3,32 @@ import {addLocaleData} from 'react-intl';
 import {localeData, isRtl} from '@turbowarp/scratch-l10n';
 import editorMessages from '@turbowarp/scratch-l10n/locales/editor-msgs';
 import addAdditionalTranslations from '../lib/tw-translations/index.js';
+import {setLocale} from 'mdui/functions/setLocale.js';
 
 import {LANGUAGE_KEY} from '../lib/detect-locale.js';
 
 addAdditionalTranslations(editorMessages);
 addLocaleData(localeData);
+
+// Map app locale codes to mdui locale codes (mdui uses en-us by default).
+const MDUI_LOCALES = {
+    'en': 'en-us',
+    'zh-cn': 'zh-cn',
+    'zh-tw': 'zh-tw'
+};
+
+// Sync mdui built-in strings with the app locale. Safe to call before the mdui
+// bootstrap has registered loadLocale (the unsupported-browser modal path) —
+// the error is swallowed and the default en-us strings remain.
+export const syncMduiLocale = locale => {
+    const mduiLocale = MDUI_LOCALES[locale];
+    if (!mduiLocale) return;
+    try {
+        setLocale(mduiLocale).catch(() => {});
+    } catch (e) {
+        // mdui not initialized here; ignore
+    }
+};
 
 const UPDATE_LOCALES = 'scratch-gui/locales/UPDATE_LOCALES';
 const SELECT_LOCALE = 'scratch-gui/locales/SELECT_LOCALE';
@@ -46,6 +67,7 @@ const selectLocale = function (locale) {
     try {
         localStorage.setItem(LANGUAGE_KEY, locale);
     } catch (e) { /* ignore */ }
+    syncMduiLocale(locale);
     return {
         type: SELECT_LOCALE,
         locale: locale
@@ -60,6 +82,7 @@ const setLocales = function (localesMessages) {
 };
 const initLocale = function (currentState, locale) {
     if (Object.prototype.hasOwnProperty.call(currentState.messagesByLocale, locale)) {
+        syncMduiLocale(locale);
         return Object.assign(
             {},
             currentState,

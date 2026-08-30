@@ -1,9 +1,9 @@
-import bindAll from 'lodash.bindall';
 import classNames from 'classnames';
-import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-intl';
+import {defineMessages, FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
+
+import {MduiTooltip} from '../../lib/mdui';
 
 import styles from './coming-soon.css';
 
@@ -28,100 +28,49 @@ const messages = defineMessages({
     }
 });
 
-class ComingSoonContent extends React.Component {
-    constructor (props) {
-        super(props);
-        bindAll(this, [
-            'setHide',
-            'setShow',
-            'getRandomMessage'
-        ]);
-        this.state = {
-            isShowing: false
-        };
-    }
-    setShow () {
-        // needed to set the opacity to 1, since the default is .9 on show
-        this.setState({isShowing: true});
-    }
-    setHide () {
-        this.setState({isShowing: false});
-    }
-    getRandomMessage () {
-        // randomly chooses a messages from `messages` to display in the tooltip.
-        const images = [awwCatIcon, coolCatIcon];
-        const messageNumber = Math.floor(Math.random() * Object.keys(messages).length) + 1;
-        const imageNumber = Math.floor(Math.random() * Object.keys(images).length);
-        return (
-            <FormattedMessage
-                {...messages[`message${messageNumber}`]}
-                values={{
-                    emoji: (
-                        <img
-                            className={styles.comingSoonImage}
-                            src={images[imageNumber]}
-                            draggable={false}
-                            alt="" /* decorative emoji */
-                        />
-                    )
-                }}
-            />
-        );
-    }
-    render () {
-        return (
-            <ReactTooltip
-                afterHide={this.setHide}
-                afterShow={this.setShow}
-                className={classNames(
-                    styles.comingSoon,
-                    this.props.className,
-                    {
-                        [styles.show]: (this.state.isShowing),
-                        [styles.left]: (this.props.place === 'left'),
-                        [styles.right]: (this.props.place === 'right'),
-                        [styles.top]: (this.props.place === 'top'),
-                        [styles.bottom]: (this.props.place === 'bottom')
-                    }
-                )}
-                getContent={this.getRandomMessage}
-                id={this.props.tooltipId}
-            />
-        );
-    }
-}
-
-ComingSoonContent.propTypes = {
-    className: PropTypes.string,
-    intl: intlShape,
-    place: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
-    tooltipId: PropTypes.string.isRequired
+// Randomly chooses one of the messages to display in the tooltip.
+const getRandomMessage = () => {
+    const images = [awwCatIcon, coolCatIcon];
+    const messageNumber = Math.floor(Math.random() * Object.keys(messages).length) + 1;
+    const imageNumber = Math.floor(Math.random() * Object.keys(images).length);
+    return (
+        <FormattedMessage
+            {...messages[`message${messageNumber}`]}
+            values={{
+                emoji: (
+                    <img
+                        className={styles.comingSoonImage}
+                        src={images[imageNumber]}
+                        draggable={false}
+                        alt="" /* decorative emoji */
+                    />
+                )
+            }}
+        />
+    );
 };
 
-ComingSoonContent.defaultProps = {
-    place: 'bottom'
-};
-
-const ComingSoon = injectIntl(ComingSoonContent);
-
+// D2: migrated from react-tooltip to mdui-tooltip. The first default-slot
+// child is the trigger target; the `content` slot child is the tooltip body.
+// mdui adds role="tooltip", hover+focus triggering and RTL-aware placement.
 const ComingSoonTooltip = props => (
-    <div className={props.className}>
-        <div
-            data-delay-hide={props.delayHide}
-            data-delay-show={props.delayShow}
-            data-effect="solid"
-            data-for={props.tooltipId}
-            data-place={props.place}
-            data-tip="tooltip"
-        >
+    <MduiTooltip
+        className={classNames(styles.comingSoon, props.className)}
+        placement={props.place}
+        trigger="hover focus"
+        openDelay={props.delayShow}
+        closeDelay={props.delayHide}
+    >
+        <div className={styles.target}>
             {props.children}
         </div>
-        <ComingSoon
-            className={props.tooltipClassName}
-            place={props.place}
-            tooltipId={props.tooltipId}
-        />
-    </div>
+        <div
+            slot="content"
+            className={classNames(styles.content, props.tooltipClassName)}
+        >
+            {getRandomMessage()}
+        </div>
+    </MduiTooltip>
 );
 
 ComingSoonTooltip.propTypes = {
@@ -130,8 +79,7 @@ ComingSoonTooltip.propTypes = {
     delayHide: PropTypes.number,
     delayShow: PropTypes.number,
     place: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
-    tooltipClassName: PropTypes.string,
-    tooltipId: PropTypes.string.isRequired
+    tooltipClassName: PropTypes.string
 };
 
 ComingSoonTooltip.defaultProps = {
@@ -140,6 +88,5 @@ ComingSoonTooltip.defaultProps = {
 };
 
 export {
-    ComingSoon as ComingSoonComponent,
     ComingSoonTooltip
 };

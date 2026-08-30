@@ -17,6 +17,7 @@ const ShareButton = ({
             styles.shareButton,
             {[styles.shareButtonIsShared]: isShared}
         )}
+        disabled={isShared}
         onClick={onClick}
     >
         {isShared ? (

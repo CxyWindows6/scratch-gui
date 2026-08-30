@@ -70,12 +70,18 @@ class SurgeThemeMenu extends React.Component {
     }
     render () {
         return (
-            <MduiMenuItem icon="palette">
+            <MduiMenuItem icon={MODE_ICONS[this.state.current]}>
                 <FormattedMessage
                     defaultMessage="Interface theme"
                     description="Label for menu to choose UI theme mode (light / dark / auto)"
                     id="tw.menuBar.themeMode"
                 />
+                {/* D4: current value as secondary end-text instead of hardcoded
+                    parentheses in the label. mdui styles the end-text slot as
+                    on-surface-variant secondary text. */}
+                <span slot="end-text">
+                    <FormattedMessage {...messages[this.state.current]} />
+                </span>
                 <MduiMenu
                     slot="submenu"
                     submenuTrigger="click"

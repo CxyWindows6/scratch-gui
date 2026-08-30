@@ -123,7 +123,6 @@ const MenuBarItemTooltip = ({
     children,
     className,
     enable,
-    id,
     place = 'bottom'
 }) => {
     if (enable) {
@@ -138,7 +137,6 @@ const MenuBarItemTooltip = ({
             className={classNames(styles.comingSoon, className)}
             place={place}
             tooltipClassName={styles.comingSoonTooltip}
-            tooltipId={id}
         >
             {children}
         </ComingSoonTooltip>
@@ -150,27 +148,7 @@ MenuBarItemTooltip.propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
     enable: PropTypes.bool,
-    id: PropTypes.string,
     place: PropTypes.oneOf(['top', 'bottom', 'left', 'right'])
-};
-
-const MenuItemTooltip = ({id, isRtl, children, className}) => (
-    <ComingSoonTooltip
-        className={classNames(styles.comingSoon, className)}
-        isRtl={isRtl}
-        place={isRtl ? 'left' : 'right'}
-        tooltipClassName={styles.comingSoonTooltip}
-        tooltipId={id}
-    >
-        {children}
-    </ComingSoonTooltip>
-);
-
-MenuItemTooltip.propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    id: PropTypes.string,
-    isRtl: PropTypes.bool
 };
 
 const AboutButton = props => (
@@ -387,7 +365,6 @@ class MenuBar extends React.Component {
         const readyToReplaceProject = this.props.confirmReadyToReplaceProject(
             this.props.intl.formatMessage(sharedMessages.replaceProjectWarning)
         );
-        this.props.onRequestCloseFile();
         if (readyToReplaceProject) {
             this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
         }

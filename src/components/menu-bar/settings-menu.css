@@ -1,9 +1,5 @@
 @import "../../css/colors.css";
 
-.theme-label {
-    flex: 1;
-}
-
 .dropdown-label {
     margin: 0 0.5rem 0 0.25rem;
 }
