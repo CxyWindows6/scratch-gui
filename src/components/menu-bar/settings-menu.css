@@ -40,11 +40,11 @@
 }
 
 .accent-icon-outer {
-    width: 24px;
-    height: 24px;
+    /* 22px swatch, no transform: scale(90%) caused a 1.2px column offset
+       vs the 24px icon column and a half-pixel border (see C2). */
+    width: 22px;
+    height: 22px;
     border: 1px solid rgb(var(--mdui-color-outline-variant, 196, 199, 197));
     border-radius: 100%;
     box-sizing: border-box;
-    transform-origin: center;
-    transform: scale(90%);
 }

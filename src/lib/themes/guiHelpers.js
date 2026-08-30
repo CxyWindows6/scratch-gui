@@ -118,9 +118,9 @@ const mduiGuiColors = () => {
         'pen-transparent': 'hsla(163, 85%, 40%, 0.25)',
         'pen-tertiary': 'hsla(163, 86%, 30%, 1)',
 
-        'error-primary': 'hsla(30, 100%, 55%, 1)',
-        'error-light': 'hsla(30, 100%, 70%, 1)',
-        'error-transparent': 'hsla(30, 100%, 55%, 0.25)',
+        'error-primary': mduiColor('--mdui-color-error', null, 'hsla(30, 100%, 55%, 1)'),
+        'error-light': mduiColor('--mdui-color-error', 0.7, 'hsla(30, 100%, 70%, 1)'),
+        'error-transparent': mduiColor('--mdui-color-error', 0.25, 'hsla(30, 100%, 55%, 0.25)'),
 
         'drop-highlight': 'hsla(215, 100%, 77%, 1)',
 
