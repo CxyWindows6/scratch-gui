@@ -118,6 +118,20 @@ const Footer = () => (
 
             <div className={styles.footerColumns}>
                 <div className={styles.footerSection}>
+                    <span className={styles.footerSectionHeading}>
+                        {/* Do not translate */}
+                        {'友情链接'}
+                    </span>
+                    <a
+                        href="https://remixwarp.top/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        {/* Do not translate */}
+                        {'Remixwarp'}
+                    </a>
+                </div>
+                <div className={styles.footerSection}>
                     <a href="credits.html">
                         <FormattedMessage
                             defaultMessage="Credits"

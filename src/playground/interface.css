@@ -86,11 +86,14 @@ a {
 .footer-section {
     display: flex;
     flex-direction: column;
-    width: 200px;
+    width: 150px;
     margin-bottom: 10px;
 }
 .footer-section > * {
     margin-bottom: 10px;
+}
+.footer-section-heading {
+    font-weight: bold;
 }
 
 .infobox {
