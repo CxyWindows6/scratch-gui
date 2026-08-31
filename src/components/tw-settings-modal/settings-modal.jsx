@@ -334,14 +334,7 @@ const WarpTimer = props => (
                     description="Warp Timer help (when enabled)"
                     id="tw.settingsModal.warpTimerHelp"
                 />
-            ) : (
-                <FormattedMessage
-                    // eslint-disable-next-line max-len
-                    defaultMessage="⚠️ The Warp Timer is off: scripts run at full speed and are never paused. An infinite or very long loop will freeze the entire page and unsaved work may be lost."
-                    description="Warp Timer warning (when disabled)"
-                    id="tw.settingsModal.warpTimerOffWarning"
-                />
-            )
+            ) : null
         }
         slug="warp-timer"
     />
